@@ -1,6 +1,6 @@
 import React, { useState, useEffect, ReactEventHandler } from "react";
 import styled from "styled-components";
-import { tileData } from "./tileData"; // Import the tile data
+import { CellType, tileData } from "./tileData"; // Import the tile data
 
 // Main container for the Path Map component
 const PathMapContainer = ({ children: jsx }: { children: React.ReactNode }) => {
@@ -216,28 +216,30 @@ const PathMap: React.FC<PathMapProps> = ({
     initializeGrid();
   }, []);
   const initializeGrid = () => {
-    const newGrid: Number|string[][] = [];
+      const newGrid: { row: number; type: keyof typeof tileData; isEnd: boolean; color: string; label: string }[][] = [];
 
     for (let row = 0; row < 60; row++) {
-      const currentRow: Number[] = [];
-      for (let col = 0; col < 60; col++) {
+      const currentRow = Array.from({ length: 60 }, (_, col) => {
         const terrainType = exampleLayout[row][col];
         const tileKey = Object.keys(tileData)[terrainType] as keyof typeof tileData;
-        const tileProps = tileData[tileKey];
 
-        currentRow.push({
-          row,
-          col,
-          ...tileProps,
-          type: tileKey,
-   
+        return {
           isEnd: terrainType === 8,
-        });
-      }
+          ...tileData[tileKey],
+          type: tileKey as "path" | "classroom" | "stairs" | "fireEquipment" | "elevator" | "start" | "end" | "bathroom" | "utilityRoom",
+        };
+      });
       newGrid.push(currentRow);
     }
 
-    setGrid(newGrid);
+    setGrid(
+      newGrid.map((row, rowIndex) =>
+      row.map((cell, colIndex) => ({
+        ...cell,
+        ...tileData[cell.type],
+      }))
+      )
+    );
   };
 
   const handleCellClick = (row: number, col: number) => {
@@ -247,20 +249,9 @@ const PathMap: React.FC<PathMapProps> = ({
     if (selectionMode === "start" || selectionMode === "end") {
       for (let r = 0; r < newGrid.length; r++) {
         for (let c = 0; c < newGrid[0].length; c++) {
-          if (selectionMode === "start") {
-            newGrid[r][c].isStart = false;
-          } else if (selectionMode === "end") {
-            newGrid[r][c].isEnd = false;
-          }
+          
         }
       }
-    }
-
-    // Update cell based on selection mode
-    if (selectionMode === "start") {
-      newGrid[row][col].isStart = true;
-    } else if (selectionMode === "end") {
-      newGrid[row][col].isEnd = true;
     }
 
     setGrid(newGrid);
@@ -285,14 +276,6 @@ const PathMap: React.FC<PathMapProps> = ({
     const newGrid = [...grid];
     const cell = newGrid[row][col];
 
-    // Update the cell based on the current selection mode
-    if (selectionMode === "start") {
-      cell.isStart = true;
-      cell.isEnd = false;
-    } else if (selectionMode === "end") {
-      cell.isEnd = true;
-      cell.isStart = false;
-    }
 
     setGrid(newGrid);
   };
@@ -307,24 +290,17 @@ const PathMap: React.FC<PathMapProps> = ({
         <Content>
           <MapVisualization onMouseUp={handleMouseUp}>
             <MapGrid>
-              {grid.map((row, rowIdx) =>
+                {grid.map((row, rowIdx) =>
                 row.map((cell, colIdx) => (
                   <Cell
-                    key={`${rowIdx}-${colIdx}`}
-                    isClassroom={cell.isClassroom}
-                    isStairs={cell.isStairs}
-                    isBathroom={cell.isBathroom}
-                    isFireEquipment={cell.isFireEquipment}
-                    isElevator={cell.isElevator}
-                    isUtilityRoom={cell.isUtilityRoom}
-                    isStart={cell.isStart}
-                    isEnd={cell.isEnd}
-                    onMouseDown={() => handleMouseDown(rowIdx, colIdx)}
-                    onMouseEnter={() => handleMouseMove(rowIdx, colIdx)}
-                    onClick={() => handleCellClick(rowIdx, colIdx)}
+                  key={`${rowIdx}-${colIdx}`}
+                  type={cell.type as keyof typeof tileData} // Ensure type matches the expected union type
+                  onMouseDown={() => handleMouseDown(rowIdx, colIdx)}
+                  onMouseEnter={() => handleMouseMove(rowIdx, colIdx)}
+                  onClick={() => handleCellClick(rowIdx, colIdx)}
                   />
                 ))
-              )}
+                )}
             </MapGrid>
           </MapVisualization>
 
