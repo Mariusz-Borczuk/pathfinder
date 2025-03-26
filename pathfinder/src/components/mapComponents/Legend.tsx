@@ -1,7 +1,6 @@
 import * as Accordion from "@radix-ui/react-accordion";
 import React from "react";
 
-
 // Legend.tsx
 export const Legend = ({ children }: { children: React.ReactNode }) => {
   return (
@@ -49,18 +48,31 @@ export const LegendItem = ({
   bgColor: string;
 }) => {
   return (
-    <div className="flex items-center gap-2">
-      <div
-        className="w-4 h-4 rounded-sm"
-        style={{ backgroundColor: bgColor }}
-      ></div>
-      <span className="text-sm text-gray-600 font-medium">{label}</span>
+    <div
+      className="flex items-center gap-2 p-4 font-bold text-lg tracking-wider"
+      style={{
+        backgroundColor: bgColor,
+        color: "white", // Ensure black text
+        textShadow:
+          "1px 0px 2px rgb(255, 255, 255)", // Soft white shadow
+      }}
+    >
+      <LegendText>{label}</LegendText>
     </div>
   );
 };
 
 export const LegendText = ({ children }: { children: React.ReactNode }) => {
-  return <span className="text-sm text-gray-600 font-medium">{children}</span>;
+  return (
+    <span
+      className="flex items-center text-xl gap-2 text-black font-bold"
+      style={{
+        textShadow: "1px 1px 2px rgb(0, 0, 0)", // Soft white shadow
+      }}
+    >
+      {children}
+    </span>
+  );
 };
 // ColorSquare.tsx
 export const ColorSquare = ({ bgColor }: { bgColor: string }) => {

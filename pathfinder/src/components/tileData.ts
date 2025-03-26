@@ -8,8 +8,8 @@ export type CellType = {
   };
   
 export const tileData = {
-    classroom: { color: "#F9A800", label: "Classroom", type: "classroom", row: 0, col: 0 },
-    path: { color: "#e0e0e0", label: "Path", type: "path", row: 0, col: 0 },
+    classroom: { color: "#e0e0e0", label: "Classroom", type: "classroom", row: 0, col: 0 },
+    path: { color: "#F9A800", label: "Path", type: "path", row: 0, col: 0 },
     stairs: { color: "#247F52", label: "Stairs", type: "stairs", row: 0, col: 0 },
     bathroom: { color: "#1E2460", label: "Bathroom", type: "bathrooms", row: 0, col: 0 },
     fireEquipment: { color: "#9B2423", label: "Fire Equipment", type: "fireEquipment", row: 0, col: 0 },
