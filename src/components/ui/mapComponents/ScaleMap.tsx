@@ -96,7 +96,7 @@ export const ScallableMapGrid = () => {
 
   return (
     <div
-      className="relative w-full h-[400px] overflow-hidden border-2 border-red-800 rounded-lg"
+      className="absolute  w-full h-full overflow-hidden border-2 border-blue-800 rounded-lg"
       tabIndex={0}
       onKeyDown={handleArrowKey}
     >

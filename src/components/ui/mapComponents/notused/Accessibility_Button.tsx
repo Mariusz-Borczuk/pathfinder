@@ -19,8 +19,8 @@ export const AccessibilityButton: React.FC<AccessibilityButtonProps> = ({
         <button
             onClick={onClick}
             className={`p-2 rounded ${
-                isActive ? "bg-blue-600" : "bg-gray-600"
-            } hover:opacity-90 focus:ring-2 focus:ring-blue-400 focus:outline-none`}
+                isActive ? "bg-green-400" : "bg-gray-600"
+            } text-black hover:opacity-90 hover:shadow-lg focus:ring-2 focus:ring-green-800 focus:outline-none border-2 rounded px-4 py-2`}
             aria-label={label}
         >
             {icon}

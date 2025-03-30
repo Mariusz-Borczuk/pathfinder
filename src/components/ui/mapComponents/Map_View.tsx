@@ -1,6 +1,6 @@
 import React from 'react';
 import { MapGrid } from './MapGrid';
-import { ScallableMapGrid } from './ScallableMap';
+import { ScallableMapGrid } from './notused/ScallableMap';
 
 const MapView: React.FC = () => {
     return (

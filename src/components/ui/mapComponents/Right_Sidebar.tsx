@@ -2,11 +2,15 @@ import React from "react";
 
 interface RightSidebarProps {
     settings: {
-        contrast: string;
+        contrast: "high" | "low";
+        isDyslexicFont: boolean;
+        fontSize: "small" | "large" | "xlarge";
     };
 }
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ settings}) => {
+
+
+const RightSidebar: React.FC<RightSidebarProps> = ({ settings }) => {
     return (
         <div
             className={`w-72 ${
@@ -16,6 +20,12 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings}) => {
             <h2
                 className={`text-xl font-semibold mb-4 ${
                     settings.contrast === "high" ? "text-gray-100" : "text-gray-100"
+                } ${settings.isDyslexicFont ? "font-dyslexic" : ""} ${
+                    settings.fontSize === "large"
+                        ? "text-lg"
+                        : settings.fontSize === "xlarge"
+                        ? "text-xl"
+                        : ""
                 }`}
             >
                 Location Details
@@ -29,6 +39,12 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings}) => {
                     <h3
                         className={`font-medium ${
                             settings.contrast === "high" ? "text-gray-800" : "text-gray-100"
+                        } ${settings.isDyslexicFont ? "font-dyslexic" : ""} ${
+                            settings.fontSize === "large"
+                                ? "text-lg"
+                                : settings.fontSize === "xlarge"
+                                ? "text-xl"
+                                : ""
                         }`}
                     >
                         Current Location
@@ -36,6 +52,12 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings}) => {
                     <p
                         className={`${
                             settings.contrast === "high" ? "text-gray-400" : "text-gray-400"
+                        } ${settings.isDyslexicFont ? "font-dyslexic" : ""} ${
+                            settings.fontSize === "large"
+                                ? "text-lg"
+                                : settings.fontSize === "xlarge"
+                                ? "text-xl"
+                                : ""
                         }`}
                     >
                         Building A, Floor 1
@@ -49,6 +71,12 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings}) => {
                     <h3
                         className={`font-medium ${
                             settings.contrast === "high" ? "text-gray-500" : "text-gray-50"
+                        } ${settings.isDyslexicFont ? "font-dyslexic" : ""} ${
+                            settings.fontSize === "large"
+                                ? "text-lg"
+                                : settings.fontSize === "xlarge"
+                                ? "text-xl"
+                                : ""
                         }`}
                     >
                         Accessibility Features
@@ -56,7 +84,13 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings}) => {
                     <ul
                         className={`${
                             settings.contrast === "high" ? "text-gray-400" : "text-gray-400"
-                        } list-disc ml-4`}
+                        } list-disc ml-4 ${settings.isDyslexicFont ? "font-dyslexic" : ""} ${
+                            settings.fontSize === "large"
+                                ? "text-lg"
+                                : settings.fontSize === "xlarge"
+                                ? "text-xl"
+                                : ""
+                        }`}
                     >
                         <li>Wheelchair accessible</li>
                         <li>Automatic doors</li>

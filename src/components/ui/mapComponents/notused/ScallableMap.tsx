@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Cell } from "./Cell";
+import { Cell, CellProps } from "./Cell";
 
 export const ScallableMapGrid = () => {
   const gridSize = 60;
-  const baseTileSize = 15;
+  const baseTileSize = 25;
   const [scale, setScale] = useState(1);
   const [posX, setPosX] = useState(0);
   const [posY, setPosY] = useState(0);
@@ -86,7 +86,7 @@ export const ScallableMapGrid = () => {
 
   return (
     <div
-      className="relative w-full h-[400px] overflow-hidden border-2 border-red-800 rounded-lg"
+      className="relative w-full h-full overflow-hidden border-2 border-blue-800 rounded-lg"
       tabIndex={0}
       onKeyDown={handleArrowKey}
     >
@@ -101,8 +101,8 @@ export const ScallableMapGrid = () => {
         {Array.from({ length: gridSize * gridSize }).map((_, index) => {
           const x = index % gridSize;
           const y = Math.floor(index / gridSize);
-          const isEven = (x + y) % 2 === 0;
-          const cellType = isEven ? "path" : "classroom"; // Map "even" and "odd" to valid types
+            const cellTypes: CellProps["type"][] = ["path", "classroom", "start", "end"];
+            const cellType: CellProps["type"] = cellTypes[index % cellTypes.length] || "path"; // Ensure a fallback value
 
           return (
             <div
@@ -120,20 +120,7 @@ export const ScallableMapGrid = () => {
           );
         })}
       </div>
-      <div className="absolute top-2 left-2 flex space-x-2">
-        <button
-          className="px-2 py-1 bg-blue-500 text-white rounded"
-          onClick={handleZoomIn}
-        >
-          Zoom In (+)
-        </button>
-        <button
-          className="px-2 py-1 bg-blue-500 text-white rounded"
-          onClick={handleZoomOut}
-        >
-          Zoom Out (-)
-        </button>
-      </div>
+     
     </div>
   );
 };

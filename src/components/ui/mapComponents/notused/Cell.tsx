@@ -25,7 +25,7 @@
 import { tileData } from "../tileData";
 import React from "react";
 
-interface CellProps {
+export interface CellProps {
   type: keyof typeof tileData;
 }
 

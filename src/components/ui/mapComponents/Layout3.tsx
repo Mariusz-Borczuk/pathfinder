@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import RightSidebar from "./Right_Sidebar";
 import MapView from "./Map_View";
-import QuickNavigation from "./Quick_Navigation";
-import MainHeader from "./Main_Header";
-import { SearchBar } from "./SearchBar";
-import AccessibilityButton from "./Accessibility_Button";
-import { AccessibilitySettings } from "./Accessibility_Settings";
+import QuickNavigation from "./notused/Quick_Navigation";
+import { MainHeader } from "./notused/Main_Header";
+import { SearchBar } from "./notused/SearchBar";
+import AccessibilityButton from "./notused/Accessibility_Button";
+import { AccessibilitySettings } from "./notused/Accessibility_Settings";
 import { Eye, Type, Map } from "lucide-react";
-import EyeButton from "./Eye";
+import EyeButton from "./notused/Eye";
 
-interface WayfindingApp3Props {
+interface LayoutProps {
   children: React.ReactNode;
 }
 
-const WayfindingApp3: React.FC<WayfindingApp3Props> = ({ children }) => {
+const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [settings, setSettings] = useState<AccessibilitySettings>({
     fontSize: "normal",
     contrast: "normal",
@@ -26,13 +26,29 @@ const WayfindingApp3: React.FC<WayfindingApp3Props> = ({ children }) => {
     >
       {/* Left Sidebar */}
       <aside
-        className="w-80 bg-gray-800 shadow-lg p-4 flex flex-col"
+        className={`w-80 bg-gray-800 shadow-lg p-4 flex flex-col ${
+          settings.isDyslexicFont ? "font-dyslexic" : ""
+        } ${
+          settings.fontSize === "large"
+            ? "text-lg"
+            : settings.fontSize === "xlarge"
+            ? "text-2xl"
+            : ""
+        }`}
         role="complementary"
       >
-        <MainHeader />
+        <MainHeader settings={settings} />
 
         <div
-          className="mb-6 bg-gray-700 p-4 rounded-lg"
+          className={`mb-6 bg-gray-700 p-4 rounded-lg ${
+            settings.isDyslexicFont ? "font-dyslexic" : ""
+          } ${
+            settings.fontSize === "large"
+              ? "text-lg"
+              : settings.fontSize === "xlarge"
+              ? "text-2xl"
+              : ""
+          }`}
           aria-label="Accessibility settings"
         >
           <h2 className="font-semibold mb-3 text-gray-200">
@@ -50,10 +66,11 @@ const WayfindingApp3: React.FC<WayfindingApp3Props> = ({ children }) => {
                     onClick={() => setSettings({ ...settings, fontSize: size })}
                     icon={
                       <Type
-                        size={
-                          size === "normal" ? 16 : size === "large" ? 20 : 24
-                        }
-                        className="text-gray-200"
+                        className={`text-gray-200 ${
+                          settings.contrast === "high"
+                            ? " text-zinc-950"
+                            : "text-gray-100"
+                        }`}
                       />
                     }
                     description={`Change text size to ${size}`}
@@ -109,7 +126,7 @@ const WayfindingApp3: React.FC<WayfindingApp3Props> = ({ children }) => {
             <button
               className={`p-2 rounded-lg ${
                 settings.contrast === "high"
-                  ? "bg-gray-300 hover:bg-gray-400"
+                  ? "bg-red-300 hover:bg-gray-400"
                   : "bg-gray-200 hover:bg-gray-300"
               }`}
             >
@@ -121,7 +138,7 @@ const WayfindingApp3: React.FC<WayfindingApp3Props> = ({ children }) => {
                 }`}
               />
             </button>
-            <button
+            {/* <button
               className={`p-2 rounded-lg ${
                 settings.contrast === "high"
                   ? "bg-gray-300 hover:bg-gray-400"
@@ -131,25 +148,23 @@ const WayfindingApp3: React.FC<WayfindingApp3Props> = ({ children }) => {
               <Type
                 className={`w-5 h-5 ${
                   settings.contrast === "high"
-                    ? "text-gray-100"
-                    : "text-gray-800"
+                    ? "text-zinc-950"
+                    : "text-white"
                 }`}
               />
-            </button>
+            </button> */}
           </div>
-          <EyeButton
+          {/* <EyeButton
             settings={{
               contrast: settings.contrast === "normal" ? "low" : "high",
             }}
-          />
+          /> */}
         </div>
 
         <MapView />
       </div>
-      <RightSidebar
-        settings={{
-          contrast: "",
-        }}
+      <RightSidebar fontSize={"normal"} contrast={"normal"} isDyslexicFont={false}        // settings={{settings}}
+        //
       />
       {children}
     </div>

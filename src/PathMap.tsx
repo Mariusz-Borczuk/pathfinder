@@ -1,6 +1,6 @@
 import React, { useState,  } from "react";
-import { tileData, CellType } from "./components/ui/tileData"; // Import the tile data
-import { Cell } from "./components/ui/mapComponents/Cell";
+import { tileData, CellType } from "./components/ui/mapComponents/tileData"; // Import the tile data
+import { Cell } from "./components/ui/mapComponents/notused/Cell";
 import WayfindingApp from "./components/ui/mapComponents/Layout";
 import WayfindingApp3 from "./components/ui/mapComponents/Layout3";
 import { Content } from "@radix-ui/react-accordion";
