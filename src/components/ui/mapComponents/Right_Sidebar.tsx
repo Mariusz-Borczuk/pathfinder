@@ -1,16 +1,9 @@
 import React from "react";
-
-interface RightSidebarProps {
-    settings: {
-        contrast: "high" | "low";
-        isDyslexicFont: boolean;
-        fontSize: "small" | "large" | "xlarge";
-    };
-}
+import { AccessibilitySettings } from "./notused/Accessibility_Settings";
 
 
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ settings }) => {
+const RightSidebar: React.FC<{settings: AccessibilitySettings}> = ({ settings }) => {
     return (
         <div
             className={`w-72 ${
@@ -24,7 +17,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings }) => {
                     settings.fontSize === "large"
                         ? "text-lg"
                         : settings.fontSize === "xlarge"
-                        ? "text-xl"
+                        ? "text-2xl"
                         : ""
                 }`}
             >
@@ -43,7 +36,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings }) => {
                             settings.fontSize === "large"
                                 ? "text-lg"
                                 : settings.fontSize === "xlarge"
-                                ? "text-xl"
+                                ? "text-2xl"
                                 : ""
                         }`}
                     >
@@ -56,7 +49,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings }) => {
                             settings.fontSize === "large"
                                 ? "text-lg"
                                 : settings.fontSize === "xlarge"
-                                ? "text-xl"
+                                ? "text-2xl"
                                 : ""
                         }`}
                     >
@@ -75,7 +68,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings }) => {
                             settings.fontSize === "large"
                                 ? "text-lg"
                                 : settings.fontSize === "xlarge"
-                                ? "text-xl"
+                                ? "text-2xl"
                                 : ""
                         }`}
                     >
@@ -88,7 +81,7 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings }) => {
                             settings.fontSize === "large"
                                 ? "text-lg"
                                 : settings.fontSize === "xlarge"
-                                ? "text-xl"
+                                ? "text-2xl"
                                 : ""
                         }`}
                     >

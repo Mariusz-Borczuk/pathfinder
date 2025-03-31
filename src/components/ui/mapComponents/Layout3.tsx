@@ -163,7 +163,8 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
 
         <MapView />
       </div>
-      <RightSidebar fontSize={"normal"} contrast={"normal"} isDyslexicFont={false}        // settings={{settings}}
+      <RightSidebar 
+           settings={settings}
         //
       />
       {children}
