@@ -120,7 +120,6 @@ export const ScallableMapGrid = () => {
           );
         })}
       </div>
-     
     </div>
   );
 };

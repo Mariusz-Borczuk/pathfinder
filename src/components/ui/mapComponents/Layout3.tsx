@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import RightSidebar from "./Right_Sidebar";
-import MapView from "./Map_View";
+import { MapView } from "./Map_View"; 
 import QuickNavigation from "./notused/Quick_Navigation";
 import { MainHeader } from "./notused/Main_Header";
 import { SearchBar } from "./notused/SearchBar";
 import AccessibilityButton from "./notused/Accessibility_Button";
 import { AccessibilitySettings } from "./notused/Accessibility_Settings";
 import { Eye, Type, Map } from "lucide-react";
-import EyeButton from "./notused/Eye";
+import FloorManagement from "./notused/Floor_Management";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -19,6 +19,8 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
     contrast: "normal",
     isDyslexicFont: false,
   });
+  const [currentFloor, setCurrentFloor] = useState(1);
+
   return (
     <div
       className="flex h-screen w-full bg-gray-900 p-0 m-0"
@@ -118,6 +120,10 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
         <SearchBar />
 
         <QuickNavigation />
+        <FloorManagement 
+          currentFloor={currentFloor} 
+          onFloorChange={setCurrentFloor} 
+        />
       </aside>
 
       <div className="flex-1 p-4">
@@ -138,34 +144,13 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
                 }`}
               />
             </button>
-            {/* <button
-              className={`p-2 rounded-lg ${
-                settings.contrast === "high"
-                  ? "bg-gray-300 hover:bg-gray-400"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
-            >
-              <Type
-                className={`w-5 h-5 ${
-                  settings.contrast === "high"
-                    ? "text-zinc-950"
-                    : "text-white"
-                }`}
-              />
-            </button> */}
           </div>
-          {/* <EyeButton
-            settings={{
-              contrast: settings.contrast === "normal" ? "low" : "high",
-            }}
-          /> */}
         </div>
-
         <MapView />
       </div>
       <RightSidebar 
-           settings={settings}
-        //
+        settings={settings}
+        currentFloor={currentFloor}
       />
       {children}
     </div>

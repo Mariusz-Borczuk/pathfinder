@@ -1,9 +1,20 @@
 import React from "react";
 import { AccessibilitySettings } from "./notused/Accessibility_Settings";
+import { AccessibleTTSButton, Route } from "./Speaking";
 
+interface RightSidebarProps {
+    settings: AccessibilitySettings;
+    currentFloor: number;
+}
 
+const RightSidebar: React.FC<RightSidebarProps> = ({ settings, currentFloor }) => {
+    const route: Route = {
+        destination: `Building A, Floor ${currentFloor}`,
+        estimatedTime: "2 minutes",
+        accessibilityNotes: "Elevator available, smooth pathways, wheelchair accessible",
+        navigationInstructions: `You are currently on Floor ${currentFloor}. The elevator is located at the end of the corridor.`
+    };
 
-const RightSidebar: React.FC<{settings: AccessibilitySettings}> = ({ settings }) => {
     return (
         <div
             className={`w-72 ${
@@ -53,7 +64,7 @@ const RightSidebar: React.FC<{settings: AccessibilitySettings}> = ({ settings })
                                 : ""
                         }`}
                     >
-                        Building A, Floor 1
+                        Building A, Floor {currentFloor}
                     </p>
                 </div>
                 <div
@@ -90,10 +101,37 @@ const RightSidebar: React.FC<{settings: AccessibilitySettings}> = ({ settings })
                         <li>Accessible restroom nearby</li>
                     </ul>
                 </div>
+                <div
+                    className={`p-3 ${
+                        settings.contrast === "high" ? "bg-gray-700" : "bg-gray-700"
+                    } rounded-lg`}
+                >
+                    <h3
+                        className={`font-medium ${
+                            settings.contrast === "high" ? "text-gray-200" : "text-gray-200"
+                        } ${settings.isDyslexicFont ? "font-dyslexic" : ""} ${
+                            settings.fontSize === "large"
+                                ? "text-lg"
+                                : settings.fontSize === "xlarge"
+                                ? "text-2xl"
+                                : ""
+                        }`}
+                    >
+                        Audio Navigation
+                    </h3>
+                    <div className="mt-2">
+                        <AccessibleTTSButton 
+                            route={route}
+                            settings={settings}
+                            className={`w-full ${
+                                settings.isDyslexicFont ? "font-dyslexic" : ""
+                            }`}
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     );
 };
 
 export default RightSidebar;
-1

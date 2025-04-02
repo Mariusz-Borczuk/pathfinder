@@ -25,7 +25,7 @@ export const AccessibilityButton: React.FC<AccessibilityButtonProps> = ({
         >
             {icon}
         </button>
-        <div className="absolute left-1/2 transform -translate-x-1/2 mt-2 hidden group-hover:block bg-gray-800 text-gray-100 px-3 py-2 rounded text-sm">
+        <div className="z-50 absolute left-1/2 transform -translate-x-1/2 mt-2 hidden border-green-400 border-2 group-hover:block bg-gray-800 text-gray-100 px-3 py-2 rounded text-sm">
             {description}
         </div>
     </div>
