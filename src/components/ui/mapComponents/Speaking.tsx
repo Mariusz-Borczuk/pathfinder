@@ -22,6 +22,7 @@ export interface TextToSpeechOptions {
 class TextToSpeechService {
     private synth: SpeechSynthesis;
     private isSpeaking: boolean;
+    private onWordSpoken?: (word: string, position: number) => void;
 
     constructor() {
         this.synth = window.speechSynthesis;
@@ -29,11 +30,12 @@ class TextToSpeechService {
     }
 
     // Speak method with comprehensive configuration
-    speak(text: string, options: TextToSpeechOptions = {}): SpeechSynthesisUtterance {
+    speak(text: string, options: TextToSpeechOptions = {}, onWordSpoken?: (word: string, position: number) => void): SpeechSynthesisUtterance {
         if (this.isSpeaking) {
             this.cancel();
         }
 
+        this.onWordSpoken = onWordSpoken;
         const utterance = new SpeechSynthesisUtterance(text);
 
         utterance.lang = options.language || 'en-US';
@@ -55,6 +57,13 @@ class TextToSpeechService {
             console.error('Speech synthesis error:', event);
             this.isSpeaking = false;
             options.onError?.(event);
+        };
+
+        utterance.onboundary = (event) => {
+            if (event.name === 'word') {
+                const word = text.slice(event.charIndex, event.charIndex + event.charLength);
+                this.onWordSpoken?.(word, event.charIndex);
+            }
         };
 
         this.synth.speak(utterance);
@@ -89,36 +98,92 @@ export interface AccessibleTTSButtonProps {
     className?: string;
     settings: AccessibilitySettings;
 }
+interface Section {
+    title: string;
+    content: string;
+}
+
+interface SpeechSettings {
+    volume: number;
+    rate: number;
+}
 
 // Accessible Text-to-Speech Button Component
-const AccessibleTTSButton: React.FC<AccessibleTTSButtonProps> = ({ 
+export const AccessibleTTSButton: React.FC<AccessibleTTSButtonProps> = ({ 
     route, 
     className = '',
     settings
 }) => {
     const [ttsService] = useState<TextToSpeechService>(new TextToSpeechService());
     const [isPlaying, setIsPlaying] = useState<boolean>(false);
+    const [currentSection, setCurrentSection] = useState<string | null>(null);
+    const [speechSettings, setSpeechSettings] = useState<SpeechSettings>({
+        volume: 1,
+        rate: 0.9
+    });
 
-    const routeDescription: string = `
-        You are currently at ${route.destination}.
-        ${route.estimatedTime} to reach your destination.
-        ${route.accessibilityNotes}.
-        ${route.navigationInstructions}
-    `;
+    const sections: Section[] = [
+        { title: "Location", content: route.destination },
+        { title: "Time", content: route.estimatedTime },
+        { title: "Directions", content: route.navigationInstructions },
+        { title: "Accessibility", content: route.accessibilityNotes }
+    ];
+
+    const routeDescription: string = sections
+        .map(section => `${section.title}: ${section.content}`)
+        .join('. ');
+
+    const getCurrentSection = (position: number): string | null => {
+        const textBeforePosition = routeDescription.slice(0, position);
+        
+        // Find the current section based on content
+        for (let i = 0; i < sections.length; i++) {
+            const currentSection = sections[i];
+            if (!currentSection) continue;
+
+            const sectionText = `${currentSection.title}: ${currentSection.content}`;
+            const nextSection = i < sections.length - 1 ? sections[i + 1] : null;
+            const nextSectionText = nextSection ? `${nextSection.title}: ${nextSection.content}` : null;
+
+            // If we've reached the end of current section and there's a next section
+            if (textBeforePosition.includes(sectionText) && 
+                (!nextSectionText || !textBeforePosition.includes(nextSectionText))) {
+                return nextSection?.title || currentSection.title;
+            }
+        }
+        
+        return sections[0]?.title || null;
+    };
 
     const toggleSpeech = (): void => {
         if (isPlaying) {
             ttsService.cancel();
             setIsPlaying(false);
+            setCurrentSection(null);
         } else {
+            setCurrentSection(null);
             ttsService.speak(routeDescription, {
-                onStart: () => setIsPlaying(true),
-                onEnd: () => setIsPlaying(false),
-                onError: () => setIsPlaying(false),
+                onStart: () => {
+                    setIsPlaying(true);
+                    // Set initial section highlight
+                    const firstSection = sections[0];
+                    if (firstSection) {
+                        setCurrentSection(firstSection.title);
+                    }
+                },
+                onEnd: () => {
+                    setIsPlaying(false);
+                    setCurrentSection(null);
+                },
+                onError: () => {
+                    setIsPlaying(false);
+                    setCurrentSection(null);
+                },
                 language: 'en-US',
-                rate: 0.9,
+                rate: speechSettings.rate,
+                volume: speechSettings.volume,
                 pitch: 1
-            });
+            }, (word, position) => setCurrentSection(getCurrentSection(position)));
         }
     };
 
@@ -136,15 +201,60 @@ const AccessibleTTSButton: React.FC<AccessibleTTSButtonProps> = ({
 
     return (
         <div className="space-y-3">
-            <div className={`${textSizeClass} text-gray-300 bg-gray-800 p-3 rounded-lg`}>
-                <p className="font-medium text-gray-200 mb-2">What will be read:</p>
-                <div className="space-y-2">
-                    <p><span className="font-medium">Location:</span> {route.destination}</p>
-                    <p><span className="font-medium">Time:</span> {route.estimatedTime}</p>
-                    <p><span className="font-medium">Accessibility:</span> {route.accessibilityNotes}</p>
-                    <p><span className="font-medium">Directions:</span> {route.navigationInstructions}</p>
+            <div className={`${textSizeClass} text-gray-300 bg-gray-800 p-2 rounded-lg`}>
+                <div className="space-y-3">
+                    {sections.map((section) => (
+                        <div 
+                            key={section.title}
+                            className={`
+                                transition-colors duration-200
+                                ${currentSection === section.title 
+                                    ? 'bg-gray-700 rounded px-3 py-1' 
+                                    : ''
+                                }
+                            `}
+                        >
+                            <p className="font-medium text-gray-200 mb-1">{section.title}</p>
+                            <p className="text-gray-300">
+                                {section.content}
+                            </p>
+                        </div>
+                    ))}
                 </div>
             </div>
+
+            <div className="space-y-2 bg-gray-800 p-2 rounded-lg">
+                <div className="flex items-center justify-between">
+                    <label htmlFor="volume" className="text-gray-200">Volume</label>
+                    <span className="text-gray-400">{Math.round(speechSettings.volume * 100)}%</span>
+                </div>
+                <input
+                    type="range"
+                    id="volume"
+                    min="0"
+                    max="1"
+                    step="0.1"
+                    value={speechSettings.volume}
+                    onChange={(e) => setSpeechSettings(prev => ({ ...prev, volume: parseFloat(e.target.value) }))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                />
+
+                <div className="flex items-center justify-between mt-2">
+                    <label htmlFor="rate" className="text-gray-200">Speed</label>
+                    <span className="text-gray-400">{Math.round(speechSettings.rate * 100)}%</span>
+                </div>
+                <input
+                    type="range"
+                    id="rate"
+                    min="0.5"
+                    max="2"
+                    step="0.1"
+                    value={speechSettings.rate}
+                    onChange={(e) => setSpeechSettings(prev => ({ ...prev, rate: parseFloat(e.target.value) }))}
+                    className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                />
+            </div>
+
             <button 
                 onClick={toggleSpeech}
                 className={`
@@ -174,26 +284,6 @@ export interface RouteInformationCardProps {
     settings: AccessibilitySettings;
 }
 
-// Example usage in a route component
-const RouteInformationCard: React.FC<RouteInformationCardProps> = ({ route, settings }) => {
-    return (
-        <div className="p-4 bg-gray-800 rounded-lg shadow-lg">
-            <h2 className="text-xl font-semibold text-gray-200 mb-4">Route Details</h2>
-            <div className="space-y-2 text-gray-300">
-                <p><span className="font-medium">Destination:</span> {route.destination}</p>
-                <p><span className="font-medium">Estimated Time:</span> {route.estimatedTime}</p>
-                <p><span className="font-medium">Accessibility Notes:</span> {route.accessibilityNotes}</p>
-            </div>
-            
-            <div className="mt-4">
-                <AccessibleTTSButton 
-                    route={route} 
-                    settings={settings}
-                    className="w-full"
-                />
-            </div>
-        </div>
-    );
-};
 
-export { AccessibleTTSButton, TextToSpeechService, RouteInformationCard };
+
+
