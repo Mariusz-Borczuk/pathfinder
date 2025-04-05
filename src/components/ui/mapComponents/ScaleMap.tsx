@@ -1,18 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
+import { floor1GridMap } from "./mapComponents/Floor_1"; // Import the floor data
+
+type CellType = "path" | "classroom" | "start" | "end" | "elevator" | "bathroom" | "fireEquipment" | "utilityRoom" | "stair" | "empty";
+
+interface ScallableMapGridProps {
+  layout: CellType[][];
+}
 
 /**
  * A React functional component that renders a grid layout for a map.
  *
- * The grid is styled using Tailwind CSS classes to create a 60x60 grid
- * with each cell having a size of 15px by 15px, separated by a 0.5px gap.
- * The grid is centered horizontally with padding, a gray background,
- * rounded corners, and an inner shadow effect.
+ * The grid is styled using Tailwind CSS classes to create a scalable grid
+ * with draggable and zoomable functionality.
  *
  * @component
+ * @param {ScallableMapGridProps} props - The props for the component.
  * @returns {JSX.Element} The rendered grid layout for the map.
  */
-export const ScallableMapGrid = () => {
-  const gridSize = 60;
+export const ScallableMapGrid: React.FC<ScallableMapGridProps> = ({ layout }) => {
+  const gridSize = layout.length; // Use the layout size dynamically
   const baseTileSize = 15;
   const [scale, setScale] = useState(1);
   const [posX, setPosX] = useState(0);
@@ -96,7 +102,7 @@ export const ScallableMapGrid = () => {
 
   return (
     <div
-      className="absolute  w-full h-full overflow-hidden border-2 border-blue-800 rounded-lg"
+      className="absolute w-full h-full overflow-hidden border-2 border-blue-800 rounded-lg"
       tabIndex={0}
       onKeyDown={handleArrowKey}
     >
@@ -108,27 +114,26 @@ export const ScallableMapGrid = () => {
           transform: `translate(${posX}px, ${posY}px)`,
         }}
       >
-        {Array.from({ length: gridSize * gridSize }).map((_, index) => {
-          const x = index % gridSize;
-          const y = Math.floor(index / gridSize);
-          const isEven = (x + y) % 2 === 0;
-          const tileColor = isEven ? "#e0e0e0" : "#c0c0c0";
-          return (
-            <div
-              key={index}
-              className="absolute flex items-center justify-center text-[8px] border border-gray-300"
-              style={{
-                left: `${x * tileSize}px`,
-                top: `${y * tileSize}px`,
-                width: `${tileSize}px`,
-                height: `${tileSize}px`,
-                backgroundColor: tileColor,
-              }}
-            >
-              {`${x},${y}`}
-            </div>
-          );
-        })}
+        {layout.map((row, y) =>
+          row.map((cell, x) => {
+            const tileColor = cell === "empty" ? "#e0e0e0" : "#c0c0c0"; // Customize colors based on cell type
+            return (
+              <div
+                key={`${x}-${y}`}
+                className="absolute flex items-center justify-center text-[8px] border border-gray-300"
+                style={{
+                  left: `${x * tileSize}px`,
+                  top: `${y * tileSize}px`,
+                  width: `${tileSize}px`,
+                  height: `${tileSize}px`,
+                  backgroundColor: tileColor,
+                }}
+              >
+                {cell !== "empty" ? cell : ""}
+              </div>
+            );
+          })
+        )}
       </div>
       <div className="absolute top-2 left-2 flex space-x-2">
         <button
@@ -146,4 +151,9 @@ export const ScallableMapGrid = () => {
       </div>
     </div>
   );
+};
+
+// Example usage
+export const App = () => {
+  return <ScallableMapGrid layout={floor1GridMap} />;
 };
