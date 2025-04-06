@@ -7,8 +7,3 @@
  *                      Options are "normal" or "high".
  * @property isDyslexicFont - Indicates whether the dyslexic-friendly font is enabled.
  */
-export interface AccessibilitySettings {
-  fontSize: "normal" | "large" | "xlarge";
-  contrast: "normal" | "high";
-  isDyslexicFont: boolean;
-}

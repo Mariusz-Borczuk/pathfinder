@@ -1,22 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { AccessibilitySettings } from './notused/Accessibility_Settings';
+import { AccessibleTTSButtonProps, Section, SpeechSettings, TextToSpeechOptions } from './types/types';
 
-export interface Route {
-    destination: string;
-    estimatedTime: string;
-    accessibilityNotes: string;
-    navigationInstructions: string;
-}
-
-export interface TextToSpeechOptions {
-    language?: string;
-    pitch?: number;
-    rate?: number;
-    volume?: number;
-    onStart?: () => void;
-    onEnd?: () => void;
-    onError?: (event: SpeechSynthesisErrorEvent) => void;
-}
 
 // Text-to-Speech Utility Class
 class TextToSpeechService {
@@ -91,21 +75,6 @@ class TextToSpeechService {
             this.synth.resume();
         }
     }
-}
-
-export interface AccessibleTTSButtonProps {
-    route: Route;
-    className?: string;
-    settings: AccessibilitySettings;
-}
-interface Section {
-    title: string;
-    content: string;
-}
-
-interface SpeechSettings {
-    volume: number;
-    rate: number;
 }
 
 // Accessible Text-to-Speech Button Component
@@ -278,12 +247,3 @@ export const AccessibleTTSButton: React.FC<AccessibleTTSButtonProps> = ({
         </div>
     );
 };
-
-export interface RouteInformationCardProps {
-    route: Route;
-    settings: AccessibilitySettings;
-}
-
-
-
-

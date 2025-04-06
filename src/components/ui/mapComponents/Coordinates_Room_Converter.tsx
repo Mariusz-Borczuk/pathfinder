@@ -1,27 +1,43 @@
 import React from 'react';
-import { tileData } from './tileData';
-import type { CellType } from './tileData';
-import floor1Data from './notused/floor1.data';
+import { tileData } from './types/tileData';
+import type { CellType } from './types/tileData';
+import floor1Data from './types/floor1.data';
+import floor2Data from './types/floor2.data';
+import floor3Data from './types/floor3.data';
 import { MapLegend } from './MapLegend';
+import * as types from './types/types';
+import { FloorGridProps } from './types/types';
 
-interface FloorGridProps {
-    showGrid: boolean;
-}
 
-const createEmptyCell = (row: number, col: number): CellType => ({
-    row,
-    col,
-    type: 'empty',
-    color: '#ffffff',
-    label: '',
-});
+const floorData: types.FloorData[] = [floor1Data, floor2Data, floor3Data];
 
-export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
+export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) => {
     const gridSize = 60;
+
+    // Validate currentFloor and get floor data
+    const floorIndex = currentFloor - 1;
+    
+    if (floorIndex < 0 || floorIndex >= floorData.length) {
+        console.error(`Invalid floor number: ${currentFloor}. Available floors: 1-${floorData.length}`);
+        return (
+            <div className="p-4 text-red-500">
+                Invalid floor number. Please select a floor between 1 and {floorData.length}.
+            </div>
+        );
+    }
+    
+    // We've validated the index, so the floor data must exist
+    const currentFloorData = floorData[floorIndex]!;
 
     // Create initial grid with empty cells
     const initialGrid: CellType[][] = Array.from({ length: gridSize }, (_, row) =>
-        Array.from({ length: gridSize }, (_, col) => createEmptyCell(row, col))
+        Array.from({ length: gridSize }, (_, col) => ({
+            row,
+            col,
+            type: 'empty',
+            color: '#ffffff',
+            label: '',
+        }))
     );
 
     // Safe method to update grid cells
@@ -35,7 +51,7 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
     };
 
     // Add all classrooms to the grid
-    const gridWithClassrooms = floor1Data.classrooms.reduce((grid, classroom) => {
+    const gridWithClassrooms = currentFloorData.classrooms.reduce((grid: CellType[][], classroom: types.Room) => {
         let updatedGrid = grid;
 
         // Fill classroom area
@@ -64,7 +80,7 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
     }, initialGrid);
 
     // Add bathrooms
-    const gridWithBathrooms = floor1Data.bathrooms.reduce((grid, bathroom) => {
+    const gridWithBathrooms = currentFloorData.bathrooms.reduce((grid: CellType[][], bathroom: types.Bathroom) => {
         let updatedGrid = grid;
 
         for (let row = Math.min(bathroom.start.y, bathroom.end.y); row <= Math.max(bathroom.start.y, bathroom.end.y); row++) {
@@ -82,7 +98,7 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
     }, gridWithClassrooms);
 
     // Add elevators
-    const gridWithElevators = floor1Data.elevators.reduce((grid, elevator) => {
+    const gridWithElevators = currentFloorData.elevators.reduce((grid: CellType[][], elevator: types.Elevator) => {
         let updatedGrid = grid;
 
         for (let row = Math.min(elevator.start.y, elevator.end.y); row <= Math.max(elevator.start.y, elevator.end.y); row++) {
@@ -100,7 +116,7 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
     }, gridWithBathrooms);
 
     // Add utility rooms
-    const gridWithUtility = floor1Data.utilityRooms.reduce((grid, room) => {
+    const gridWithUtility = currentFloorData.utilityRooms.reduce((grid: CellType[][], room: types.UtilityRoom) => {
         let updatedGrid = grid;
 
         for (let row = Math.min(room.start.y, room.end.y); row <= Math.max(room.start.y, room.end.y); row++) {
@@ -118,7 +134,7 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
     }, gridWithElevators);
 
     // Add stairs
-    const gridWithStairs = floor1Data.stairs.reduce((grid, stair) => {
+    const gridWithStairs = currentFloorData.stairs.reduce((grid: CellType[][], stair: types.Stair) => {
         let updatedGrid = grid;
 
         for (let row = Math.min(stair.start.y, stair.end.y); row <= Math.max(stair.start.y, stair.end.y); row++) {
@@ -136,7 +152,7 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
     }, gridWithUtility);
 
     // Add fire equipment
-    const gridWithFire = floor1Data.fireEquipment.reduce((grid, equipment) => {
+    const gridWithFire = currentFloorData.fireEquipment.reduce((grid: CellType[][], equipment: types.FireEquipment) => {
         return updateGridCell(grid, equipment.location.y, equipment.location.x, {
             row: equipment.location.y,
             col: equipment.location.x,
@@ -147,7 +163,7 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
     }, gridWithStairs);
 
     // Add paths last to not override other elements
-    const finalGrid = floor1Data.paths.reduce((grid, path) => {
+    const finalGrid = currentFloorData.paths.reduce((grid: CellType[][], path: types.Path) => {
         let updatedGrid = grid;
 
         for (let row = Math.min(path.start.y, path.end.y); row <= Math.max(path.start.y, path.end.y); row++) {
@@ -168,7 +184,6 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
         return updatedGrid;
     }, gridWithFire);
 
-    
     return (
         <div className="p-4">
             <div className={`inline-block border border-gray-200 bg-white ${showGrid ? 'border-2 border-gray-400' : ''}`}>
@@ -178,8 +193,8 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
                     gap: showGrid ? '1px' : '0px',
                     backgroundColor: showGrid ? 'white' : 'transparent',
                 }}>
-                    {finalGrid.map((row, rowIndex) =>
-                        row.map((cell: CellType, colIndex) => (
+                    {finalGrid.map((row: CellType[], rowIndex: number) =>
+                        row.map((cell: CellType, colIndex: number) => (
                             <div
                                 key={`${rowIndex}-${colIndex}`}
                                 className="w-3 h-3"
@@ -197,5 +212,3 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
         </div>
     );
 };
-
-export default FloorGrid;

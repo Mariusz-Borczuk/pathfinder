@@ -5,14 +5,11 @@ import QuickNavigation from "./notused/Quick_Navigation";
 import { MainHeader } from "./notused/Main_Header";
 import { SearchBar } from "./notused/SearchBar";
 import AccessibilityButton from "./notused/Accessibility_Button";
-import { AccessibilitySettings } from "./notused/Accessibility_Settings";
-import { Eye, Type, Map } from "lucide-react";
+import { Eye, Type } from "lucide-react";
 import FloorManagement from "./notused/Floor_Management";
 import { GridToggleButton } from "./GridToggleButton";
+import { AccessibilitySettings, LayoutProps } from "./types/types";
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
 
 const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [settings, setSettings] = useState<AccessibilitySettings>({
@@ -131,28 +128,16 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
       <div className="flex-1 p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-4">
-            <button
-              className={`p-2 rounded-lg ${
-                settings.contrast === "high"
-                  ? "bg-red-300 hover:bg-gray-400"
-                  : "bg-gray-200 hover:bg-gray-300"
-              }`}
-              title="Map View"
-            >
-              <Map
-                className={`w-5 h-5 ${
-                  settings.contrast === "high"
-                    ? "text-gray-100"
-                    : "text-gray-800"
-                }`}
-              />
-            </button>
             <div className="mb-4">
                 <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} />
             </div>
           </div>
         </div>
-        <MapView />
+        <MapView  
+          settings={settings}   
+          currentFloor={currentFloor}
+          showGrid={showGrid}
+        />
       </div>
       <RightSidebar 
         settings={settings}

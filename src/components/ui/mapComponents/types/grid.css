@@ -1,0 +1,15 @@
+/* Styles for the map grid */
+.grid-cell {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+
+/* Each cell will apply its color from the data attribute */
+.grid-cell {
+  background-color: var(--cell-color);
+}
+
+/* Show border when grid mode is enabled */
+.grid-cell.with-grid {
+  border: 1px solid white;
+} 

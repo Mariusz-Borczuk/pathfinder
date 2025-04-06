@@ -1,5 +1,5 @@
 import React from 'react';
-import { AccessibilitySettings } from './Accessibility_Settings';
+import { AccessibilitySettings } from '../types/types';
 
 
 export const MainHeader: React.FC<{ settings: AccessibilitySettings }> = ({  }) => {

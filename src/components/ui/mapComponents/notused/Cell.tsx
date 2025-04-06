@@ -22,7 +22,7 @@
  * - Scales the cell slightly (1.05x) on hover.
  * - Adds a subtle box shadow for a raised effect.
  */
-import { tileData } from "../tileData";
+import { tileData } from "../types/tileData";
 import React from "react";
 
 export interface CellProps {

@@ -1,5 +1,5 @@
 import React from "react";
-import { contrastSettings } from "../tileData"; // Adjusted the path to match the correct location
+import { contrastSettings } from "../types/tileData"; // Adjusted the path to match the correct location
 import { Eye } from "lucide-react"; // Replace with the actual import for the Eye component
 
 
@@ -7,6 +7,7 @@ import { Eye } from "lucide-react"; // Replace with the actual import for the Ey
 const EyeButton: React.FC<contrastSettings> = ({ settings }) => {
     return (
         <button
+            aria-label="Toggle contrast"
             className={`p-2 rounded-lg ${
                 settings.contrast === "high" ? "bg-gray-300 hover:bg-gray-400" : "bg-gray-200 hover:bg-gray-300"
             }`}

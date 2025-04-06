@@ -1,11 +1,7 @@
 import React from "react";
-import { AccessibilitySettings } from "./notused/Accessibility_Settings";
-import { AccessibleTTSButton, Route } from "./Speaking";
+import { AccessibleTTSButton,  } from "./Speaking";
+import { RightSidebarProps, Route } from "./types/types";
 
-interface RightSidebarProps {
-    settings: AccessibilitySettings;
-    currentFloor: number;
-}
 
 const RightSidebar: React.FC<RightSidebarProps> = ({ settings, currentFloor }) => {
     const route: Route = {

@@ -1,61 +1,9 @@
-interface Coordinate {
-    x: number;
-    y: number;
-}
+import { FloorData } from "./types";
 
-interface Room {
-    number: string;
-    start: Coordinate;
-    end: Coordinate;
-    entry: Coordinate;
-}
-
-interface Elevator {
-    start: Coordinate;
-    end: Coordinate;
-    entry: Coordinate;
-}
-
-interface Bathroom {
-    type: 'Male' | 'Female';
-    start: Coordinate;
-    end: Coordinate;
-    entry: Coordinate;
-}
-
-interface FireEquipment {
-    location: Coordinate;
-}
-
-interface UtilityRoom {
-    name: string;
-    start: Coordinate;
-    end: Coordinate;
-}
-
-interface Stair {
-    start: Coordinate;
-    end: Coordinate;
-}
-
-interface Path {
-    start: Coordinate;
-    end: Coordinate;
-}
-
-interface FloorData {
-    classrooms: Room[];
-    elevators: Elevator[];
-    bathrooms: Bathroom[];
-    fireEquipment: FireEquipment[];
-    utilityRooms: UtilityRoom[];
-    stairs: Stair[];
-    paths: Path[];
-}
 
 const floor1Data: FloorData = {
     classrooms: [
-        { number: "101", start: { x: 49, y: 38 }, end: { x: 53, y: 47 }, entry: { x: 49, y: 42 } },
+        { number: "101", start: { x: 49, y: 38 }, end: { x: 53, y: 17 }, entry: { x: 49, y: 42 } },
         { number: "102", start: { x: 49, y: 35 }, end: { x: 53, y: 36 }, entry: { x: 49, y: 35 } },
         { number: "103", start: { x: 49, y: 31 }, end: { x: 53, y: 33 }, entry: { x: 49, y: 32 } },
         { number: "104", start: { x: 49, y: 28 }, end: { x: 53, y: 29 }, entry: { x: 49, y: 28 } },
@@ -99,17 +47,17 @@ const floor1Data: FloorData = {
         { type: "Female", start: { x: 39, y: 16 }, end: { x: 44, y: 19 }, entry: { x: 44, y: 17 } },
     ],
     fireEquipment: [
-        { location: { x: 13, y: 10 } },
-        { location: { x: 22, y: 44 } },
-        { location: { x: 27, y: 7 } },
-        { location: { x: 35, y: 44 } },
-        { location: { x: 45, y: 13 } },
-        { location: { x: 45, y: 20 } },
-        { location: { x: 45, y: 6 } },
-        { location: { x: 47, y: 44 } },
+        { location: { x: 7, y: 46 } },
         { location: { x: 7, y: 28 } },
         { location: { x: 9, y: 8 } },
-        { location: { x: 7, y: 46 } },
+        { location: { x: 13, y: 10 } },
+        { location: { x: 27, y: 7 } },
+        { location: { x: 45, y: 6 } },
+        { location: { x: 45, y: 13 } },
+        { location: { x: 45, y: 20 } },
+        { location: { x: 47, y: 44 } },
+        { location: { x: 35, y: 44 } },
+        { location: { x: 22, y: 44 } },
     ],
     utilityRooms: [
         { name: "GYM", start: { x: 16, y: 25 }, end: { x: 38, y: 14 } },
@@ -121,16 +69,14 @@ const floor1Data: FloorData = {
     ],
     paths: [
         { start: { x: 7, y: 2 }, end: { x: 9, y: 50 } },
-        //gym path
-        { start: { x: 10, y: 7 }, end: { x: 41, y: 9 } },
+        { start: { x: 8, y: 2 }, end: { x: 11, y: 9 } },
+        { start: { x: 10, y: 21 }, end: { x: 15, y: 22 } },
+        { start: { x: 12, y: 8 }, end: { x: 41, y: 9 } },
         { start: { x: 20, y: 43 }, end: { x: 45, y: 44 } },
-        //holway
-        { start: { x: 39, y: 9 }, end: { x: 48, y: 3 } },
-        //entry from entrence
-        { start: { x: 46, y: 8 }, end: { x: 54, y: 13 } },
-        //left corridor
+        { start: { x: 41, y: 10 }, end: { x: 41, y: 11 } },
+        { start: { x: 39, y: 8 }, end: { x: 46, y: 3 } },
+        { start: { x: 46, y: 8 }, end: { x: 54, y: 11 } },
         { start: { x: 46, y: 12 }, end: { x: 48, y: 50 } },
-        //entry lower
         { start: { x: 55, y: 14 }, end: { x: 53, y: 12 } },
     ],
 };
