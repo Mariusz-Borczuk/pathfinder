@@ -4,6 +4,10 @@ import type { CellType } from './tileData';
 import floor1Data from './notused/floor1.data';
 import { MapLegend } from './MapLegend';
 
+interface FloorGridProps {
+    showGrid: boolean;
+}
+
 const createEmptyCell = (row: number, col: number): CellType => ({
     row,
     col,
@@ -12,7 +16,7 @@ const createEmptyCell = (row: number, col: number): CellType => ({
     label: '',
 });
 
-export const FloorGrid: React.FC = () => {
+export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid }) => {
     const gridSize = 60;
 
     // Create initial grid with empty cells
@@ -52,7 +56,7 @@ export const FloorGrid: React.FC = () => {
             row: classroom.entry.y,
             col: classroom.entry.x,
             type: 'entry',
-            color: '#34C759',
+            color: tileData.entry.color,
             label: `${classroom.number}-E`,
         });
 
@@ -164,13 +168,15 @@ export const FloorGrid: React.FC = () => {
         return updatedGrid;
     }, gridWithFire);
 
+    
     return (
         <div className="p-4">
-            <div className="inline-block border border-gray-200 bg-white">
+            <div className={`inline-block border border-gray-200 bg-white ${showGrid ? 'border-2 border-gray-400' : ''}`}>
                 <div className="grid" style={{
                     display: 'grid',
                     gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
-                    gap: '0px',
+                    gap: showGrid ? '1px' : '0px',
+                    backgroundColor: showGrid ? 'white' : 'transparent',
                 }}>
                     {finalGrid.map((row, rowIndex) =>
                         row.map((cell: CellType, colIndex) => (
@@ -179,6 +185,7 @@ export const FloorGrid: React.FC = () => {
                                 className="w-3 h-3"
                                 style={{
                                     backgroundColor: cell.color,
+                                    border: showGrid ? '1px solid white' : 'none',
                                 }}
                                 title={cell.label ? `${cell.label} (${colIndex}, ${rowIndex})` : `(${colIndex}, ${rowIndex})`}
                             />

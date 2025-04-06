@@ -21,6 +21,7 @@ export const tileData = {
     utilityRoom: { color: "#6A8CA3", label: "Utility Room", type: "utility", row: 0, col: 0 },
     start: { color: "#34C759", label: "Start", type: "start", row: 0, col: 0 },
     end: { color: "#FF3737", label: "End", type: "end", row: 0, col: 0 },
+    entry:{color:"#007AFF",label:"entry",type:"entry", row: 0, col: 0 }
 };
 export type TileType = typeof tileData[keyof typeof tileData];
 export const tileDataArray = Object.values(tileData);

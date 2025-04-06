@@ -10,7 +10,8 @@ export const MapLegend: React.FC = () => {
         { color: tileData.fireEquipment.color, label: 'Fire Equipment' },
         { color: tileData.elevator.color, label: 'Elevator' },
         { color: tileData.utilityRoom.color, label: 'Utility Room' },
-        { color: '#34C759', label: 'Entry Point' },
+        { color: tileData.entry.color, label: 'Entry Point' },
+        {}
     ];
 
     return (

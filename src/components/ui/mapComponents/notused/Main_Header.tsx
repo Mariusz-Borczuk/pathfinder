@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { getTextClass } from './Text_Class';
+import React from 'react';
 import { AccessibilitySettings } from './Accessibility_Settings';
 
 
-export const MainHeader: React.FC<{ settings: AccessibilitySettings }> = ({ settings }) => {
+export const MainHeader: React.FC<{ settings: AccessibilitySettings }> = ({  }) => {
     return (
         <header className="mb-6 ${
                     settings.isDyslexicFont ? 'font-dyslexic' : ''

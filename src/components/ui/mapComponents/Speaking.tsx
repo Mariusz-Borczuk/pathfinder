@@ -183,7 +183,7 @@ export const AccessibleTTSButton: React.FC<AccessibleTTSButtonProps> = ({
                 rate: speechSettings.rate,
                 volume: speechSettings.volume,
                 pitch: 1
-            }, (word, position) => setCurrentSection(getCurrentSection(position)));
+            }, (_, position) => setCurrentSection(getCurrentSection(position)));
         }
     };
 

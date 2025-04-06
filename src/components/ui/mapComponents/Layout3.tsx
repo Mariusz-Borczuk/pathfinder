@@ -8,6 +8,7 @@ import AccessibilityButton from "./notused/Accessibility_Button";
 import { AccessibilitySettings } from "./notused/Accessibility_Settings";
 import { Eye, Type, Map } from "lucide-react";
 import FloorManagement from "./notused/Floor_Management";
+import { GridToggleButton } from "./GridToggleButton";
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -20,6 +21,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
     isDyslexicFont: false,
   });
   const [currentFloor, setCurrentFloor] = useState(1);
+  const [showGrid, setShowGrid] = useState(false)
 
   return (
     <div
@@ -135,6 +137,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
                   ? "bg-red-300 hover:bg-gray-400"
                   : "bg-gray-200 hover:bg-gray-300"
               }`}
+              title="Map View"
             >
               <Map
                 className={`w-5 h-5 ${
@@ -144,6 +147,9 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
                 }`}
               />
             </button>
+            <div className="mb-4">
+                <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} />
+            </div>
           </div>
         </div>
         <MapView />

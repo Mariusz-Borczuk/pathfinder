@@ -1,4 +1,4 @@
-import { Search, Settings } from "lucide-react";
+import { Search } from "lucide-react";
 import { useState } from "react";
 import { getTextClass } from "./Text_Class";
 
