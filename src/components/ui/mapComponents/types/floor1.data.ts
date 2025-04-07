@@ -1,7 +1,7 @@
 import { FloorData } from "./types";
 
 
-const floor1Data: FloorData = {
+export const floor1Data: FloorData = {
     classrooms: [
         { number: "101", start: { x: 49, y: 38 }, end: { x: 53, y: 17 }, entry: { x: 49, y: 42 } },
         { number: "102", start: { x: 49, y: 35 }, end: { x: 53, y: 36 }, entry: { x: 49, y: 35 } },
@@ -80,5 +80,3 @@ const floor1Data: FloorData = {
         { start: { x: 55, y: 14 }, end: { x: 53, y: 12 } },
     ],
 };
-
-export default floor1Data;

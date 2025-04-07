@@ -1,15 +1,16 @@
 import React from 'react';
 import { tileData } from './types/tileData';
 import type { CellType } from './types/tileData';
-import floor1Data from './types/floor1.data';
-import floor2Data from './types/floor2.data';
-import floor3Data from './types/floor3.data';
+import { floor1Data } from './types/floor1.data';
+import { floor2Data } from './types/floor2.data';
+import { floor3Data } from './types/floor3.data';
+import { floor4Data } from './types/floor4.data';
 import { MapLegend } from './MapLegend';
 import * as types from './types/types';
 import { FloorGridProps } from './types/types';
 
 
-const floorData: types.FloorData[] = [floor1Data, floor2Data, floor3Data];
+const floorData: types.FloorData[] = [floor1Data, floor2Data, floor3Data, floor4Data];
 
 export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) => {
     const gridSize = 60;
