@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import { MdSportsTennis, MdOutlineDirectionsWalk } from 'react-icons/md';
-import { IoMdFemale, IoMdMale } from 'react-icons/io';
-import { IoWater } from 'react-icons/io5';
-import { FaElevator } from 'react-icons/fa6';
 import { getTextClass } from './Text_Class';
 import AddCustomNavigationButton from '../Custom_Location';
+import { MdElevator, MdWater, MdOutlineDirectionsWalk, MdSportsTennis, RestroomIcon } from '@/utils/icons';
 interface NavigationItem {
     name: string;
     coordinates: { x: number; y: number };
@@ -15,11 +12,23 @@ const QuickNavigation: React.FC = () => {
     const [customNavigation, setCustomNavigation] = useState<NavigationItem[]>([]);
 
     const predefinedLocations: NavigationItem[] = [
-        { icon: <MdSportsTennis />, name: "Gymnasium", coordinates: { x: 10, y: 20 } },
-        { icon: <span className="flex flex-row"><IoMdFemale /><IoMdMale /></span>, name: "Restrooms", coordinates: { x: 15, y: 25 } },
-        { icon: <FaElevator />, name: "Elevators", coordinates: { x: 5, y: 10 } },
-        { icon: <MdOutlineDirectionsWalk />, name: "Escape route", coordinates: { x: 30, y: 40 } },
-        { icon: <IoWater />, name: "Water", coordinates: { x: 50, y: 60 } },
+      {
+        icon: <MdSportsTennis />,
+        name: "Gymnasium",
+        coordinates: { x: 10, y: 20 },
+      },
+      {
+        icon: <RestroomIcon />,
+        name: "Restrooms",
+        coordinates: { x: 15, y: 25 },
+      },
+      { icon: <MdElevator />, name: "Elevators", coordinates: { x: 5, y: 10 } },
+      {
+        icon: <MdOutlineDirectionsWalk />,
+        name: "Escape route",
+        coordinates: { x: 30, y: 40 },
+      },
+      { icon: <MdWater />, name: "Water", coordinates: { x: 50, y: 60 } },
     ];
 
     const handleAddCustomNavigation = (item: NavigationItem) => {

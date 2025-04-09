@@ -5,10 +5,10 @@ import QuickNavigation from "./notused/Quick_Navigation";
 import { MainHeader } from "./notused/Main_Header";
 import { SearchBar } from "./notused/SearchBar";
 import AccessibilityButton from "./notused/Accessibility_Button";
-import { Eye, Type } from "lucide-react";
 import FloorManagement from "./notused/Floor_Management";
 import { GridToggleButton } from "./GridToggleButton";
 import { AccessibilitySettings, LayoutProps } from "./types/types";
+import { IoMdEye, LuType } from "../utils/icons";
 
 
 const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
@@ -66,7 +66,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
                     isActive={settings.fontSize === size}
                     onClick={() => setSettings({ ...settings, fontSize: size })}
                     icon={
-                      <Type
+                      <LuType
                         className={`text-gray-200 ${
                           settings.contrast === "high"
                             ? " text-zinc-950"
@@ -93,7 +93,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
                     isDyslexicFont: !settings.isDyslexicFont,
                   })
                 }
-                icon={<Type className="text-gray-200" />}
+                icon={<LuType className="text-gray-200" />}
                 description="Toggle dyslexia-friendly font"
               />
             </div>
@@ -109,7 +109,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
                     contrast: settings.contrast === "high" ? "normal" : "high",
                   })
                 }
-                icon={<Eye className="text-gray-200" />}
+                icon={<IoMdEye className="text-gray-200" />}
                 description="Toggle high contrast mode"
               />
             </div>
@@ -119,9 +119,9 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
         <SearchBar />
 
         <QuickNavigation />
-        <FloorManagement 
-          currentFloor={currentFloor} 
-          onFloorChange={setCurrentFloor} 
+        <FloorManagement
+          currentFloor={currentFloor}
+          onFloorChange={setCurrentFloor}
         />
       </aside>
 
@@ -129,20 +129,20 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-4">
             <div className="mb-4">
-                <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} />
+              <GridToggleButton
+                showGrid={showGrid}
+                onToggle={() => setShowGrid(!showGrid)}
+              />
             </div>
           </div>
         </div>
-        <MapView  
-          settings={settings}   
+        <MapView
+          settings={settings}
           currentFloor={currentFloor}
           showGrid={showGrid}
         />
       </div>
-      <RightSidebar 
-        settings={settings}
-        currentFloor={currentFloor}
-      />
+      <RightSidebar settings={settings} currentFloor={currentFloor} />
       {children}
     </div>
   );
