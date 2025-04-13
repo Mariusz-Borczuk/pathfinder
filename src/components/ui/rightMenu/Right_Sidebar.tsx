@@ -1,0 +1,85 @@
+import React from "react";
+import { RightSidebarProps, Route } from "../../types/types";
+import { getSettings } from "../settings";
+import { AccessibleTTSButton, } from "./Speaking";
+
+const RightSidebar: React.FC<RightSidebarProps> = ({ settings, currentFloor }) => {
+    const route: Route = {
+        destination: `Building A, Floor ${currentFloor}`,
+        estimatedTime: "2 minutes",
+        accessibilityNotes: "Elevator available, smooth pathways, wheelchair accessible",
+        navigationInstructions: `You are currently on Floor ${currentFloor}. The elevator is located at the end of the corridor.`
+    };
+
+    return (
+        <div
+            className={`w-72 ${
+                settings.contrast === "high" ? "bg-gray-800" : "bg-gray-800"
+            } shadow-lg p-4`}
+        >
+            <h2
+                className={`text-xl font-semibold mb-4 ${getSettings(settings)}`}
+            >
+                Location Details
+            </h2>
+            <div className="space-y-4">
+                <div
+                    className={`p-3 ${
+                        settings.contrast === "high" ? "bg-gray-700" : "bg-gray-700"
+                    } rounded-lg`}
+                >
+                    <h3
+                        className={`font-medium ${getSettings(settings)}`}       
+                    >
+                        Current Location
+                    </h3>
+                    <p
+                        className={`${getSettings(settings)}`}
+                    >
+                        Building A, Floor {currentFloor}
+                    </p>
+                </div>
+                <div
+                    className={`p-3 ${
+                        settings.contrast === "high" ? "bg-gray-700" : "bg-gray-700"
+                    } rounded-lg`}
+                >
+                    <h3
+                        className={`font-medium ${getSettings(settings)}`}
+                    >
+                        Accessibility Features
+                    </h3>
+                    <ul
+                        className={`${getSettings(settings)}`}
+                    >
+                        <li>Wheelchair accessible</li>
+                        <li>Automatic doors</li>
+                        <li>Accessible restroom nearby</li>
+                    </ul>
+                </div>
+                <div
+                    className={`p-3 ${
+                        settings.contrast === "high" ? "bg-gray-700" : "bg-gray-700"
+                    } rounded-lg`}
+                >
+                    <h3
+                        className={`font-medium ${getSettings(settings)}`}       
+                    >
+                        Audio Navigation
+                    </h3>
+                    <div className="mt-2">
+                        <AccessibleTTSButton 
+                            route={route}
+                            settings={settings}
+                            className={`w-full ${
+                                settings.isDyslexicFont ? "font-dyslexic" : ""
+                            }`}
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default RightSidebar;

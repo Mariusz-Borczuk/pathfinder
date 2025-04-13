@@ -1,6 +1,6 @@
 import React from "react";
-import WayfindingApp3 from "./components/ui/mapComponents/Layout3";
-import { PathMapProps } from "./components/ui/mapComponents/types/types";
+import { PathMapProps } from "./components/types/types";
+import WayfindingApp3 from "./components/ui/layouts/Layout3";
 
 
 const PathMap: React.FC<PathMapProps> = ({
