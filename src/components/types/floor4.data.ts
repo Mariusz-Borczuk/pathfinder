@@ -61,7 +61,7 @@ export const floor4Data: FloorData = {
     paths: [
         { start: { x: 8, y: 9 }, end: { x: 9, y: 51 } },
         { start: { x: 8, y: 8 }, end: { x: 48, y: 9 } },
-        { start: { x: 39, y: 3 }, end: { x: 47, y: 8 } },
+        // { start: { x: 39, y: 3 }, end: { x: 47, y: 8 } },
         { start: { x: 47, y: 9 }, end: { x: 48, y: 51 } },
         { start: { x: 10, y: 44 }, end: { x: 17, y: 45 } },
         { start: { x: 40, y: 51 }, end: { x: 47, y: 50 } }

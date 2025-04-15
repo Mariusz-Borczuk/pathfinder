@@ -7,7 +7,7 @@ export interface Room {
     number: string;
     start: Coordinate;
     end: Coordinate;
-    entry: Coordinate[] | Coordinate;
+    entry?: Coordinate[] | Coordinate;
 }
 export interface FloorManagementProps {
     currentFloor: number;

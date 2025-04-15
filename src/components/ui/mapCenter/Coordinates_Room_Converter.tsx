@@ -68,7 +68,12 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) 
             }
         }
 
-        // Handle entry points (supports both single entry and array of entries)
+        // Skip adding entry points if no entry is defined
+        if (!classroom.entry) {
+            return updatedGrid;
+        }
+
+        // Handle entry points based on type
         if (Array.isArray(classroom.entry)) {
             // Handle multiple entries
             classroom.entry.forEach((entry, index) => {
@@ -209,17 +214,52 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) 
                     backgroundColor: showGrid ? 'white' : 'transparent',
                 }}>
                     {finalGrid.map((row: CellType[], rowIndex: number) =>
-                        row.map((cell: CellType, colIndex: number) => (
-                            <div
-                                key={`${rowIndex}-${colIndex}`}
-                                className="w-3 h-3"
-                                style={{
-                                    backgroundColor: cell.color,
-                                    border: showGrid ? '1px solid white' : 'none',
-                                }}
-                                title={cell.label ? `${cell.label} (${colIndex}, ${rowIndex})` : `(${colIndex}, ${rowIndex})`}
-                            />
-                        ))
+                        row.map((cell: CellType, colIndex: number) => {
+                            // Check if the cell needs a border by checking adjacent cells
+                            const topCell = finalGrid[rowIndex - 1]?.[colIndex];
+                            const bottomCell = finalGrid[rowIndex + 1]?.[colIndex];
+                            const leftCell = finalGrid[rowIndex]?.[colIndex - 1];
+                            const rightCell = finalGrid[rowIndex]?.[colIndex + 1];
+                            
+                            // Add borders between different types OR between cells of the same type but different labels (e.g., different classrooms)
+                            const needsTopBorder = rowIndex > 0 && topCell && (
+                                topCell.type !== cell.type || 
+                                (topCell.type === 'classroom' && cell.type === 'classroom' && topCell.label !== cell.label)
+                            );
+                            const needsBottomBorder = rowIndex < gridSize - 1 && bottomCell && (
+                                bottomCell.type !== cell.type || 
+                                (bottomCell.type === 'classroom' && cell.type === 'classroom' && bottomCell.label !== cell.label)
+                            );
+                            const needsLeftBorder = colIndex > 0 && leftCell && (
+                                leftCell.type !== cell.type || 
+                                (leftCell.type === 'classroom' && cell.type === 'classroom' && leftCell.label !== cell.label)
+                            );
+                            const needsRightBorder = colIndex < gridSize - 1 && rightCell && (
+                                rightCell.type !== cell.type || 
+                                (rightCell.type === 'classroom' && cell.type === 'classroom' && rightCell.label !== cell.label)
+                            );
+                            
+                            // Only show borders where needed
+                            const borderTop = needsTopBorder ? '1px solid #333' : 'none';
+                            const borderBottom = needsBottomBorder ? '1px solid #333' : 'none';
+                            const borderLeft = needsLeftBorder ? '1px solid #333' : 'none';
+                            const borderRight = needsRightBorder ? '1px solid #333' : 'none';
+                            
+                            return (
+                                <div
+                                    key={`${rowIndex}-${colIndex}`}
+                                    className="w-3 h-3"
+                                    style={{
+                                        backgroundColor: cell.color,
+                                        borderTop: borderTop,
+                                        borderBottom: borderBottom,
+                                        borderLeft: borderLeft,
+                                        borderRight: borderRight,
+                                    }}
+                                    title={cell.label ? `${cell.label} (${colIndex}, ${rowIndex})` : `(${colIndex}, ${rowIndex})`}
+                                />
+                            );
+                        })
                     )}
                 </div>
             </div>
