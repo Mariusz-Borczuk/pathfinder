@@ -206,12 +206,12 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) 
 
     return (
         <div className="p-4">
-            <div className={`inline-block border border-gray-200 bg-white ${showGrid ? 'border-2 border-gray-400' : ''}`}>
+            <div className={`inline-block ${showGrid ? 'border-2 border-gray-400' : 'border border-gray-200'} bg-white`}>
                 <div className="grid" style={{
                     display: 'grid',
                     gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
-                    gap: showGrid ? '1px' : '0px',
-                    backgroundColor: showGrid ? 'white' : 'transparent',
+                    gap: '0px',
+                    backgroundColor: 'transparent',
                 }}>
                     {finalGrid.map((row: CellType[], rowIndex: number) =>
                         row.map((cell: CellType, colIndex: number) => {
@@ -251,10 +251,11 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) 
                                     className="w-3 h-3"
                                     style={{
                                         backgroundColor: cell.color,
-                                        borderTop: borderTop,
-                                        borderBottom: borderBottom,
-                                        borderLeft: borderLeft,
-                                        borderRight: borderRight,
+                                        borderTop: showGrid ? '1px solid #ddd' : borderTop,
+                                        borderBottom: showGrid ? '1px solid #ddd' : borderBottom,
+                                        borderLeft: showGrid ? '1px solid #ddd' : borderLeft,
+                                        borderRight: showGrid ? '1px solid #ddd' : borderRight,
+                                        boxSizing: 'border-box',
                                     }}
                                     title={cell.label ? `${cell.label} (${colIndex}, ${rowIndex})` : `(${colIndex}, ${rowIndex})`}
                                 />

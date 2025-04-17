@@ -12,17 +12,19 @@
  */
 export const MapGrid = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div
-      className="grid grid-cols-[repeat(60,15px)] grid-rows-[repeat(60,15px)] gap-0.5 mx-auto bg-gray-200 p-1 rounded-lg shadow-inner"
-    >
-      {Array.from({ length: 60 * 60 }).map((_, index) => (
-        <div
-          key={index}
-          className="bg-white border border-gray-300"
-        >
-          {children}
-        </div>
-      ))}
+    <div className="p-4 mx-auto bg-gray-100 rounded-lg shadow-inner">
+      <div
+        className="grid grid-cols-[repeat(60,15px)] grid-rows-[repeat(60,15px)] gap-[1px] mx-auto"
+      >
+        {Array.from({ length: 60 * 60 }).map((_, index) => (
+          <div
+            key={index}
+            className="bg-white hover:bg-gray-50 transition-colors duration-100"
+          >
+            {children}
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

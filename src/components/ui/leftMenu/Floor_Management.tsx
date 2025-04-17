@@ -1,5 +1,5 @@
+import { FloorManagementProps } from '@/components/types/types';
 import React from 'react';
-import { FloorManagementProps } from '../types/types';
 
 
 export const FloorManagement: React.FC<FloorManagementProps> = ({ currentFloor, onFloorChange }) => {
