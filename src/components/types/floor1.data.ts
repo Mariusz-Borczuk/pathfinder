@@ -3,7 +3,7 @@ import { FloorData } from "./types";
 
 export const floor1Data: FloorData = {
     classrooms: [
-        { number: "101", start: { x: 49, y: 38 }, end: { x: 53, y: 17 }, entry: { x: 49, y: 42 } },
+        { number: "101", start: { x: 49, y: 38 }, end: { x: 53, y: 47 }, entry: { x: 49, y: 42 } },
         { number: "102", start: { x: 49, y: 35 }, end: { x: 53, y: 36 }, entry: { x: 49, y: 35 } },
         { number: "103", start: { x: 49, y: 31 }, end: { x: 53, y: 33 }, entry: { x: 49, y: 32 } },
         { number: "104", start: { x: 49, y: 28 }, end: { x: 53, y: 29 }, entry: { x: 49, y: 28 } },
