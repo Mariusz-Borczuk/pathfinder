@@ -9,8 +9,8 @@ export const floor4Data: FloorData = {
         { number: "404", start: { x: 49, y: 20 }, end: { x: 52, y: 24 }, entry: { x: 49, y: 22 } },
         { number: "405", start: { x: 49, y: 15 }, end: { x: 52, y: 18 }, entry: { x: 49, y: 17 } },
         { number: "407", start: { x: 49, y: 9 }, end: { x: 52, y: 13 }, entry: { x: 49, y: 9 } },
-        { number: "409", start: { x: 48, y: 4 }, end: { x: 52, y: 7 }, entry: { x: 48, y: 7 } },
-        { number: "410", start: { x: 44, y: 4 }, end: { x: 46, y: 7 }, entry: { x: 45, y: 7 } },
+        { number: "409", start: { x: 46, y: 4 }, end: { x: 49, y: 7 }, entry: { x: 48, y: 7 } },
+        { number: "410", start: { x: 43, y: 4 }, end: { x: 45, y: 7 }, entry: { x: 45, y: 7 } },
         { number: "411", start: { x: 35, y: 4 }, end: { x: 42, y: 7 }, entry: { x: 38, y: 7 } },
         { number: "412", start: { x: 16, y: 3 }, end: { x: 33, y: 7 }, entry: { x: 25, y: 7 } },
         { number: "415", start: { x: 12, y: 7 }, end: { x: 14, y: 3 }, entry: { x: 13, y: 7 } },
@@ -61,7 +61,6 @@ export const floor4Data: FloorData = {
     paths: [
         { start: { x: 8, y: 9 }, end: { x: 9, y: 51 } },
         { start: { x: 8, y: 8 }, end: { x: 48, y: 9 } },
-        // { start: { x: 39, y: 3 }, end: { x: 47, y: 8 } },
         { start: { x: 47, y: 9 }, end: { x: 48, y: 51 } },
         { start: { x: 10, y: 44 }, end: { x: 17, y: 45 } },
         { start: { x: 40, y: 51 }, end: { x: 47, y: 50 } }
