@@ -1,4 +1,3 @@
-
 export interface Coordinate {
     x: number;
     y: number;
@@ -115,6 +114,7 @@ export interface MapViewProps {
     currentFloor: number;
     showGrid: boolean;
     settings?: any;
+    highlightedLocation?: LocationSearchResult | null;
 }
 export interface LayoutProps {
     children: React.ReactNode;
@@ -126,4 +126,18 @@ export function getFloorFromRoomNumber(roomNumber: string): number {
 }
 export function isRoomOnFloor(roomNumber: string, floorNumber: number): boolean {
     return getFloorFromRoomNumber(roomNumber) === floorNumber;
-} 
+}
+export interface LocationSearchResult {
+    type: 'classroom' | 'bathroom' | 'elevator' | 'stairs' | 'fireEquipment' | 'utilityRoom' | 'coordinate';
+    name: string;
+    floor: number;
+    location: Coordinate;
+    description?: string;
+}
+
+export interface LocationSearchFieldProps {
+    onSearch: (result: LocationSearchResult) => void;
+    currentFloor: number;
+    setCurrentFloor?: (floor: number) => void;
+    settings?: AccessibilitySettings;
+}

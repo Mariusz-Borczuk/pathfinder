@@ -1,16 +1,16 @@
 import { Eye, Type } from "lucide-react";
 import React, { useState } from "react";
 import AccessibilityButton from "../../Accessibility_Button";
-import { AccessibilitySettings, LayoutProps } from "../../types/types";
-import { SearchBar } from "../leftMenu/SearchBar";
-import { GridToggleButton } from "../mapCenter/GridToggleButton";
-import { MapView } from "../mapCenter/Map_View";
-import RightSidebar from "../rightMenu/Right_Sidebar";
-import { getSettings } from "../settings";
+import { AccessibilitySettings, LayoutProps, LocationSearchResult } from "../../types/types";
+import FloorManagement from "../leftMenu/Floor_Management";
 import { MainHeader } from "../leftMenu/Main_Header";
 import QuickNavigation from "../leftMenu/Quick_Navigation";
-import FloorManagement from "../leftMenu/Floor_Management";
-
+import { SearchBar } from "../leftMenu/SearchBar";
+import { MapView } from "../mapCenter/Map_View";
+import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
+import LocationSearchField from "../mapCenter/topPart/LocationSearchField";
+import RightSidebar from "../rightMenu/Right_Sidebar";
+import { getSettings } from "../settings";
 
 const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [settings, setSettings] = useState<AccessibilitySettings>({
@@ -19,7 +19,16 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
     isDyslexicFont: false,
   });
   const [currentFloor, setCurrentFloor] = useState(1);
-  const [showGrid, setShowGrid] = useState(false)
+  const [showGrid, setShowGrid] = useState(false);
+  const [highlightedLocation, setHighlightedLocation] = useState<LocationSearchResult | null>(null);
+
+  const handleSearch = (result: LocationSearchResult) => {
+    setHighlightedLocation(result);
+    // If the result is on a different floor, change to that floor
+    if (result.floor !== currentFloor) {
+      setCurrentFloor(result.floor);
+    }
+  };
 
   return (
     <div
@@ -112,9 +121,15 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
 
       <div className="flex-1 p-4">
         <div className="flex justify-between items-center mb-4">
-          <div className="flex gap-4">
-            <div className="mb-4">
-                <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} />
+          <div className="flex gap-4 items-center p-2 mb-4 bg-gray-800 rounded-lg w-full"> 
+            <div className="flex items-center space-x-4 w-96">
+              <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} settings={settings} />
+              <LocationSearchField 
+                onSearch={handleSearch} 
+                currentFloor={currentFloor}
+                setCurrentFloor={setCurrentFloor}
+                settings={settings}
+              />
             </div>
           </div>
         </div>
@@ -122,6 +137,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
           settings={settings}   
           currentFloor={currentFloor}
           showGrid={showGrid}
+          highlightedLocation={highlightedLocation}
         />
       </div>
       <RightSidebar 

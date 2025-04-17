@@ -1,6 +1,6 @@
 import { Grid } from 'lucide-react';
 import React from 'react';
-import { GridToggleButtonProps } from '../../types/types';
+import { GridToggleButtonProps } from '../../../types/types';
 
 export const GridToggleButton: React.FC<GridToggleButtonProps> = ({ 
     showGrid, 
