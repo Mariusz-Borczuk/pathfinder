@@ -1,9 +1,11 @@
+import { FaFireExtinguisher, FaRestroom, FaWrench, MdElevator, MdLocationPin, MdSearch, MdStairs, SiGoogleclassroom } from '@/utils/icons';
 import React, { useEffect, useMemo, useState } from 'react';
 import { floor1Data } from '../../../types/floor1.data';
 import { floor2Data } from '../../../types/floor2.data';
 import { floor3Data } from '../../../types/floor3.data';
 import { floor4Data } from '../../../types/floor4.data';
 import { Coordinate, LocationSearchFieldProps, LocationSearchResult } from '../../../types/types';
+import { getFontSizeClass, getSearchStyles } from '../../settings';
 
 /**
  * A search input component that allows users to search for locations by name 
@@ -79,7 +81,7 @@ const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
             type: 'classroom',
             name: `Classroom ${room.number}`,
             floor: floorNumber,
-            location: entryCoord,
+            location: entryCoord as Coordinate, // Since we provide defaultLocation as fallback, entryCoord will never be undefined
             description: `Classroom ${room.number} on floor ${floorNumber}`
           });
         }
@@ -172,47 +174,14 @@ const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
     setIsDropdownOpen(false);
   };
 
-  // Get high contrast styles based on settings
-  const getHighContrastStyles = () => {
-    if (settings?.contrast === "high") {
-      return {
-        inputBg: 'bg-white',
-        inputText: 'text-black font-bold',
-        inputBorder: 'border-2 border-black',
-        buttonBg: 'bg-black',
-        buttonText: 'text-white',
-        dropdownBg: 'bg-white',
-        dropdownBorder: 'border-2 border-black',
-        dropdownItemHover: 'hover:bg-yellow-300 hover:text-black',
-        resultText: 'text-black',
-        resultDetailText: 'text-black',
-        highlightBadge: 'bg-black text-white'
-      };
-    }
-    return {
-      inputBg: 'bg-white',
-      inputText: 'text-gray-800',
-      inputBorder: 'border border-gray-300',
-      buttonBg: 'bg-blue-600',
-      buttonText: 'text-white',
-      dropdownBg: 'bg-white',
-      dropdownBorder: 'border border-gray-300',
-      dropdownItemHover: 'hover:bg-gray-100',
-      resultText: 'text-gray-800',
-      resultDetailText: 'text-gray-500',
-      highlightBadge: 'bg-blue-100 text-blue-800'
-    };
-  };
-
-  const styles = getHighContrastStyles();
-  const fontSizeClass = settings ? 
-    (settings.fontSize === "large" ? "text-lg" : settings.fontSize === "xlarge" ? "text-xl" : "text-base") : 
-    "text-base";
+  // Get styles from the centralized settings
+  const styles = getSearchStyles(settings);
+  const fontSizeClass = getFontSizeClass(settings);
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-116">
       <div className="relative">
-        <label htmlFor="location-search" className={`block text-lg font-medium mb-1 ${settings?.contrast === "high" ? "text-black" : "text-gray-700"}`}>
+        <label htmlFor="location-search" className={`block font-medium ${styles.labelText} ${fontSizeClass}`}>
           Find Location
         </label>
         <input
@@ -221,56 +190,58 @@ const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           placeholder="Search rooms, bathrooms, or coordinates (e.g., 10,20)"
-          className={`w-full px-4 py-3 ${styles.inputBg} ${styles.inputText} ${styles.inputBorder} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md ${fontSizeClass}`}
+          className={`w-full  px-4 pr-12 py-3 ${styles.inputBg} ${styles.inputText} ${styles.inputBorder} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md ${fontSizeClass}`}
           onFocus={() => searchResults.length > 0 && setIsDropdownOpen(true)}
           onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
         />
-        <button 
-          className={`absolute right-3 top-1/2 transform -translate-y-1/4 ${styles.buttonBg} ${styles.buttonText} p-3 rounded-full shadow-lg hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
-          onClick={() => {
-            if (searchResults.length > 0) {
-              handleResultClick(searchResults[0]);
-            }
-          }}
-          aria-label="Search"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </button>
+        <div className="absolute inset-y-0 right-0 flex items-center top-6">   
+          <button 
+            className={`${styles.buttonBg} ${styles.buttonText} h-full px-3 rounded-r-lg shadow-lg hover:scale-105 hover:shadow-lg transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center border-l ${styles.inputBorder}`}
+            onClick={() => {
+              if (searchResults.length > 0 && searchResults[0]) {
+            handleResultClick(searchResults[0]);
+              }
+            }}
+            aria-label="Search"
+          >
+            <MdSearch className={`h-5 w-5 ${styles.iconColor}`} />
+          </button>
+        </div>
       </div>
       
       {isDropdownOpen && searchResults.length > 0 && (
-        <div className={`absolute z-10 mt-1 w-full ${styles.dropdownBg} ${styles.dropdownBorder} rounded-lg shadow-lg max-h-60 overflow-y-auto`}>
-          {searchResults.map((result, index) => (
-            <div
-              key={`${result.type}-${result.name}-${index}`}
-              className={`px-4 py-3 cursor-pointer ${styles.dropdownItemHover} flex items-center ${fontSizeClass}`}
-              onClick={() => handleResultClick(result)}
-            >
-              <div className="mr-3 text-xl">
-                {result.type === 'classroom' && <span>🏫</span>}
-                {result.type === 'bathroom' && <span>🚻</span>}
-                {result.type === 'elevator' && <span>🔼</span>}
-                {result.type === 'stairs' && <span>🪜</span>}
-                {result.type === 'fireEquipment' && <span>🧯</span>}
-                {result.type === 'utilityRoom' && <span>🔧</span>}
-                {result.type === 'coordinate' && <span>📍</span>}
-              </div>
-              <div className="flex flex-col">
-                <span className={`font-semibold ${styles.resultText}`}>{result.name}</span>
-                <span className={`text-sm ${styles.resultDetailText}`}>
-                  {result.type !== 'coordinate' ? `Floor ${result.floor} • ` : ''}
-                  {`(${result.location.x}, ${result.location.y})`}
-                </span>
-              </div>
-              {result.floor !== currentFloor && (
-                <span className={`ml-auto text-sm ${styles.highlightBadge} px-2 py-1 rounded`}>
-                  On Floor {result.floor}
-                </span>
-              )}
+        <div className={`absolute z-10 mt-1 w-full ${styles.dropdownBg} ${styles.dropdownBorder} rounded-md shadow-lg max-h-60 overflow-hidden`}>
+          <div className="overflow-y-auto max-h-60">
+            {searchResults.map((result, index) => (
+              <div
+            key={`${result.type}-${result.name}-${index}`}
+            className={`px-5 py-3 cursor-pointer ${styles.dropdownItemHover} flex items-center ${fontSizeClass}`}
+            onClick={() => handleResultClick(result)}
+              >
+            <div className="mr-1 pr-2 text-xl">
+              {result.type === 'classroom' && <span><SiGoogleclassroom /></span>}
+              {result.type === 'bathroom' && <span><FaRestroom /></span>}
+              {result.type === 'elevator' && <span><MdElevator /></span>}
+              {result.type === 'stairs' && <span><MdStairs /></span>}
+              {result.type === 'fireEquipment' && <span><FaFireExtinguisher /></span>}
+              {result.type === 'utilityRoom' && <span><FaWrench /></span>}
+              {result.type === 'coordinate' && <span><MdLocationPin /></span>}
             </div>
-          ))}
+            <div className="flex flex-col">
+              <span className={`font-semibold ${styles.resultText}`}>{result.name}</span>
+              <span className={`text-sm ${styles.resultDetailText}`}>
+                {result.type !== 'coordinate' ? `Floor ${result.floor} • ` : ''}
+                {`(${result.location.x}, ${result.location.y})`}
+              </span>
+            </div>
+            {result.floor !== currentFloor && (
+              <span className={`text-sm ${styles.highlightBadge} px-1 py-1 rounded ml-auto`}>
+                On Floor {result.floor}
+              </span>
+            )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>

@@ -1,30 +1,25 @@
 import React from "react";
+import { IoMdEye } from "react-icons/io";
+import { LuType } from "react-icons/lu";
+import { FaRestroom,FaFireExtinguisher,FaWrench } from "react-icons/fa";
+import { SiGoogleclassroom } from "react-icons/si";
 import {
-  MdSportsTennis,
-  MdOutlineDirectionsWalk,
-  MdLocationOn,
-  MdHome,
   MdDarkMode,
   MdElevator,
   MdFemale,
+  MdHome,
+  MdLocationOn,
   MdMale,
+  MdOutlineDirectionsWalk,
+  MdSearch,
+  MdSportsTennis,
   MdWater,
+  MdStairs,
+  MdLocationPin
 } from "react-icons/md";
-import { LuType } from "react-icons/lu";
-import { IoMdEye } from "react-icons/io";
 // Export all icons as named exports
 export {
-  MdSportsTennis,
-  MdOutlineDirectionsWalk,
-  MdLocationOn,
-  MdHome,
-  MdDarkMode,
-  MdFemale,
-  MdMale,
-  MdWater,
-  MdElevator,
-  LuType,
-  IoMdEye,
+  IoMdEye, LuType, MdDarkMode, MdElevator, MdFemale, MdHome, SiGoogleclassroom, MdLocationOn, MdMale, MdOutlineDirectionsWalk, MdSearch, MdSportsTennis, MdWater, MdStairs, FaRestroom, FaFireExtinguisher, FaWrench, MdLocationPin
 };
 
 // Export commonly used icon combinations

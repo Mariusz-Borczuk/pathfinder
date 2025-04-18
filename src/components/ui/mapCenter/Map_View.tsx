@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { MapViewProps } from '../../types/types';
 import { FloorGrid } from './Coordinates_Room_Converter';
 
-export const MapView: React.FC<MapViewProps> = ({ currentFloor, showGrid, settings, highlightedLocation }) => {
+export const MapView: React.FC<MapViewProps> = ({ currentFloor, showGrid, highlightedLocation }) => {
     const mapRef = useRef<HTMLDivElement>(null);
     
     return (
@@ -17,7 +17,7 @@ export const MapView: React.FC<MapViewProps> = ({ currentFloor, showGrid, settin
                 
                 {highlightedLocation && (
                     <div 
-                        className="absolute w-6 h-6 bg-red-500 rounded-full animate-pulse border-2 border-white"
+                        className="absolute w-4 h-4 bg-red-500  animate-pulse border-2 border-white"
                         style={{
                             left: `calc(${highlightedLocation.location.x * 12}px + 1rem)`,
                             top: `calc(${highlightedLocation.location.y * 12}px + 1rem)`,

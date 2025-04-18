@@ -122,14 +122,19 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
       <div className="flex-1 p-4">
         <div className="flex justify-between items-center mb-4">
           <div className="flex gap-4 items-center p-2 mb-4 bg-gray-800 rounded-lg w-full"> 
-            <div className="flex items-center space-x-4 w-96">
-              <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} settings={settings} />
-              <LocationSearchField 
-                onSearch={handleSearch} 
-                currentFloor={currentFloor}
-                setCurrentFloor={setCurrentFloor}
-                settings={settings}
-              />
+            <div className="flex items-center space-x-4 w-196">
+              <div className="flex-1">
+                <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} settings={settings} />
+              </div>
+              <div className="flex-1">
+                <LocationSearchField 
+                  onSearch={handleSearch} 
+                  currentFloor={currentFloor}
+                  setCurrentFloor={setCurrentFloor}
+                  settings={settings}
+                />
+              </div>
+              
             </div>
           </div>
         </div>
