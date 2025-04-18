@@ -32,7 +32,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div
-      className="flex h-screen w-full bg-gray-900 p-0 m-0"
+      className="flex h-full w-full bg-gray-900 p-0 m-0"
       role="application"
     >
       {/* Left Sidebar */}

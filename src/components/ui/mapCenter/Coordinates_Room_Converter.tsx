@@ -1,34 +1,33 @@
-import React from 'react';
-import { floor1Data } from '../../types/floor1.data';
-import { floor2Data } from '../../types/floor2.data';
-import { floor3Data } from '../../types/floor3.data';
-import { floor4Data } from '../../types/floor4.data';
+import React, { useState } from 'react';
 import type { CellType } from '../../types/tileData';
 import { tileData } from '../../types/tileData';
 import * as types from '../../types/types';
 import { FloorGridProps } from '../../types/types';
+import { getFontSizeClass } from '../settings';
 import { MapLegend } from './MapLegend';
 
-
-const floorData: types.FloorData[] = [floor1Data, floor2Data, floor3Data, floor4Data];
-
-export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) => {
+export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor, highlightedLocation, settings }) => {
     const gridSize = 60;
+    const [hoveredCell, setHoveredCell] = useState<types.HoveredCellInfo | null>(null);
+
+    
+    // Get specifically the font size class for elements that need independent scaling
+    const fontSizeClass = settings ? getFontSizeClass(settings) : 'text-base';
 
     // Validate currentFloor and get floor data
     const floorIndex = currentFloor - 1;
     
-    if (floorIndex < 0 || floorIndex >= floorData.length) {
-        console.error(`Invalid floor number: ${currentFloor}. Available floors: 1-${floorData.length}`);
+    if (floorIndex < 0 || floorIndex >= types.allFloorData.length) {
+        console.error(`Invalid floor number: ${currentFloor}. Available floors: 1-${types.allFloorData.length}`);
         return (
             <div className="p-4 text-red-500">
-                Invalid floor number. Please select a floor between 1 and {floorData.length}.
+                Invalid floor number. Please select a floor between 1 and {types.allFloorData.length}.
             </div>
         );
     }
     
     // We've validated the index, so the floor data must exist
-    const currentFloorData = floorData[floorIndex]!;
+    const currentFloorData = types.allFloorData[floorIndex]!;
 
     // Create initial grid with empty cells
     const initialGrid: CellType[][] = Array.from({ length: gridSize }, (_, row) =>
@@ -205,8 +204,8 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) 
     }, gridWithFire);
 
     return (
-        <div className="p-4">
-            <div className={`inline-block ${showGrid ? 'border-2 border-gray-400' : 'border border-gray-200'} bg-white`}>
+        <div className="p-4 relative">
+            <div className={`inline-block ${showGrid ? 'border-2 border-gray-400' : 'border border-gray-200'} bg-white relative`}>
                 <div className="grid" style={{
                     display: 'grid',
                     gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))`,
@@ -244,11 +243,19 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) 
                             const borderBottom = needsBottomBorder ? '1px solid #333' : 'none';
                             const borderLeft = needsLeftBorder ? '1px solid #333' : 'none';
                             const borderRight = needsRightBorder ? '1px solid #333' : 'none';
-                            
+
+                            // Check if this cell should be highlighted
+                            const isHighlighted = highlightedLocation && 
+                                                highlightedLocation.floor === currentFloor &&
+                                                highlightedLocation.location.y === rowIndex && 
+                                                highlightedLocation.location.x === colIndex;
+
+                            const cellTitle = cell.label ? `${cell.label} (${colIndex}, ${rowIndex})` : `(${colIndex}, ${rowIndex})`;
+
                             return (
                                 <div
                                     key={`${rowIndex}-${colIndex}`}
-                                    className="w-3 h-3"
+                                    className={`w-3 h-3 relative ${fontSizeClass}`}
                                     style={{
                                         backgroundColor: cell.color,
                                         borderTop: showGrid ? '1px solid #ddd' : borderTop,
@@ -257,14 +264,51 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor }) 
                                         borderRight: showGrid ? '1px solid #ddd' : borderRight,
                                         boxSizing: 'border-box',
                                     }}
-                                    title={cell.label ? `${cell.label} (${colIndex}, ${rowIndex})` : `(${colIndex}, ${rowIndex})`}
-                                />
+                                    onMouseEnter={(e) => {
+                                        const rect = (e.target as HTMLElement).getBoundingClientRect();
+                                        const containerRect = (e.target as HTMLElement).closest('.inline-block')?.getBoundingClientRect();
+                                        if (containerRect) {
+                                            setHoveredCell({
+                                                text: cellTitle,
+                                                x: rect.left - containerRect.left + rect.width / 2,
+                                                y: rect.top - containerRect.top
+                                            });
+                                        }
+                                    }}
+                                    onMouseLeave={() => {
+                                        setHoveredCell(null);
+                                    }}
+                                >
+                                    {isHighlighted && (
+                                        <div 
+                                            className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+                                            title={highlightedLocation.description || highlightedLocation.name}
+                                        >
+                                            <div className="absolute w-4 h-4 bg-red-500 animate-pulse border-2 border-white rounded-sm">
+                                                <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             );
                         })
                     )}
                 </div>
+                
+                {hoveredCell && (
+                    <div 
+                        className={`absolute z-20 p-2 rounded shadow-lg pointer-events-none bg-gray-400 font-bold ${fontSizeClass}`}
+                        style={{
+                            left: `${hoveredCell.x}px`,
+                            top: `${hoveredCell.y}px`,
+                            transform: 'translate(-50%, -110%)',
+                            whiteSpace: 'nowrap'
+                        }}
+                    >
+                        {hoveredCell.text}
+                    </div>
+                )}
             </div>
-            <MapLegend />
         </div>
     );
 };

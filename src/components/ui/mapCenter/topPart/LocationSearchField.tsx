@@ -210,7 +210,7 @@ const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
       </div>
       
       {isDropdownOpen && searchResults.length > 0 && (
-        <div className={`absolute z-10 mt-1 w-full ${styles.dropdownBg} ${styles.dropdownBorder} rounded-md shadow-lg max-h-60 overflow-hidden`}>
+        <div className={`absolute z-180 mt-1 w-full ${styles.dropdownBg} ${styles.dropdownBorder} rounded-md shadow-lg max-h-60 overflow-hidden`}>
           <div className="overflow-y-auto max-h-60">
             {searchResults.map((result, index) => (
               <div

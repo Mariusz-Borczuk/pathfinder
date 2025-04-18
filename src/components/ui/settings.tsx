@@ -9,7 +9,7 @@ export const getSettings = ({ contrast, isDyslexicFont, fontSize }: Accessibilit
             : fontSize === "xlarge"
             ? "text-2xl"
             : fontSize === "normal"
-            ? "text-md"
+            ? "text-base"
             : ""
     }`.trim();
 };

@@ -1,3 +1,8 @@
+import { floor1Data } from "./floor1.data";
+import { floor2Data } from "./floor2.data";
+import { floor3Data } from "./floor3.data";
+import { floor4Data } from "./floor4.data";
+
 export interface Coordinate {
     x: number;
     y: number;
@@ -11,6 +16,12 @@ export interface Room {
 export interface FloorManagementProps {
     currentFloor: number;
     onFloorChange: (floor: number) => void;
+}
+
+export interface HoveredCellInfo {
+    text: string;
+    x: number;
+    y: number;
 }
 export interface NavigationItem {
     name: string;
@@ -66,12 +77,15 @@ export interface PathMapProps {
 export interface FloorGridProps {
     showGrid: boolean;
     currentFloor: number;
+    highlightedLocation?: LocationSearchResult | null;
+    settings?: AccessibilitySettings;
 }
 export interface Route {
     destination: string;
     estimatedTime: string;
     accessibilityNotes: string;
     navigationInstructions: string;
+    // estimatedDistance?: string;
 }
 export interface RouteInformationCardProps {
     route: Route;
@@ -141,3 +155,11 @@ export interface LocationSearchFieldProps {
     setCurrentFloor?: (floor: number) => void;
     settings?: AccessibilitySettings;
 }
+
+// Floor data arrays need to be imported at the top of the file
+
+/**
+ * Combined floor data for all floors in the building
+ * Index corresponds to floor number - 1 (e.g., floor1Data is at index 0)
+ */
+export const allFloorData: FloorData[] = [floor1Data, floor2Data, floor3Data, floor4Data];

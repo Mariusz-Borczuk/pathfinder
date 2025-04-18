@@ -1,7 +1,25 @@
 import React from 'react';
 import { tileData } from '../../types/tileData';
+import { AccessibilitySettings } from '../../types/types'; // Import AccessibilitySettings
+import { getFontSizeClass } from '../settings'; // Import helper function
 
-export const MapLegend: React.FC = () => {
+// Define props for MapLegend
+export interface MapLegendProps {
+    settings?: AccessibilitySettings;
+}
+
+export const MapLegend: React.FC<MapLegendProps> = ({ settings }) => {
+    // Get full accessibility settings or use defaults
+    const accessSettings = settings || {
+        fontSize: "normal",
+        contrast: "normal", 
+        isDyslexicFont: false
+    };
+
+    // Determine font size and family classes
+    const fontSizeClass = getFontSizeClass(accessSettings);
+    const fontFamilyClass = accessSettings.isDyslexicFont ? "font-dyslexic" : "";
+
     const legendItems = [
         { label: 'Classroom', color: tileData.classroom.color },
         { label: 'Entry Point', color: tileData.entry.color },
@@ -15,7 +33,8 @@ export const MapLegend: React.FC = () => {
 
     return (
         <div className="mt-4 p-4 bg-gray-800 rounded-lg shadow-sm border border-gray-700">
-            <h3 className="text-lg font-semibold mb-3 text-gray-200">Map Legend</h3>
+            {/* Apply settings to the title */}
+            <h3 className={`text-lg font-semibold mb-3 text-gray-200 ${fontSizeClass} ${fontFamilyClass}`}>Map Legend</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {legendItems.map((item, index) => (
                     <div key={index} className="flex items-center">
@@ -23,7 +42,8 @@ export const MapLegend: React.FC = () => {
                             className="w-6 h-6 mr-2 rounded-sm"
                             style={{ backgroundColor: item.color }}
                         />
-                        <span className="text-gray-300">{item.label}</span>
+                        {/* Apply settings to the label span */}
+                        <span className={`text-gray-300 ${fontSizeClass} ${fontFamilyClass}`}>{item.label}</span>
                     </div>
                 ))}
             </div>
@@ -31,4 +51,4 @@ export const MapLegend: React.FC = () => {
     );
 };
 
-export default MapLegend; 
+export default MapLegend;
