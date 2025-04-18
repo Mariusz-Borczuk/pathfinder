@@ -1,10 +1,19 @@
 import PathMap from "./PathMap"; // Ensure the file exists at this path or update the path accordingly
 
+/**
+ * Main application component for the path finding visualization.
+ * 
+ * Renders the application container with a PathMap component that allows users
+ * to find paths through a terrain map and reset the map state.
+ * 
+ * @returns The rendered App component
+ */
+
 const AppContainer: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   return (
-    <div className="w-full h-full flex flex-col items-center p-0.5 bg-amber-200 ">
+    <div className="w-full h-full flex flex-col items-center">
       {children}
     </div>
   );

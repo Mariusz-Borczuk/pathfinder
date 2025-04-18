@@ -1,17 +1,42 @@
-import { FaFireExtinguisher, FaRestroom, FaWrench, MdElevator, MdLocationPin, MdSearch, MdStairs, SiGoogleclassroom } from '@/utils/icons';
-import React, { useEffect, useMemo, useState } from 'react';
+
 import { floor1Data } from '../../../types/floor1.data';
 import { floor2Data } from '../../../types/floor2.data';
 import { floor3Data } from '../../../types/floor3.data';
 import { floor4Data } from '../../../types/floor4.data';
-import { Coordinate, LocationSearchFieldProps, LocationSearchResult } from '../../../types/types';
+import React, { useEffect, useMemo, useState } from 'react';
 import { getFontSizeClass, getSearchStyles } from '../../settings';
+import { Coordinate, LocationSearchFieldProps, LocationSearchResult } from '../../../types/types';
+import { FaFireExtinguisher, FaRestroom, FaWrench, MdElevator, MdLocationPin, MdSearch, MdStairs, SiGoogleclassroom } from '@/utils/icons';
 
 /**
  * A search input component that allows users to search for locations by name 
  * (classrooms, bathrooms, etc.) or by coordinates.
  */
-const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
+/**
+ * A component for searching locations within a building.
+ * 
+ * This component provides a search field that enables users to look up:
+ * - Classrooms by number
+ * - Bathrooms
+ * - Elevators
+ * - Staircases
+ * - Utility rooms
+ * - Fire equipment
+ * - Specific coordinates (in formats like "x:10 y:20", "10,20", or "(10,20)")
+ * 
+ * The component displays search results in a dropdown, highlighting items that are on different floors
+ * than the current one. Each result shows an icon based on location type, name, floor number, 
+ * and coordinates.
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Function} props.onSearch - Callback function triggered when a search result is selected
+ * @param {number} props.currentFloor - The floor currently being viewed
+ * @param {Function} props.setCurrentFloor - Function to change the current floor
+ * @param {Object} props.settings - Visual settings for styling the component
+ * @returns {React.ReactElement} The location search field component with dropdown results
+ */
+export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
   onSearch,
   currentFloor,
   setCurrentFloor,
@@ -247,5 +272,3 @@ const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
     </div>
   );
 };
-
-export default LocationSearchField;

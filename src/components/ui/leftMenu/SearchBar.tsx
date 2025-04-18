@@ -1,9 +1,20 @@
-import { Search } from "lucide-react";
 import { useState } from "react";
-import { RightSidebarProps } from "../../types/types";
+import { Search } from "lucide-react";
 import { getSettings } from "../settings";
+import { RightSidebarProps } from "../../types/types";
 
-
+/**
+ * SearchBar component that provides a search input field for locations/rooms.
+ * 
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.settings - Configuration settings for the component styling.
+ * 
+ * @returns {JSX.Element} A search bar UI component with a search icon and input field.
+ * 
+ * @example
+ * <SearchBar settings={mySettings} />
+ */
 export const SearchBar: React.FC<RightSidebarProps> = ({ settings })  => {
     const [searchQuery, setSearchQuery] = useState("");
 

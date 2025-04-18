@@ -1,8 +1,22 @@
+import MapLegend from './MapLegend';
 import React, { useRef } from 'react';
 import { MapViewProps } from '../../types/types';
 import { FloorGrid } from './Coordinates_Room_Converter';
-import MapLegend from './MapLegend';
 
+/**
+ * A component that renders a map view of the current floor.
+ * 
+ * The map can display a grid and highlight specific locations based on the provided props.
+ * It includes both the main map content and a legend to help users interpret the map.
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {string} props.currentFloor - The current floor to display in the map
+ * @param {boolean} props.showGrid - Whether to display the grid on the map
+ * @param {Object|null} props.highlightedLocation - The location to highlight on the map, if any
+ * @param {Object} props.settings - Application settings that affect map display
+ * @returns {JSX.Element} The rendered map view component
+ */
 export const MapView: React.FC<MapViewProps> = ({ currentFloor, showGrid, highlightedLocation, settings }) => {
     const mapRef = useRef<HTMLDivElement>(null);
     

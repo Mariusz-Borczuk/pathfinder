@@ -141,6 +141,15 @@ export function getFloorFromRoomNumber(roomNumber: string): number {
 export function isRoomOnFloor(roomNumber: string, floorNumber: number): boolean {
     return getFloorFromRoomNumber(roomNumber) === floorNumber;
 }
+/**
+ * Represents the result of a location search.
+ * @interface LocationSearchResult
+ * @property {('classroom' | 'bathroom' | 'elevator' | 'stairs' | 'fireEquipment' | 'utilityRoom' | 'coordinate')} type - The type of location.
+ * @property {string} name - The name of the location.
+ * @property {number} floor - The floor number where the location is situated.
+ * @property {Coordinate} location - The coordinates of the location.
+ * @property {string} [description] - Optional description of the location.
+ */
 export interface LocationSearchResult {
     type: 'classroom' | 'bathroom' | 'elevator' | 'stairs' | 'fireEquipment' | 'utilityRoom' | 'coordinate';
     name: string;
@@ -148,18 +157,34 @@ export interface LocationSearchResult {
     location: Coordinate;
     description?: string;
 }
-
 export interface LocationSearchFieldProps {
     onSearch: (result: LocationSearchResult) => void;
     currentFloor: number;
     setCurrentFloor?: (floor: number) => void;
     settings?: AccessibilitySettings;
 }
-
+export interface NavigationItem {
+    name: string;
+    coordinates: { x: number; y: number };
+    icon: React.ReactNode;
+}
+export interface AddCustomNavigationButtonProps {
+    onAdd: (item: NavigationItem) => void;
+}
 // Floor data arrays need to be imported at the top of the file
-
 /**
  * Combined floor data for all floors in the building
  * Index corresponds to floor number - 1 (e.g., floor1Data is at index 0)
  */
 export const allFloorData: FloorData[] = [floor1Data, floor2Data, floor3Data, floor4Data];
+// Define props for MapLegend
+export interface MapLegendProps {
+    settings?: AccessibilitySettings;
+}
+export interface AccessibilityButtonProps {
+    label: string;
+    isActive: boolean;
+    onClick: () => void;
+    icon: React.ReactNode;
+    description: string;
+}

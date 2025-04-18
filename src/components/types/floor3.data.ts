@@ -1,5 +1,23 @@
 import { FloorData } from './types';
 
+/**
+ * Data representation for the third floor layout.
+ * 
+ * @interface FloorData
+ * @property {Classroom[]} classrooms - Array of classrooms on the third floor with their coordinates and entry points
+ * @property {Elevator[]} elevators - Array of elevators on the third floor
+ * @property {Bathroom[]} bathrooms - Array of bathrooms on the third floor, specifying type (Male/Female)
+ * @property {FireEquipment[]} fireEquipment - Array of fire equipment locations on the third floor
+ * @property {UtilityRoom[]} utilityRooms - Array of utility rooms on the third floor (currently empty)
+ * @property {Stair[]} stairs - Array of staircases on the third floor
+ * @property {Path[]} paths - Array of walkable paths on the third floor
+ * 
+ * Each room/element contains:
+ * - For rooms: start and end coordinates defining a rectangular area
+ * - For paths: start and end coordinates defining a line segment
+ * - Most rooms include an entry point coordinate
+ * - Coordinates use a grid system where x increases eastward and y increases southward
+ */
 export const floor3Data: FloorData = {
     classrooms: [
         { number: "300", start: { x: 49, y: 41 }, end: { x: 53, y: 46 }, entry: { x: 49, y: 43 } },

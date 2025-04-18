@@ -1,4 +1,24 @@
-
+/**
+ * Defines different tile types used in the path finding system.
+ * Each tile has specific properties:
+ * - color: Hex color code for visual representation
+ * - label: Display name for the tile
+ * - type: Identifier string for the tile type
+ * - row: Default row position (initialized to 0)
+ * - col: Default column position (initialized to 0)
+ * 
+ * Available tile types include:
+ * - path: Regular walkable path
+ * - classroom: Educational rooms
+ * - stairs: Vertical connections between floors
+ * - bathroom: Restroom facilities
+ * - fireEquipment: Fire safety equipment locations
+ * - elevator: Accessible vertical transportation
+ * - utilityRoom: Maintenance/utility spaces
+ * - start: Starting location for path finding
+ * - end: Destination location for path finding
+ * - entry: Building entrance/exit points
+ */
 export type CellType = {
     row: number;
     col: number;

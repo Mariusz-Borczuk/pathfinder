@@ -1,13 +1,26 @@
-import { RestroomIcon } from '@/utils/icons';
 import React, { useState } from 'react';
-import { MdElevator, MdOutlineDirectionsWalk, MdSportsTennis, MdWater } from 'react-icons/md';
 import { getSettings } from '../settings';
-import { RightSidebarProps, NavigationItem } from '@/components/types/types';
+import { RestroomIcon } from '@/utils/icons';
 import AddCustomNavigationButton from './Custom_Location';
+import { RightSidebarProps, NavigationItem } from '@/components/types/types';
+import { MdElevator, MdOutlineDirectionsWalk, MdSportsTennis, MdWater } from 'react-icons/md';
 
-
-
-const QuickNavigation: React.FC<RightSidebarProps> = ({ settings }) => {
+/**
+ * QuickNavigation component provides a list of predefined locations and custom navigation items.
+ * 
+ * The component displays a list of locations, each with an icon, name, and coordinates. Users can 
+ * also add custom navigation items which will appear alongside the predefined ones.
+ * 
+ * @component
+ * @param {RightSidebarProps} props - Props for the QuickNavigation component
+ * @param {Object} props.settings - The settings for displaying the component
+ * 
+ * @returns {JSX.Element} A sidebar section with quick navigation options and ability to add custom locations
+ * 
+ * @example
+ * <QuickNavigation settings={userSettings} />
+ */
+export const QuickNavigation: React.FC<RightSidebarProps> = ({ settings }) => {
     const [customNavigation, setCustomNavigation] = useState<NavigationItem[]>([]);
 
     const predefinedLocations: NavigationItem[] = [
@@ -53,5 +66,3 @@ const QuickNavigation: React.FC<RightSidebarProps> = ({ settings }) => {
         </div>
     );
 };
-
-export default QuickNavigation;

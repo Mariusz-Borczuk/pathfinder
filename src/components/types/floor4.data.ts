@@ -1,5 +1,22 @@
 import { FloorData } from './types';
 
+/**
+ * Data representation for the 4th floor layout.
+ * 
+ * Contains information about:
+ * - Classrooms (room numbers, physical boundaries, and entry points)
+ * - Elevators (locations and entry points)
+ * - Bathrooms (type, locations and entry points)
+ * - Fire equipment locations
+ * - Utility rooms
+ * - Stairwells
+ * - Walking paths connecting different areas
+ * 
+ * Each location is defined using x,y coordinates, with most spaces having:
+ * - start: Top-left corner coordinates
+ * - end: Bottom-right corner coordinates
+ * - entry: Point(s) where the space can be entered
+ */
 export const floor4Data: FloorData = {
     classrooms: [
         { number: "400", start: { x: 49, y: 41 }, end: { x: 52, y: 47 }, entry: { x: 49, y: 44 } },

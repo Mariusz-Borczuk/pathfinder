@@ -1,7 +1,23 @@
-import { FloorManagementProps } from '@/components/types/types';
 import React from 'react';
+import { FloorManagementProps } from '@/components/types/types';
 
-
+/**
+ * A component for managing floor selection in a multi-floor building interface.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {number} props.currentFloor - The currently selected floor number
+ * @param {function} props.onFloorChange - Callback function that fires when a floor is selected,
+ *                                        receives the floor number as an argument
+ * @returns {JSX.Element} A floor selection interface with buttons for each available floor
+ * 
+ * @example
+ * // Example usage
+ * <FloorManagement 
+ *   currentFloor={2}
+ *   onFloorChange={(floor) => setCurrentFloor(floor)}
+ * />
+ */
 export const FloorManagement: React.FC<FloorManagementProps> = ({ currentFloor, onFloorChange }) => {
     const floors = [1, 2, 3, 4];
 

@@ -18,6 +18,18 @@ import {
   MdLocationPin
 } from "react-icons/md";
 // Export all icons as named exports
+/**
+ * Exports various icons from different icon libraries for use in the application.
+ * 
+ * Includes icons for:
+ * - UI elements (eye, search, dark mode, etc.)
+ * - Navigation (location, directions, home, etc.)
+ * - Facilities (restroom, water, elevator, stairs, etc.)
+ * - Gender indicators (male, female)
+ * - Other utilities (fire extinguisher, wrench, etc.)
+ * 
+ * @module icons
+ */
 export {
   IoMdEye, LuType, MdDarkMode, MdElevator, MdFemale, MdHome, SiGoogleclassroom, MdLocationOn, MdMale, MdOutlineDirectionsWalk, MdSearch, MdSportsTennis, MdWater, MdStairs, FaRestroom, FaFireExtinguisher, FaWrench, MdLocationPin
 };

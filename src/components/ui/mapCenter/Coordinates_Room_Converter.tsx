@@ -1,11 +1,30 @@
 import React, { useState } from 'react';
-import type { CellType } from '../../types/tileData';
-import { tileData } from '../../types/tileData';
 import * as types from '../../types/types';
-import { FloorGridProps } from '../../types/types';
 import { getFontSizeClass } from '../settings';
-import { MapLegend } from './MapLegend';
+import { tileData } from '../../types/tileData';
+import { FloorGridProps } from '../../types/types';
+import type { CellType } from '../../types/tileData';
 
+/**
+ * FloorGrid component renders a visual representation of a floor map with various room types.
+ * 
+ * This component takes floor data and renders a grid-based visualization showing classrooms,
+ * bathrooms, elevators, utility rooms, stairs, fire equipment, and paths. It handles:
+ * - Generating an interactive grid with proper borders between different space types
+ * - Displaying tooltips on hover with cell coordinates and labels
+ * - Highlighting a specific location if provided
+ * - Validating floor data and showing appropriate error messages
+ * - Dynamic resizing based on user settings
+ * 
+ * @component
+ * @param {Object} props - Component properties
+ * @param {boolean} props.showGrid - Whether to display grid lines
+ * @param {number} props.currentFloor - The floor number to display (1-based index)
+ * @param {types.HighlightedLocation} [props.highlightedLocation] - Optional location to highlight on the map
+ * @param {Object} [props.settings] - Optional display settings including font size preferences
+ * 
+ * @returns {React.ReactElement} The rendered floor grid component
+ */
 export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor, highlightedLocation, settings }) => {
     const gridSize = 60;
     const [hoveredCell, setHoveredCell] = useState<types.HoveredCellInfo | null>(null);

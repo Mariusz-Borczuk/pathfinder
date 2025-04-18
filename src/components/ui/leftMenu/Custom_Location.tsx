@@ -1,16 +1,33 @@
-import { MdSportsTennis,MdLocationOn,MdHome } from '@/utils/icons';
 import React, { useState } from 'react';
+import { MdSportsTennis,MdLocationOn,MdHome } from '@/utils/icons';
+import { AddCustomNavigationButtonProps } from '@/components/types/types';
 
-interface NavigationItem {
-    name: string;
-    coordinates: { x: number; y: number };
-    icon: React.ReactNode;
-}
-
-interface AddCustomNavigationButtonProps {
-    onAdd: (item: NavigationItem) => void;
-}
-
+/**
+ * A component that provides a UI for adding custom navigation points.
+ * 
+ * This component allows users to:
+ * - Toggle an accordion panel to show/hide the form
+ * - Enter a name for the navigation point
+ * - Set X and Y coordinates
+ * - Select an icon from predefined options
+ * - Submit the new custom navigation point
+ * 
+ * The component is fully accessible with proper ARIA attributes and keyboard navigation.
+ * 
+ * @component
+ * @param {Object} props - Component properties
+ * @param {Function} props.onAdd - Callback function that receives the new navigation point data when added
+ * @returns {JSX.Element} A form interface for adding custom navigation points
+ * 
+ * @example
+ * // Example usage:
+ * <AddCustomNavigationButton 
+ *   onAdd={(navPoint) => {
+ *     // Handle the new navigation point
+ *     console.log(navPoint.name, navPoint.coordinates);
+ *   }}
+ * />
+ */
 const AddCustomNavigationButton: React.FC<AddCustomNavigationButtonProps> = ({ onAdd }) => {
     const [isAccordionOpen, setIsAccordionOpen] = useState(false);
     const [name, setName] = useState('');

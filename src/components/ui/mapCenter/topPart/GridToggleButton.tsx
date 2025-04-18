@@ -1,8 +1,22 @@
-import { Grid } from 'lucide-react';
 import React from 'react';
-import { AccessibilitySettings, GridToggleButtonProps } from '../../../types/types';
+import { Grid } from 'lucide-react';
 import { getSettings } from '../../settings';
+import { AccessibilitySettings, GridToggleButtonProps } from '../../../types/types';
 
+/**
+ * A button component that toggles the grid visibility on the map.
+ * 
+ * @component
+ * @param {Object} props - The component props
+ * @param {boolean} props.showGrid - The current state of grid visibility
+ * @param {() => void} props.onToggle - Function to toggle grid visibility
+ * @param {Object} [props.settings] - Accessibility settings for the component
+ * @param {string} [props.settings.contrast="normal"] - Contrast setting ("normal" or "high")
+ * @param {string} [props.settings.fontSize="medium"] - Font size setting
+ * @param {boolean} [props.settings.isDyslexicFont=false] - Whether to use dyslexic-friendly font
+ * 
+ * @returns {JSX.Element} A button with appropriate styling based on grid visibility state
+ */
 export const GridToggleButton: React.FC<GridToggleButtonProps> = ({ 
     showGrid, 
     onToggle, 

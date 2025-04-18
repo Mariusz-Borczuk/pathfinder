@@ -1,9 +1,28 @@
 import React from "react";
-import { RightSidebarProps, Route } from "../../types/types";
 import { getSettings } from "../settings";
 import { AccessibleTTSButton, } from "./Speaking";
+import { RightSidebarProps, Route } from "../../types/types";
 
-const RightSidebar: React.FC<RightSidebarProps> = ({ settings, currentFloor }) => {
+/**
+ * Right sidebar component that displays details about the current location and accessibility features
+ * 
+ * @component
+ * @param {Object} props - Component props
+ * @param {Object} props.settings - User interface settings for accessibility
+ * @param {string} props.settings.contrast - Contrast setting (e.g., "high", "normal")
+ * @param {boolean} props.settings.isDyslexicFont - Whether to use dyslexic-friendly font
+ * @param {number} props.currentFloor - The current floor number being displayed
+ * 
+ * @returns {React.ReactElement} A sidebar component with location information, accessibility features,
+ * and audio navigation options
+ * 
+ * @example
+ * <RightSidebar 
+ *   settings={{ contrast: "normal", isDyslexicFont: false }}
+ *   currentFloor={2}
+ * />
+ */
+export const RightSidebar: React.FC<RightSidebarProps> = ({ settings, currentFloor }) => {
     const route: Route = {
         destination: `Building A, Floor ${currentFloor}`,
         estimatedTime: "2 minutes",
@@ -81,5 +100,3 @@ const RightSidebar: React.FC<RightSidebarProps> = ({ settings, currentFloor }) =
         </div>
     );
 };
-
-export default RightSidebar;

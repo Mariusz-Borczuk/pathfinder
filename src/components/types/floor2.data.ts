@@ -1,5 +1,20 @@
 import { FloorData } from './types';
 
+/**
+ * Data for the second floor layout.
+ * 
+ * This object contains information about:
+ * - Classrooms: Each classroom with its number, spatial coordinates (start/end points) and entry point
+ * - Elevators: Location and entry point
+ * - Bathrooms: Type (Male/Female), location and entry point
+ * - Fire Equipment: Locations of fire safety equipment
+ * - Utility Rooms: Empty array placeholder for future utility room data
+ * - Stairs: Start and end coordinates of stairwells
+ * - Paths: Walkable paths connecting different areas of the floor
+ * 
+ * The coordinate system uses x,y coordinates where each unit represents a discrete position
+ * on the floor layout grid.
+ */
 export const floor2Data: FloorData = {
     classrooms: [
         { number: "200", start: { x: 49, y: 43 }, end: { x: 52, y: 44 }, entry: { x: 49, y: 43 } },

@@ -1,6 +1,30 @@
 import { FloorData } from "./types";
 
-
+/**
+ * Data representation of the first floor layout.
+ * 
+ * Contains detailed spatial information about classrooms, elevators, bathrooms, 
+ * fire equipment, utility rooms, stairs, and walkable paths. 
+ * 
+ * Each classroom is defined by:
+ * - number: The classroom identifier
+ * - start: The top-left coordinate of the room {x, y}
+ * - end: The bottom-right coordinate of the room {x, y}
+ * - entry: The entry point coordinate of the room {x, y}
+ * 
+ * Elevators and bathrooms follow similar structure to classrooms.
+ * Bathrooms additionally have a 'type' field indicating gender.
+ * 
+ * Fire equipment is represented by single point locations.
+ * 
+ * Utility rooms have:
+ * - name: Descriptive name of the utility room
+ * - start: Top-left coordinate
+ * - end: Bottom-right coordinate
+ * 
+ * Stairs and paths are defined by start and end coordinates, representing
+ * the bounding box for stairs and line segments for paths.
+ */
 export const floor1Data: FloorData = {
     classrooms: [
         { number: "101", start: { x: 49, y: 38 }, end: { x: 53, y: 47 }, entry: { x: 49, y: 42 } },

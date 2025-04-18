@@ -1,13 +1,31 @@
 import React from 'react';
 import { tileData } from '../../types/tileData';
-import { AccessibilitySettings } from '../../types/types'; // Import AccessibilitySettings
-import { getFontSizeClass } from '../settings'; // Import helper function
+import { getFontSizeClass } from '../settings'; 
+import { MapLegendProps } from '../../types/types'; 
 
-// Define props for MapLegend
-export interface MapLegendProps {
-    settings?: AccessibilitySettings;
-}
-
+/**
+ * A component that displays a legend for the map, showing what each color represents.
+ * 
+ * This component renders a grid of color blocks with labels for different map elements
+ * such as classrooms, entry points, paths, etc. The component applies accessibility settings
+ * including font size and font family based on user preferences.
+ * 
+ * @component
+ * @param {object} props - Component props
+ * @param {object} props.settings - Accessibility settings object
+ * @param {string} props.settings.fontSize - Font size setting ('small', 'normal', 'large', etc.)
+ * @param {string} props.settings.contrast - Contrast setting ('normal', 'high', etc.)
+ * @param {boolean} props.settings.isDyslexicFont - Whether to use dyslexic-friendly font
+ * 
+ * @example
+ * ```tsx
+ * <MapLegend settings={{
+ *   fontSize: "large",
+ *   contrast: "high",
+ *   isDyslexicFont: true
+ * }} />
+ * ```
+ */
 export const MapLegend: React.FC<MapLegendProps> = ({ settings }) => {
     // Get full accessibility settings or use defaults
     const accessSettings = settings || {

@@ -1,17 +1,37 @@
-import { Eye, Type } from "lucide-react";
 import React, { useState } from "react";
-import AccessibilityButton from "../../Accessibility_Button";
-import { AccessibilitySettings, LayoutProps, LocationSearchResult } from "../../types/types";
-import FloorManagement from "../leftMenu/Floor_Management";
-import { MainHeader } from "../leftMenu/Main_Header";
-import QuickNavigation from "../leftMenu/Quick_Navigation";
-import { SearchBar } from "../leftMenu/SearchBar";
-import { MapView } from "../mapCenter/Map_View";
-import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
-import LocationSearchField from "../mapCenter/topPart/LocationSearchField";
-import RightSidebar from "../rightMenu/Right_Sidebar";
+import { Eye, Type } from "lucide-react";
 import { getSettings } from "../settings";
+import { MapView } from "../mapCenter/Map_View";
+import { SearchBar } from "../leftMenu/SearchBar";
+import { MainHeader } from "../leftMenu/Main_Header";
+import { RightSidebar } from "../rightMenu/Right_Sidebar";
+import FloorManagement from "../leftMenu/Floor_Management";
+import AccessibilityButton from "../../Accessibility_Button";
+import { QuickNavigation } from "../leftMenu/Quick_Navigation";
+import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
+import {LocationSearchField } from "../mapCenter/topPart/LocationSearchField";
+import { AccessibilitySettings, LayoutProps, LocationSearchResult } from "../../types/types";
 
+/**
+ * WayfindingApp3 component represents the main layout for the wayfinding application.
+ * It manages the state for accessibility settings, current floor, grid visibility, and highlighted locations.
+ * 
+ * The layout consists of:
+ * - Left sidebar with accessibility settings, search functionality, quick navigation and floor management
+ * - Main content area with map view and location search
+ * - Right sidebar with additional information
+ * 
+ * @component
+ * @param {LayoutProps} props - Component props
+ * @param {React.ReactNode} props.children - Child components to be rendered within the layout
+ * 
+ * @example
+ * ```tsx
+ * <WayfindingApp3>
+ *   <AdditionalContent />
+ * </WayfindingApp3>
+ * ```
+ */
 const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [settings, setSettings] = useState<AccessibilitySettings>({
     fontSize: "normal",
@@ -32,7 +52,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div
-      className="flex h-full w-full bg-gray-900 p-0 m-0"
+      className="flex h-full w-full bg-gray-900"
       role="application"
     >
       {/* Left Sidebar */}

@@ -1,8 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { AccessibleTTSButtonProps, Section, SpeechSettings, TextToSpeechOptions } from '../../types/types';
 
+/**
+ * TextToSpeechService
+ * 
+ * A utility class for handling text-to-speech functionality in the application.
+ * This service wraps the Web Speech API's SpeechSynthesis interface and provides
+ * additional functionality for controlling speech and tracking speech events.
+ */
 
-// Text-to-Speech Utility Class
+/**
+ * Accessible text-to-speech button component that converts route information to speech
+ * 
+ * @component
+ * @param props - Component props
+ * @param props.route - The route object containing navigation details
+ * @param props.className - Optional additional CSS class names
+ * @param props.settings - User settings for customization (e.g., font size)
+ * 
+ * @remarks
+ * This component provides an accessible way to listen to route information by:
+ * - Converting route sections (Location, Time, Directions, Accessibility) to speech
+ * - Providing visual feedback by highlighting the current section being spoken
+ * - Offering customizable speech settings (volume and rate)
+ * - Supporting responsive text sizes based on user preferences
+ */
 class TextToSpeechService {
     private synth: SpeechSynthesis;
     private isSpeaking: boolean;

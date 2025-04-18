@@ -1,13 +1,22 @@
 import React from "react";
+import { AccessibilityButtonProps } from "./types/types";
 
-interface AccessibilityButtonProps {
-    label: string;
-    isActive: boolean;
-    onClick: () => void;
-    icon: React.ReactNode;
-    description: string;
-}
-
+/**
+ * AccessibilityButton is a React component that creates an accessible button with a tooltip.
+ * 
+ * The button can display an active or inactive state, shows an icon, and reveals a description tooltip on hover.
+ * The component is designed with accessibility in mind, including appropriate ARIA attributes.
+ * 
+ * @component
+ * @param {AccessibilityButtonProps} props - The properties for the AccessibilityButton component
+ * @param {string} props.label - Accessible label for the button (used for aria-label)
+ * @param {boolean} props.isActive - Determines if button is in active state (green) or inactive state (gray)
+ * @param {() => void} props.onClick - Click handler function for the button
+ * @param {React.ReactNode} props.icon - Icon to display inside the button
+ * @param {string} props.description - Text to show in the tooltip when hovering over the button
+ * 
+ * @returns {JSX.Element} A button element with a tooltip that shows on hover
+ */
 export const AccessibilityButton: React.FC<AccessibilityButtonProps> = ({
     label,
     isActive,

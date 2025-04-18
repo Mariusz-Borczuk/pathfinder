@@ -21,15 +21,30 @@ export const getFontSizeClass = (settings?: AccessibilitySettings): string => {
     return settings.fontSize === "large" 
         ? "text-lg" 
         : settings.fontSize === "xlarge" 
-            ? "text-xl" 
+            ? "text-2xl" 
             : "text-base";
 };
 
 // Function to get high contrast styles for search components
+/**
+ * Returns tailwind CSS classes for search components based on user accessibility settings
+ * 
+ * This function provides different styling options depending on the user's contrast preference.
+ * When high contrast mode is enabled, it returns a set of classes optimized for better visibility.
+ * Otherwise, it returns the default styling.
+ * 
+ * @param settings - Optional accessibility settings object containing user preferences
+ * @returns An object containing tailwind class strings for various search UI components
+ * 
+ * @example
+ * const styles = getSearchStyles(userSettings);
+ * // Use the styles in your components
+ * <label className={styles.labelText}>Search</label>
+ */
 export const getSearchStyles = (settings?: AccessibilitySettings) => {
     if (settings?.contrast === "high") {
         return {
-            labelText: 'text-white font-bold',
+            labelText: 'text-white font-bold text-2xl',
             inputBg: 'bg-white',
             inputText: 'text-black font-bold',
             inputBorder: 'border-4 border-black',
