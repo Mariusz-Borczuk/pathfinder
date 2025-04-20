@@ -44,7 +44,7 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<LocationSearchResult[]>([]);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDropdownOpen,  setIsDropdownOpen] = useState(false);
 
   // Combine all floor data
   const allFloorData = useMemo(() => [floor1Data, floor2Data, floor3Data, floor4Data], []);

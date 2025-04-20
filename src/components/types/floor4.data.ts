@@ -32,7 +32,7 @@ export const floor4Data: FloorData = {
         { number: "412", start: { x: 16, y: 3 }, end: { x: 33, y: 7 }, entry: { x: 25, y: 7 } },
         { number: "415", start: { x: 12, y: 7 }, end: { x: 14, y: 3 }, entry: { x: 13, y: 7 } },
         { number: "416", start: { x: 9, y: 7 }, end: { x: 11, y: 3 }, entry: { x: 10, y: 7 } },
-        { number: "417", start: { x: 3, y: 3 }, end: { x: 8, y: 7 }, entry: { x: 7, y: 7 } },
+        { number: "417", start: { x: 3, y: 3 }, end: { x: 8, y: 7 }, entry: { x: 8, y: 7 } },
         { number: "418", start: { x: 3, y: 9 }, end: { x: 7, y: 18 }, entry: { x: 7, y: 15 } },
         { number: "420", start: { x: 3, y: 19 }, end: { x: 7, y: 20 }, entry: { x: 7, y: 19 } },
         { number: "421", start: { x: 3, y: 22 }, end: { x: 7, y: 23 }, entry: { x: 7, y: 22 } },
@@ -53,14 +53,14 @@ export const floor4Data: FloorData = {
     ],
     bathrooms: [
         { type: "Male", start: { x: 10, y: 16 }, end: { x: 15, y: 19 }, entry: { x: 10, y: 17 } },
-        { type: "Female", start: { x: 39, y: 16 }, end: { x: 44, y: 19 }, entry: { x: 44, y: 17 } }
+        { type: "Female", start: { x: 39, y: 16 }, end: { x: 45, y: 19 }, entry: { x: 45, y: 17 } }
     ],
     fireEquipment: [
         { location: { x: 9, y: 13 } },
         { location: { x: 13, y: 9 } },
         { location: { x: 27, y: 9 } },
         { location: { x: 43, y: 8 } },
-        { location: { x: 47, y: 13 } },
+        { location: { x: 48, y: 13 } },
         { location: { x: 48, y: 30 } },
         { location: { x: 48, y: 43 } },
         { location: { x: 47, y: 51 } },
@@ -70,16 +70,16 @@ export const floor4Data: FloorData = {
     ],
     utilityRooms: [],
     stairs: [
-        { start: { x: 10, y: 11 }, end: { x: 12, y: 12 } },
-        { start: { x: 41, y: 10 }, end: { x: 43, y: 12 } },
+        { start: { x: 10, y: 10 }, end: { x: 12, y: 12 } },
+        { start: { x: 43, y: 10 }, end: { x: 45, y: 12 } },
         { start: { x: 2, y: 49 }, end: { x: 7, y: 51 } },
         { start: { x: 49, y: 49 }, end: { x: 53, y: 51 } }
     ],
     paths: [
         { start: { x: 8, y: 9 }, end: { x: 9, y: 51 } },
         { start: { x: 8, y: 8 }, end: { x: 48, y: 9 } },
-        { start: { x: 47, y: 9 }, end: { x: 48, y: 51 } },
-        { start: { x: 10, y: 44 }, end: { x: 17, y: 45 } },
+        { start: { x: 46, y: 9 }, end: { x: 48, y: 51 } },
+        { start: { x: 10, y: 44 }, end: { x: 17, y: 51 } },
         { start: { x: 40, y: 51 }, end: { x: 47, y: 50 } }
     ]
 };
