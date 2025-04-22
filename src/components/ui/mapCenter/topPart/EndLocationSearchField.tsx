@@ -8,6 +8,7 @@ import { getEndLocationStyles, getFontSizeClass } from '../../settings';
  * either by selecting a known location (classroom, bathroom, etc.) or by entering coordinates.
  * 
  * This component is styled in red to distinguish it as the "destination" location selector.
+ * Modified to ensure compatibility with PathFinder and proper display on FloorGrid.
  * 
  * @component
  * @param {Object} props - Component props
@@ -25,7 +26,7 @@ export const EndLocationSearchField: React.FC<LocationSearchFieldProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<LocationSearchResult[]>([]);
-  const [isDropdownOpen,  setIsDropdownOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Parse the search query to check if it's a coordinate
   const parseCoordinates = (query: string): Coordinate | null => {
@@ -75,16 +76,25 @@ export const EndLocationSearchField: React.FC<LocationSearchFieldProps> = ({
       floorData.classrooms.forEach(room => {
         if (room.number.toLowerCase().includes(lowerQuery)) {
           const defaultLocation = { x: Math.floor((room.start.x + room.end.x) / 2), y: Math.floor((room.start.y + room.end.y) / 2) };
-          const entryCoord = Array.isArray(room.entry) 
-            ? room.entry[0] 
-            : (room.entry || defaultLocation);
+          
+          // Try to use the first entry point if available, or find the nearest path cell
+          let entryCoord: Coordinate;
+          if (Array.isArray(room.entry) && room.entry.length > 0 && room.entry[0]) {
+            entryCoord = room.entry[0];
+          } else if (room.entry && !Array.isArray(room.entry)) {
+            entryCoord = room.entry as Coordinate;
+          } else {
+            // If no entry is defined, use the default location (center of the room)
+            entryCoord = defaultLocation;
+          }
             
           results.push({
             type: 'classroom',
             name: `Classroom ${room.number}`,
             floor: floorNumber,
-            location: entryCoord as Coordinate,
-            description: `Set destination to Classroom ${room.number} on floor ${floorNumber}`
+            location: entryCoord,
+            description: `Set destination to Classroom ${room.number} on floor ${floorNumber}`,
+            roomId: room.number // Add roomId to help with path finding
           });
         }
       });
@@ -171,7 +181,13 @@ export const EndLocationSearchField: React.FC<LocationSearchFieldProps> = ({
       setCurrentFloor(result.floor);
     }
     
-    onSearch(result);
+    // Ensure the result has all needed properties for pathfinding
+    const enhancedResult: LocationSearchResult = {
+      ...result,
+      isEndLocation: true // Mark as end location for pathfinding
+    };
+    
+    onSearch(enhancedResult);
     setSearchQuery('');
     setIsDropdownOpen(false);
   };

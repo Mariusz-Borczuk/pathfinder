@@ -1,4 +1,3 @@
-import { Eye, Type } from "lucide-react";
 import React, { useState } from "react";
 import AccessibilityButton from "../../Accessibility_Button";
 import { AccessibilitySettings, LayoutProps, LocationSearchResult } from "../../types/types";
@@ -7,19 +6,19 @@ import { MainHeader } from "../leftMenu/Main_Header";
 import { QuickNavigation } from "../leftMenu/Quick_Navigation";
 import { SearchBar } from "../leftMenu/SearchBar";
 import { MapView } from "../mapCenter/Map_View";
-import { EndLocationSearchField } from "../mapCenter/topPart/EndLocationSearchField";
 import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
-import { StartLocationSearchField } from "../mapCenter/topPart/StartLocationSearchField";
+import { PathFinder, PathSegment } from "../mapCenter/topPart/PathFinder";
 import { RightSidebar } from "../rightMenu/Right_Sidebar";
 import { getSettings } from "../settings";
+import { Type, Eye } from "lucide-react";
 
 /**
  * WayfindingApp3 component represents the main layout for the wayfinding application.
- * It manages the state for accessibility settings, current floor, grid visibility, and highlighted locations.
+ * It manages the state for accessibility settings, current floor, grid visibility, highlighted locations, and pathfinding.
  * 
  * The layout consists of:
  * - Left sidebar with accessibility settings, search functionality, quick navigation and floor management
- * - Main content area with map view and location search
+ * - Main content area with map view, pathfinding controls, and location search
  * - Right sidebar with additional information
  * 
  * @component
@@ -42,19 +41,10 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [currentFloor, setCurrentFloor] = useState(1);
   const [showGrid, setShowGrid] = useState(false);
   const [highlightedLocation, setHighlightedLocation] = useState<LocationSearchResult | null>(null);
-  const [startLocation, setStartLocation] = useState<LocationSearchResult | null>(null);
+  const [pathSegments, setPathSegments] = useState<PathSegment[]>([]);
 
   const handleSearch = (result: LocationSearchResult) => {
     setHighlightedLocation(result);
-    // If the result is on a different floor, change to that floor
-    if (result.floor !== currentFloor) {
-      setCurrentFloor(result.floor);
-    }
-  };
-
-  const handleSetStartLocation = (result: LocationSearchResult) => {
-    setStartLocation(result);
-    // If the result is on a different floor, change to that floor
     if (result.floor !== currentFloor) {
       setCurrentFloor(result.floor);
     }
@@ -140,7 +130,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
           </div>
         </div>
 
-        <SearchBar settings={settings} currentFloor={currentFloor} />
+        <SearchBar settings={settings} currentFloor={currentFloor} onSearch={handleSearch} />
 
         <QuickNavigation settings={settings} currentFloor={currentFloor} />
         <FloorManagement 
@@ -150,28 +140,16 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
       </aside>
 
       <div className="flex-1 p-4 flex flex-col">
-        {/* Top control bar - Updated to align all elements in one line with better spacing */}
-        <div className="flex items-center space-x-3 py-2 px-3 mb-4 bg-gray-800 rounded-lg w-full">
+        {/* Top control bar - Now includes PathFinder which contains its own button and search fields */}
+        <div className="flex items-start space-x-3 py-2 px-3 mb-4 bg-gray-800 rounded-lg w-full">
           <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} settings={settings} />
           
-          <div className="flex-1 flex space-x-3">
-            <div className="w-1/2">
-              <StartLocationSearchField
-                onSearch={handleSetStartLocation} 
-                currentFloor={currentFloor}
-                setCurrentFloor={setCurrentFloor}
-                settings={settings}
-              />
-            </div>
-            <div className="w-1/2">
-              <EndLocationSearchField 
-                onSearch={handleSearch} 
-                currentFloor={currentFloor}
-                setCurrentFloor={setCurrentFloor}
-                settings={settings}
-              />
-            </div>
-          </div>
+          <PathFinder 
+            currentFloor={currentFloor}
+            setCurrentFloor={setCurrentFloor}
+            settings={settings}
+            onPathFound={setPathSegments}
+          />
         </div>
         
         {/* Map View takes remaining space */}
@@ -181,7 +159,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
             currentFloor={currentFloor}
             showGrid={showGrid}
             endLocation={highlightedLocation}
-            startLocation={startLocation}
+            pathSegments={pathSegments}
           />
         </div>
       </div>

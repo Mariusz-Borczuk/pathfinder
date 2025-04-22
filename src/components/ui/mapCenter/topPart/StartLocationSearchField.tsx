@@ -8,6 +8,7 @@ import { getFontSizeClass, getStartLocationStyles } from '../../settings';
  * either by selecting a known location (classroom, bathroom, etc.) or by entering coordinates.
  * 
  * This component is styled in green to distinguish it as the "start" location selector.
+ * Modified to ensure compatibility with PathFinder and proper display on FloorGrid.
  * 
  * @component
  * @param {Object} props - Component props
@@ -75,16 +76,25 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
       floorData.classrooms.forEach(room => {
         if (room.number.toLowerCase().includes(lowerQuery)) {
           const defaultLocation = { x: Math.floor((room.start.x + room.end.x) / 2), y: Math.floor((room.start.y + room.end.y) / 2) };
-          const entryCoord = Array.isArray(room.entry) 
-            ? room.entry[0] 
-            : (room.entry || defaultLocation);
+          
+          // Try to use the first entry point if available, or find the nearest path cell
+          let entryCoord: Coordinate;
+          if (Array.isArray(room.entry) && room.entry.length > 0 && room.entry[0] !== undefined) {
+            entryCoord = room.entry[0];
+          } else if (room.entry && !Array.isArray(room.entry)) {
+            entryCoord = room.entry;
+          } else {
+            // If no entry is defined, use the default location (center of the room)
+            entryCoord = defaultLocation;
+          }
             
           results.push({
             type: 'classroom',
             name: `Start at Classroom ${room.number}`,
             floor: floorNumber,
-            location: entryCoord as Coordinate,
-            description: `Set starting point at Classroom ${room.number} on floor ${floorNumber}`
+            location: entryCoord,
+            description: `Set starting point at Classroom ${room.number} on floor ${floorNumber}`,
+            roomId: room.number // Add roomId to help with path finding
           });
         }
       });
@@ -163,7 +173,7 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
     
     setSearchResults(results);
     setIsDropdownOpen(results.length > 0);
-  }, [searchQuery, allFloorData, currentFloor]);
+  }, [searchQuery, currentFloor]);
 
   // Handle search result selection
   const handleResultClick = (result: LocationSearchResult) => {
@@ -171,7 +181,13 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
       setCurrentFloor(result.floor);
     }
     
-    onSearch(result);
+    // Ensure the result has all needed properties for pathfinding
+    const enhancedResult: LocationSearchResult = {
+      ...result,
+      isStartLocation: true // Mark as start location for pathfinding
+    };
+    
+    onSearch(enhancedResult);
     setSearchQuery('');
     setIsDropdownOpen(false);
   };
@@ -219,7 +235,7 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
       </div>
       
       {isDropdownOpen && searchResults.length > 0 && (
-        <div className={`absolute z-180 mt-1 w-full ${styles.dropdownBg} ${styles.dropdownBorder} rounded-md shadow-lg max-h-60 overflow-hidden`}>
+        <div className={`absolute z-180 mt-1 w-full ${styles.dropdownBg} ${styles.dropdownBorder} border-2 border-green-500 rounded-lg p-1 shadow-lg max-h-60 overflow-hidden`}>
           <div className="overflow-y-auto max-h-60">
             {searchResults.map((result, index) => (
               <div

@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import * as types from '../../types/types';
-import { getFontSizeClass } from '../settings';
-import { tileData } from '../../types/tileData';
-import { FloorGridProps } from '../../types/types';
 import type { CellType } from '../../types/tileData';
+import { tileData } from '../../types/tileData';
+import * as types from '../../types/types';
+import { FloorGridProps } from '../../types/types';
+import { getFontSizeClass } from '../settings';
+import { PathSegment } from './topPart/PathFinder';
+
+/**
+ * Updated FloorGrid component props to include path segments
+ */
+interface ExtendedFloorGridProps extends FloorGridProps {
+    pathSegments?: PathSegment[];
+}
 
 /**
  * FloorGrid component renders a visual representation of a floor map with various room types.
@@ -15,6 +23,7 @@ import type { CellType } from '../../types/tileData';
  * - Highlighting a specific location if provided
  * - Validating floor data and showing appropriate error messages
  * - Dynamic resizing based on user settings
+ * - Displaying path segments between start and end locations
  * 
  * @component
  * @param {Object} props - Component properties
@@ -23,10 +32,18 @@ import type { CellType } from '../../types/tileData';
  * @param {types.HighlightedLocation} [props.highlightedLocation] - Optional location to highlight on the map
  * @param {types.HighlightedLocation} [props.startLocation] - Optional starting location to highlight on the map
  * @param {Object} [props.settings] - Optional display settings including font size preferences
+ * @param {PathSegment[]} [props.pathSegments] - Optional array of path segments to display
  * 
  * @returns {React.ReactElement} The rendered floor grid component
  */
-export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor, endLocation: highlightedLocation, startLocation, settings }) => {
+export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({ 
+    showGrid, 
+    currentFloor, 
+    endLocation: highlightedLocation, 
+    startLocation, 
+    settings,
+    pathSegments = []
+}) => {
     const gridSize = 60;
     const [hoveredCell, setHoveredCell] = useState<types.HoveredCellInfo | null>(null);
 
@@ -202,7 +219,7 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor, en
     }, gridWithStairs);
 
     // Add paths last to not override other elements
-    const finalGrid = currentFloorData.paths.reduce((grid: CellType[][], path: types.Path) => {
+    const gridWithBasicPaths = currentFloorData.paths.reduce((grid: CellType[][], path: types.Path) => {
         let updatedGrid = grid;
 
         for (let row = Math.min(path.start.y, path.end.y); row <= Math.max(path.start.y, path.end.y); row++) {
@@ -222,6 +239,42 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor, en
 
         return updatedGrid;
     }, gridWithFire);
+    
+    // Add the calculated path segments in orange
+    const finalGrid = pathSegments.reduce((grid: CellType[][], segment: PathSegment) => {
+        // Only process path segments for the current floor
+        if (segment.floor !== currentFloor) {
+            return grid;
+        }
+        
+        let updatedGrid = grid;
+        const start = segment.start;
+        const end = segment.end;
+        
+        // Determine the range of cells to color for this segment
+        const minRow = Math.min(start.y, end.y);
+        const maxRow = Math.max(start.y, end.y);
+        const minCol = Math.min(start.x, end.x);
+        const maxCol = Math.max(start.x, end.x);
+        
+        // Color all cells in the path segment orange
+        for (let row = minRow; row <= maxRow; row++) {
+            for (let col = minCol; col <= maxCol; col++) {
+                const currentCell = updatedGrid[row]?.[col];
+                // Only update path cells
+                if (currentCell && (currentCell.type === 'path' || currentCell.type === 'entry')) {
+                    updatedGrid = updateGridCell(updatedGrid, row, col, {
+                        ...currentCell,
+                        type: 'calculated-path',
+                        color: '#FFA500', // Orange color for the path
+                        label: currentCell.label,
+                    });
+                }
+            }
+        }
+        
+        return updatedGrid;
+    }, gridWithBasicPaths);
 
     return (
         <div className="p-4 relative">

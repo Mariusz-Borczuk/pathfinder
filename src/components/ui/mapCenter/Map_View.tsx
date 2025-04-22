@@ -2,6 +2,12 @@ import React, { useRef } from 'react';
 import { MapViewProps } from '../../types/types';
 import { FloorGrid } from './Coordinates_Room_Converter';
 import MapLegend from './MapLegend';
+import { PathSegment } from './topPart/PathFinder';
+
+// Update MapViewProps interface to include pathSegments
+interface ExtendedMapViewProps extends MapViewProps {
+  pathSegments?: PathSegment[];
+}
 
 /**
  * A component that renders a map view of the current floor.
@@ -16,14 +22,16 @@ import MapLegend from './MapLegend';
  * @param {Object|null} props.highlightedLocation - The destination location to highlight on the map, if any
  * @param {Object|null} props.startLocation - The starting location to highlight on the map, if any
  * @param {Object} props.settings - Application settings that affect map display
+ * @param {PathSegment[]} props.pathSegments - Path segments to display on the map
  * @returns {JSX.Element} The rendered map view component
  */
-export const MapView: React.FC<MapViewProps> = ({ 
+export const MapView: React.FC<ExtendedMapViewProps> = ({ 
     currentFloor, 
     showGrid, 
     endLocation, 
     startLocation, 
-    settings 
+    settings,
+    pathSegments = [] 
 }) => {
     const mapRef = useRef<HTMLDivElement>(null);
     
@@ -41,6 +49,7 @@ export const MapView: React.FC<MapViewProps> = ({
                     endLocation={endLocation}
                     startLocation={startLocation}
                     settings={settings}
+                    pathSegments={pathSegments}
                 />
             </div>
             <MapLegend settings={settings} />
