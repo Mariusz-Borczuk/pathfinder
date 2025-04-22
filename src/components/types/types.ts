@@ -77,7 +77,8 @@ export interface PathMapProps {
 export interface FloorGridProps {
     showGrid: boolean;
     currentFloor: number;
-    highlightedLocation?: LocationSearchResult | null;
+    endLocation?: LocationSearchResult | null;
+    startLocation?: LocationSearchResult | null;
     settings?: AccessibilitySettings;
 }
 export interface Route {
@@ -128,7 +129,8 @@ export interface MapViewProps {
     currentFloor: number;
     showGrid: boolean;
     settings?: any;
-    highlightedLocation?: LocationSearchResult | null;
+    endLocation?: LocationSearchResult | null;
+    startLocation?: LocationSearchResult | null;
 }
 export interface LayoutProps {
     children: React.ReactNode;
@@ -188,3 +190,4 @@ export interface AccessibilityButtonProps {
     icon: React.ReactNode;
     description: string;
 }
+export const coordRegex = /(?:x\s*:\s*(\d+)\s*y\s*:\s*(\d+))|(?:\(?(\d+)\s*,\s*(\d+)\)?)/i;

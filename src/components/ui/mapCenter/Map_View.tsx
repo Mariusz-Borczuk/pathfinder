@@ -1,7 +1,7 @@
-import MapLegend from './MapLegend';
 import React, { useRef } from 'react';
 import { MapViewProps } from '../../types/types';
 import { FloorGrid } from './Coordinates_Room_Converter';
+import MapLegend from './MapLegend';
 
 /**
  * A component that renders a map view of the current floor.
@@ -13,15 +13,22 @@ import { FloorGrid } from './Coordinates_Room_Converter';
  * @param {Object} props - Component props
  * @param {string} props.currentFloor - The current floor to display in the map
  * @param {boolean} props.showGrid - Whether to display the grid on the map
- * @param {Object|null} props.highlightedLocation - The location to highlight on the map, if any
+ * @param {Object|null} props.highlightedLocation - The destination location to highlight on the map, if any
+ * @param {Object|null} props.startLocation - The starting location to highlight on the map, if any
  * @param {Object} props.settings - Application settings that affect map display
  * @returns {JSX.Element} The rendered map view component
  */
-export const MapView: React.FC<MapViewProps> = ({ currentFloor, showGrid, highlightedLocation, settings }) => {
+export const MapView: React.FC<MapViewProps> = ({ 
+    currentFloor, 
+    showGrid, 
+    endLocation, 
+    startLocation, 
+    settings 
+}) => {
     const mapRef = useRef<HTMLDivElement>(null);
     
     return (
-        <div className="w-fill h-fit flex flex-col items-center     justify-center">            
+        <div className="w-fill h-fit flex flex-col items-center justify-center">            
             <div
                 ref={mapRef}
                 className="bg-gray-700 rounded-2xl h-fit flex items-center justify-center w-fit"
@@ -31,9 +38,9 @@ export const MapView: React.FC<MapViewProps> = ({ currentFloor, showGrid, highli
                 <FloorGrid 
                     showGrid={showGrid} 
                     currentFloor={currentFloor} 
-                    highlightedLocation={highlightedLocation} 
+                    endLocation={endLocation}
+                    startLocation={startLocation}
                     settings={settings}
-                    
                 />
             </div>
             <MapLegend settings={settings} />

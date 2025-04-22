@@ -79,7 +79,7 @@ export const floor1Data: FloorData = {
         { location: { x: 46, y: 6 } },
         { location: { x: 46, y: 13 } },
         { location: { x: 46, y: 20 } },
-        { location: { x: 47, y: 44 } },
+        { location: { x: 48, y: 44 } },
         { location: { x: 35, y: 44 } },
         { location: { x: 22, y: 44 } },
     ],

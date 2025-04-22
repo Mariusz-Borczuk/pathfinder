@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { getSettings } from '../settings';
-import { RestroomIcon } from '@/utils/icons';
 import AddCustomNavigationButton from './Custom_Location';
 import { RightSidebarProps, NavigationItem } from '@/components/types/types';
-import { MdElevator, MdOutlineDirectionsWalk, MdSportsTennis, MdWater } from 'react-icons/md';
+import { MdElevator, MdOutlineDirectionsWalk, MdSportsTennis, MdWater, RestroomIcon } from '@/utils/icons';
 
 /**
  * QuickNavigation component provides a list of predefined locations and custom navigation items.

@@ -21,11 +21,12 @@ import type { CellType } from '../../types/tileData';
  * @param {boolean} props.showGrid - Whether to display grid lines
  * @param {number} props.currentFloor - The floor number to display (1-based index)
  * @param {types.HighlightedLocation} [props.highlightedLocation] - Optional location to highlight on the map
+ * @param {types.HighlightedLocation} [props.startLocation] - Optional starting location to highlight on the map
  * @param {Object} [props.settings] - Optional display settings including font size preferences
  * 
  * @returns {React.ReactElement} The rendered floor grid component
  */
-export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor, highlightedLocation, settings }) => {
+export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor, endLocation: highlightedLocation, startLocation, settings }) => {
     const gridSize = 60;
     const [hoveredCell, setHoveredCell] = useState<types.HoveredCellInfo | null>(null);
 
@@ -263,11 +264,17 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor, hi
                             const borderLeft = needsLeftBorder ? '1px solid #333' : 'none';
                             const borderRight = needsRightBorder ? '1px solid #333' : 'none';
 
-                            // Check if this cell should be highlighted
+                            // Check if this cell should be highlighted as destination
                             const isHighlighted = highlightedLocation && 
                                                 highlightedLocation.floor === currentFloor &&
                                                 highlightedLocation.location.y === rowIndex && 
                                                 highlightedLocation.location.x === colIndex;
+                                                
+                            // Check if this cell should be highlighted as starting point
+                            const isStartPoint = startLocation && 
+                                              startLocation.floor === currentFloor &&
+                                              startLocation.location.y === rowIndex && 
+                                              startLocation.location.x === colIndex;
 
                             const cellTitle = cell.label ? `${cell.label} (${colIndex}, ${rowIndex})` : `(${colIndex}, ${rowIndex})`;
 
@@ -304,7 +311,17 @@ export const FloorGrid: React.FC<FloorGridProps> = ({ showGrid, currentFloor, hi
                                             title={highlightedLocation.description || highlightedLocation.name}
                                         >
                                             <div className="absolute w-4 h-4 bg-red-500 animate-pulse border-2 border-white rounded-sm">
-                                                <div className="absolute inset-0 bg-red-500 rounded-full animate-ping opacity-75"></div>
+                                                <div className="absolute inset-0 bg-red-500 rounded-full animate-ping"></div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {isStartPoint && (
+                                        <div 
+                                            className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+                                            title={startLocation.description || startLocation.name}
+                                        >
+                                           <div className="absolute w-4 h-4 bg-green-500 animate-pulse border-2 border-white rounded-sm">
+                                                <div className="absolute inset-0 bg-green-500 rounded-full animate-ping"></div>
                                             </div>
                                         </div>
                                     )}

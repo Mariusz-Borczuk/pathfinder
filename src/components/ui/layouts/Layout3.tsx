@@ -1,16 +1,17 @@
-import React, { useState } from "react";
 import { Eye, Type } from "lucide-react";
-import { getSettings } from "../settings";
-import { MapView } from "../mapCenter/Map_View";
-import { SearchBar } from "../leftMenu/SearchBar";
-import { MainHeader } from "../leftMenu/Main_Header";
-import { RightSidebar } from "../rightMenu/Right_Sidebar";
-import FloorManagement from "../leftMenu/Floor_Management";
+import React, { useState } from "react";
 import AccessibilityButton from "../../Accessibility_Button";
-import { QuickNavigation } from "../leftMenu/Quick_Navigation";
-import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
-import {LocationSearchField } from "../mapCenter/topPart/LocationSearchField";
 import { AccessibilitySettings, LayoutProps, LocationSearchResult } from "../../types/types";
+import FloorManagement from "../leftMenu/Floor_Management";
+import { MainHeader } from "../leftMenu/Main_Header";
+import { QuickNavigation } from "../leftMenu/Quick_Navigation";
+import { SearchBar } from "../leftMenu/SearchBar";
+import { MapView } from "../mapCenter/Map_View";
+import { EndLocationSearchField } from "../mapCenter/topPart/EndLocationSearchField";
+import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
+import { StartLocationSearchField } from "../mapCenter/topPart/StartLocationSearchField";
+import { RightSidebar } from "../rightMenu/Right_Sidebar";
+import { getSettings } from "../settings";
 
 /**
  * WayfindingApp3 component represents the main layout for the wayfinding application.
@@ -41,9 +42,18 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [currentFloor, setCurrentFloor] = useState(1);
   const [showGrid, setShowGrid] = useState(false);
   const [highlightedLocation, setHighlightedLocation] = useState<LocationSearchResult | null>(null);
+  const [startLocation, setStartLocation] = useState<LocationSearchResult | null>(null);
 
   const handleSearch = (result: LocationSearchResult) => {
     setHighlightedLocation(result);
+    // If the result is on a different floor, change to that floor
+    if (result.floor !== currentFloor) {
+      setCurrentFloor(result.floor);
+    }
+  };
+
+  const handleSetStartLocation = (result: LocationSearchResult) => {
+    setStartLocation(result);
     // If the result is on a different floor, change to that floor
     if (result.floor !== currentFloor) {
       setCurrentFloor(result.floor);
@@ -139,31 +149,41 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
         />
       </aside>
 
-      <div className="flex-1 p-4">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex gap-4 items-center p-2 mb-4 bg-gray-800 rounded-lg w-full"> 
-            <div className="flex items-center space-x-4 w-196">
-              <div className="flex-1">
-                <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} settings={settings} />
-              </div>
-              <div className="flex-1">
-                <LocationSearchField 
-                  onSearch={handleSearch} 
-                  currentFloor={currentFloor}
-                  setCurrentFloor={setCurrentFloor}
-                  settings={settings}
-                />
-              </div>
-              
+      <div className="flex-1 p-4 flex flex-col">
+        {/* Top control bar - Updated to align all elements in one line with better spacing */}
+        <div className="flex items-center space-x-3 py-2 px-3 mb-4 bg-gray-800 rounded-lg w-full">
+          <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} settings={settings} />
+          
+          <div className="flex-1 flex space-x-3">
+            <div className="w-1/2">
+              <StartLocationSearchField
+                onSearch={handleSetStartLocation} 
+                currentFloor={currentFloor}
+                setCurrentFloor={setCurrentFloor}
+                settings={settings}
+              />
+            </div>
+            <div className="w-1/2">
+              <EndLocationSearchField 
+                onSearch={handleSearch} 
+                currentFloor={currentFloor}
+                setCurrentFloor={setCurrentFloor}
+                settings={settings}
+              />
             </div>
           </div>
         </div>
-        <MapView  
-          settings={settings}   
-          currentFloor={currentFloor}
-          showGrid={showGrid}
-          highlightedLocation={highlightedLocation}
-        />
+        
+        {/* Map View takes remaining space */}
+        <div className="flex-1 overflow-hidden">
+          <MapView  
+            settings={settings}   
+            currentFloor={currentFloor}
+            showGrid={showGrid}
+            endLocation={highlightedLocation}
+            startLocation={startLocation}
+          />
+        </div>
       </div>
       <RightSidebar 
         settings={settings}

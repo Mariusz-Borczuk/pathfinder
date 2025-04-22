@@ -1,42 +1,23 @@
-
-import { floor1Data } from '../../../types/floor1.data';
-import { floor2Data } from '../../../types/floor2.data';
-import { floor3Data } from '../../../types/floor3.data';
-import { floor4Data } from '../../../types/floor4.data';
-import React, { useEffect, useMemo, useState } from 'react';
-import { getFontSizeClass, getSearchStyles } from '../../settings';
-import { Coordinate, LocationSearchFieldProps, LocationSearchResult } from '../../../types/types';
-import { FaFireExtinguisher, FaRestroom, FaWrench, MdElevator, MdLocationPin, MdSearch, MdStairs, SiGoogleclassroom } from '@/utils/icons';
+import { FaFireExtinguisher, FaPlay, FaRestroom, FaWrench, MdElevator, MdLocationPin, MdStairs, SiGoogleclassroom } from '@/utils/icons';
+import React, { useEffect, useState } from 'react';
+import { allFloorData, Coordinate, coordRegex, LocationSearchFieldProps, LocationSearchResult } from '../../../types/types';
+import { getFontSizeClass, getStartLocationStyles } from '../../settings';
 
 /**
- * A search input component that allows users to search for locations by name 
- * (classrooms, bathrooms, etc.) or by coordinates.
- */
-/**
- * A component for searching locations within a building.
+ * A search input component that allows users to set their starting location
+ * either by selecting a known location (classroom, bathroom, etc.) or by entering coordinates.
  * 
- * This component provides a search field that enables users to look up:
- * - Classrooms by number
- * - Bathrooms
- * - Elevators
- * - Staircases
- * - Utility rooms
- * - Fire equipment
- * - Specific coordinates (in formats like "x:10 y:20", "10,20", or "(10,20)")
- * 
- * The component displays search results in a dropdown, highlighting items that are on different floors
- * than the current one. Each result shows an icon based on location type, name, floor number, 
- * and coordinates.
+ * This component is styled in green to distinguish it as the "start" location selector.
  * 
  * @component
  * @param {Object} props - Component props
- * @param {Function} props.onSearch - Callback function triggered when a search result is selected
+ * @param {Function} props.onSearch - Callback function triggered when a start location is selected
  * @param {number} props.currentFloor - The floor currently being viewed
  * @param {Function} props.setCurrentFloor - Function to change the current floor
  * @param {Object} props.settings - Visual settings for styling the component
- * @returns {React.ReactElement} The location search field component with dropdown results
+ * @returns {React.ReactElement} The start location search field component with dropdown results
  */
-export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
+export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
   onSearch,
   currentFloor,
   setCurrentFloor,
@@ -44,15 +25,11 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<LocationSearchResult[]>([]);
-  const [isDropdownOpen,  setIsDropdownOpen] = useState(false);
-
-  // Combine all floor data
-  const allFloorData = useMemo(() => [floor1Data, floor2Data, floor3Data, floor4Data], []);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   // Parse the search query to check if it's a coordinate
   const parseCoordinates = (query: string): Coordinate | null => {
     // Format examples: "x:10 y:20", "10,20", "(10,20)"
-    const coordRegex = /(?:x\s*:\s*(\d+)\s*y\s*:\s*(\d+))|(?:\(?(\d+)\s*,\s*(\d+)\)?)/i;
     const match = query.match(coordRegex);
     
     if (match) {
@@ -83,10 +60,10 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
     if (coordinates) {
       results.push({
         type: 'coordinate',
-        name: `Coordinates (${coordinates.x}, ${coordinates.y})`,
+        name: `Start at (${coordinates.x}, ${coordinates.y})`,
         floor: currentFloor,
         location: coordinates,
-        description: `Location at coordinates (${coordinates.x}, ${coordinates.y})`
+        description: `Set starting point at coordinates (${coordinates.x}, ${coordinates.y})`
       });
     }
     
@@ -104,10 +81,10 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
             
           results.push({
             type: 'classroom',
-            name: `Classroom ${room.number}`,
+            name: `Start at Classroom ${room.number}`,
             floor: floorNumber,
-            location: entryCoord as Coordinate, // Since we provide defaultLocation as fallback, entryCoord will never be undefined
-            description: `Classroom ${room.number} on floor ${floorNumber}`
+            location: entryCoord as Coordinate,
+            description: `Set starting point at Classroom ${room.number} on floor ${floorNumber}`
           });
         }
       });
@@ -117,10 +94,10 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
         if (bathroom.type.toLowerCase().includes(lowerQuery) || 'bathroom'.includes(lowerQuery)) {
           results.push({
             type: 'bathroom',
-            name: `${bathroom.type} Bathroom`,
+            name: `Start at ${bathroom.type} Bathroom`,
             floor: floorNumber,
             location: bathroom.entry,
-            description: `${bathroom.type} Bathroom on floor ${floorNumber}`
+            description: `Set starting point at ${bathroom.type} Bathroom on floor ${floorNumber}`
           });
         }
       });
@@ -130,10 +107,10 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
         floorData.elevators.forEach((elevator, index) => {
           results.push({
             type: 'elevator',
-            name: `Elevator ${index + 1}`,
+            name: `Start at Elevator ${index + 1}`,
             floor: floorNumber,
             location: elevator.entry,
-            description: `Elevator ${index + 1} on floor ${floorNumber}`
+            description: `Set starting point at Elevator ${index + 1} on floor ${floorNumber}`
           });
         });
       }
@@ -146,10 +123,10 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
           
           results.push({
             type: 'stairs',
-            name: `Staircase ${index + 1}`,
+            name: `Start at Staircase ${index + 1}`,
             floor: floorNumber,
             location: { x: centerX, y: centerY },
-            description: `Staircase ${index + 1} on floor ${floorNumber}`
+            description: `Set starting point at Staircase ${index + 1} on floor ${floorNumber}`
           });
         });
       }
@@ -162,10 +139,10 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
           
           results.push({
             type: 'utilityRoom',
-            name: room.name,
+            name: `Start at ${room.name}`,
             floor: floorNumber,
             location: { x: centerX, y: centerY },
-            description: `${room.name} on floor ${floorNumber}`
+            description: `Set starting point at ${room.name} on floor ${floorNumber}`
           });
         }
       });
@@ -175,10 +152,10 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
         floorData.fireEquipment.forEach((equipment, index) => {
           results.push({
             type: 'fireEquipment',
-            name: `Fire Equipment ${index + 1}`,
+            name: `Start at Fire Equipment ${index + 1}`,
             floor: floorNumber,
             location: equipment.location,
-            description: `Fire Equipment ${index + 1} on floor ${floorNumber}`
+            description: `Set starting point at Fire Equipment ${index + 1} on floor ${floorNumber}`
           });
         });
       }
@@ -199,37 +176,44 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
     setIsDropdownOpen(false);
   };
 
-  // Get styles from the centralized settings
-  const styles = getSearchStyles(settings);
-  const fontSizeClass = getFontSizeClass(settings);
+  // Get the appropriate font size class based on settings
+  const fontSizeClass = settings && settings.fontSize ? getFontSizeClass({
+    fontSize: settings.fontSize,
+    contrast: settings.contrast || 'normal',
+    isDyslexicFont: settings.isDyslexicFont || false
+  }) : 'text-base';
+
+  // Custom green styles for the start location field
+  const styles = getStartLocationStyles(settings);
 
   return (
-    <div className="relative w-116">
+    <div className="relative w-full">
       <div className="relative">
-        <label htmlFor="location-search" className={`block font-medium ${styles.labelText} ${fontSizeClass}`}>
-          Find Location
+        <label htmlFor="start-location-search" className={`block text-sm font-medium ${styles.labelText} ${fontSizeClass}`}>
+          Set Starting Point
         </label>
         <input
-          id="location-search"
+          id="start-location-search"
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search rooms, bathrooms, or coordinates (e.g., 10,20)"
-          className={`w-full  px-4 pr-12 py-3 ${styles.inputBg} ${styles.inputText} ${styles.inputBorder} rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-md ${fontSizeClass}`}
+          placeholder="Search start point..."
+          className={`w-full px-3 pr-10 py-2 ${styles.inputBg} ${styles.inputText} ${styles.inputBorder} rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm ${fontSizeClass}`}
           onFocus={() => searchResults.length > 0 && setIsDropdownOpen(true)}
           onBlur={() => setTimeout(() => setIsDropdownOpen(false), 200)}
+          aria-label="Search for a starting location"
         />
-        <div className="absolute inset-y-0 right-0 flex items-center top-6">   
+        <div className="absolute inset-y-0 right-0 flex items-center top-5"> 
           <button 
-            className={`${styles.buttonBg} ${styles.buttonText} h-full px-3 rounded-r-lg shadow-lg hover:scale-105 hover:shadow-lg transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 flex items-center justify-center border-l ${styles.inputBorder}`}
+            className={`${styles.buttonBg} ${styles.buttonText} h-full px-2 rounded-r-lg shadow-sm hover:scale-105 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500 flex items-center justify-center border-l ${styles.inputBorder}`}
             onClick={() => {
               if (searchResults.length > 0 && searchResults[0]) {
-            handleResultClick(searchResults[0]);
+                handleResultClick(searchResults[0]);
               }
             }}
-            aria-label="Search"
+            aria-label="Set starting point"
           >
-            <MdSearch className={`h-5 w-5 ${styles.iconColor}`} />
+            <FaPlay className={`h-4 w-4 ${styles.iconColor}`} />
           </button>
         </div>
       </div>
@@ -239,31 +223,32 @@ export const LocationSearchField: React.FC<LocationSearchFieldProps> = ({
           <div className="overflow-y-auto max-h-60">
             {searchResults.map((result, index) => (
               <div
-            key={`${result.type}-${result.name}-${index}`}
-            className={`px-5 py-3 cursor-pointer ${styles.dropdownItemHover} flex items-center ${fontSizeClass}`}
-            onClick={() => handleResultClick(result)}
+                key={`${result.type}-${result.name}-${index}`}
+                className={`px-4 py-2 cursor-pointer ${styles.dropdownItemHover} flex items-center ${fontSizeClass}`}
+                onClick={() => handleResultClick(result)}
               >
-            <div className="mr-1 pr-2 text-xl">
-              {result.type === 'classroom' && <span><SiGoogleclassroom /></span>}
-              {result.type === 'bathroom' && <span><FaRestroom /></span>}
-              {result.type === 'elevator' && <span><MdElevator /></span>}
-              {result.type === 'stairs' && <span><MdStairs /></span>}
-              {result.type === 'fireEquipment' && <span><FaFireExtinguisher /></span>}
-              {result.type === 'utilityRoom' && <span><FaWrench /></span>}
-              {result.type === 'coordinate' && <span><MdLocationPin /></span>}
-            </div>
-            <div className="flex flex-col">
-              <span className={`font-semibold ${styles.resultText}`}>{result.name}</span>
-              <span className={`text-sm ${styles.resultDetailText}`}>
-                {result.type !== 'coordinate' ? `Floor ${result.floor} • ` : ''}
-                {`(${result.location.x}, ${result.location.y})`}
-              </span>
-            </div>
-            {result.floor !== currentFloor && (
-              <span className={`text-sm ${styles.highlightBadge} px-1 py-1 rounded ml-auto`}>
-                On Floor {result.floor}
-              </span>
-            )}
+                <div className="mr-1 pr-2 text-lg text-green-600">
+                  {/* Icons for different location types */}
+                  {result.type === 'classroom' && <span><SiGoogleclassroom /></span>}
+                  {result.type === 'bathroom' && <span><FaRestroom /></span>}
+                  {result.type === 'elevator' && <span><MdElevator /></span>}
+                  {result.type === 'stairs' && <span><MdStairs /></span>}
+                  {result.type === 'fireEquipment' && <span><FaFireExtinguisher /></span>}
+                  {result.type === 'utilityRoom' && <span><FaWrench /></span>}
+                  {result.type === 'coordinate' && <span><MdLocationPin /></span>}
+                </div>
+                <div className="flex flex-col">
+                  <span className={`font-semibold ${styles.resultText}`}>{result.name}</span>
+                  <span className={`text-sm ${styles.resultDetailText}`}>
+                    {result.type !== 'coordinate' ? `Floor ${result.floor} • ` : ''}
+                    {`(${result.location.x}, ${result.location.y})`}
+                  </span>
+                </div>
+                {result.floor !== currentFloor && (
+                  <span className={`text-xs ${styles.highlightBadge} px-1 py-0.5 rounded ml-auto`}>
+                    Floor {result.floor}
+                  </span>
+                )}
               </div>
             ))}
           </div>
