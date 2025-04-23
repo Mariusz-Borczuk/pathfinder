@@ -60,7 +60,7 @@ export const FindPathButton: React.FC<FindPathButtonProps> = ({
                  focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2`}
       onClick={onFindPath}
       disabled={isDisabled}
-      aria-label="Find path between selected locations"
+      aria-label="Found path between selected locations"
       title={isDisabled ? "Select both start and end locations first" : "Find path between selected locations"}
     >
       <FaRoute className="mr-2" />

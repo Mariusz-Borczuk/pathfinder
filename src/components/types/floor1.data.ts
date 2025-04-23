@@ -73,7 +73,7 @@ export const floor1Data: FloorData = {
     fireEquipment: [
         { location: { x: 7, y: 46 } },
         { location: { x: 7, y: 28 } },
-        { location: { x: 9, y: 8 } },
+        { location: { x: 7, y: 8 } },
         { location: { x: 13, y: 9 } },
         { location: { x: 27, y: 7 } },
         { location: { x: 46, y: 6 } },

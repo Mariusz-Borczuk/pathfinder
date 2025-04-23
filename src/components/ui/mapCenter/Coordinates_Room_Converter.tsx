@@ -240,7 +240,7 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
         return updatedGrid;
     }, gridWithFire);
     
-    // Add the calculated path segments in orange
+    // Add the calculated path segments in purple
     const finalGrid = pathSegments.reduce((grid: CellType[][], segment: PathSegment) => {
         // Only process path segments for the current floor
         if (segment.floor !== currentFloor) {
@@ -257,7 +257,7 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
         const minCol = Math.min(start.x, end.x);
         const maxCol = Math.max(start.x, end.x);
         
-        // Color all cells in the path segment orange
+        // Color all cells in the path segment purple
         for (let row = minRow; row <= maxRow; row++) {
             for (let col = minCol; col <= maxCol; col++) {
                 const currentCell = updatedGrid[row]?.[col];
@@ -266,7 +266,7 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
                     updatedGrid = updateGridCell(updatedGrid, row, col, {
                         ...currentCell,
                         type: 'calculated-path',
-                        color: '#FFA500', // Orange color for the path
+                        color: '#800080', // Purple color for the path
                         label: currentCell.label,
                     });
                 }

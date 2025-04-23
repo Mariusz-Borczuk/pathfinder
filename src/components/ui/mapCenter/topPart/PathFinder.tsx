@@ -1,13 +1,14 @@
 import React, { useCallback, useState } from 'react';
-import { AccessibilitySettings, LocationSearchResult } from '../../../types/types';
+import { PathFinder as CorePathFinder } from '../../../../PathFinder';
+import { AccessibilitySettings, Coordinate } from '../../../types/types';
 import { EndLocationSearchField } from './EndLocationSearchField';
 import { FindPathButton } from './FindPathButton';
 import { StartLocationSearchField } from './StartLocationSearchField';
 
 // Define path segment interface
 export interface PathSegment {
-  start: { x: number; y: number };
-  end: { x: number; y: number };
+  start: Coordinate;
+  end: Coordinate;
   floor: number;
 }
 
@@ -19,15 +20,7 @@ interface PathFinderProps {
 }
 
 /**
- * PathFinder component handles the UI for selecting start and end locations
- * and triggering the path finding logic.
- * 
- * @component
- * @param {Object} props - Component properties
- * @param {number} props.currentFloor - Current floor being viewed
- * @param {function} props.setCurrentFloor - Function to change current floor
- * @param {AccessibilitySettings} [props.settings] - Accessibility settings
- * @param {function} props.onPathFound - Callback when a path is found
+ * PathFinder UI component - Simplified to pass only coordinates to core PathFinder
  */
 export const PathFinder: React.FC<PathFinderProps> = ({
   currentFloor,
@@ -35,99 +28,119 @@ export const PathFinder: React.FC<PathFinderProps> = ({
   settings,
   onPathFound
 }) => {
-  const [startLocation, setStartLocation] = useState<LocationSearchResult | null>(null);
-  const [endLocation, setEndLocation] = useState<LocationSearchResult | null>(null);
+  const [startCoord, setStartCoord] = useState<Coordinate | null>(null);
+  const [startFloor, setStartFloor] = useState<number | null>(null);
+  const [endCoord, setEndCoord] = useState<Coordinate | null>(null);
+  const [endFloor, setEndFloor] = useState<number | null>(null);
+  
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Handler for when start location is selected
-  const handleStartLocationSearch = useCallback((result: LocationSearchResult) => {
-    setStartLocation(result);
+  // Handler for start location selection (receives coordinate and floor)
+  const handleStartLocationSearch = useCallback((coordinate: Coordinate | null, floor: number | null) => {
+    console.log("Start coordinates selected:", coordinate);
+    setStartCoord(coordinate);
+    setStartFloor(floor);
     setErrorMessage(null);
-  }, []);
+    if (floor && floor !== currentFloor) {
+      setCurrentFloor(floor);
+    }
+  }, [currentFloor, setCurrentFloor]);
 
-  // Handler for when end location is selected
-  const handleEndLocationSearch = useCallback((result: LocationSearchResult) => {
-    setEndLocation(result);
+  // Handler for end location selection (receives coordinate and floor)
+  const handleEndLocationSearch = useCallback((coordinate: Coordinate | null, floor: number | null) => {
+    console.log("End coordinates selected:", coordinate);
+    setEndCoord(coordinate);
+    setEndFloor(floor);
     setErrorMessage(null);
-  }, []);
+    if (floor && floor !== currentFloor) {
+      setCurrentFloor(floor);
+    }
+  }, [currentFloor, setCurrentFloor]);
 
-  // Find the path between start and end locations
-  const findPath = useCallback(async () => {
-    // Reset error message and set loading state
+  // Find the path using coordinates and floors
+  const findPath = useCallback(() => {
     setErrorMessage(null);
     setIsLoading(true);
 
+    const handleError = (message: string) => {
+      console.error("Pathfinding Error:", message);
+      setErrorMessage(message);
+      setIsLoading(false);
+    };
+
     try {
-      // Check if both locations are selected
-      if (!startLocation || !endLocation) {
-        setErrorMessage('Please select both start and end locations');
+      if (!startCoord || !endCoord || startFloor === null || endFloor === null) {
+        handleError('Please select both start and end locations');
         return;
       }
 
-      // Check if locations are on the same floor
-      if (startLocation.floor !== endLocation.floor) {
-        setErrorMessage('Pathfinding between different floors is not supported yet');
+      if (startFloor !== endFloor) {
+        handleError('Pathfinding between different floors is not supported yet');
         return;
       }
 
-      // Import the pathfinder logic
-      const { PathFinder: PathFinderClass } = await import('../../../../PathFinder');
-      
-      // Create pathfinder instance
-      const pathFinder = PathFinderClass({
-        startLocation,
-        endLocation,
-        currentFloor,
-        onPathFound,
-        onError: setErrorMessage
+      // Directly call the core PathFinder function, which is now a pure function (no hooks)
+      CorePathFinder({
+        startCoord,
+        endCoord,
+        currentFloor: startFloor,
+        onPathFound: (path) => {
+          setIsLoading(false);
+          onPathFound(path);
+        },
+        onError: handleError
       });
       
-      // Find the path if pathFinder is defined and has findPath method
-      if (pathFinder && typeof pathFinder === 'object' && 'findPath' in pathFinder) {
-        (pathFinder as { findPath: () => void }).findPath();
-      } else {
-        setErrorMessage('Failed to initialize path finder');
-      }
-      
     } catch (error) {
-      console.error('Error in pathfinding:', error);
-      setErrorMessage('An unexpected error occurred during pathfinding');
-    } finally {
-      setIsLoading(false);
+      console.error('Error during pathfinding setup:', error);
+      handleError('An unexpected error occurred during pathfinding setup');
     }
-  }, [startLocation, endLocation, currentFloor, onPathFound]);
+  }, [startCoord, startFloor, endCoord, endFloor, onPathFound]);
+
+  // Create minimal objects for FindPathButton (just enough to enable/disable the button)
+  const startMinimal = startCoord ? {
+    location: startCoord,
+    floor: startFloor ?? 0,
+    name: 'Start',
+    type: 'coordinate'
+  } : null;
+  
+  const endMinimal = endCoord ? {
+    location: endCoord,
+    floor: endFloor ?? 0,
+    name: 'End',
+    type: 'coordinate'
+  } : null;
 
   return (
     <div className="flex flex-col w-full space-y-3">
       <div className="flex space-x-4 items-start">
-        {/* Start location search field - now with selectedLocation prop */}
+        {/* Start location search field */}
         <div className="flex-1">
           <StartLocationSearchField
             onSearch={handleStartLocationSearch}
             currentFloor={currentFloor}
             setCurrentFloor={setCurrentFloor}
             settings={settings}
-            selectedLocation={startLocation}
           />
         </div>
         
-        {/* End location search field - now with selectedLocation prop */}
+        {/* End location search field */}
         <div className="flex-1">
           <EndLocationSearchField
             onSearch={handleEndLocationSearch}
             currentFloor={currentFloor}
             setCurrentFloor={setCurrentFloor}
             settings={settings}
-            selectedLocation={endLocation}
           />
         </div>
         
         {/* Find path button */}
         <div className="pt-5">
           <FindPathButton
-            startLocation={startLocation}
-            endLocation={endLocation}
+            startLocation={startMinimal}
+            endLocation={endMinimal}
             onFindPath={findPath}
             isLoading={isLoading}
             settings={settings}
@@ -137,7 +150,7 @@ export const PathFinder: React.FC<PathFinderProps> = ({
       
       {/* Error message display */}
       {errorMessage && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg" role="alert">
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg mt-2" role="alert">
           <span className="block sm:inline">{errorMessage}</span>
         </div>
       )}
