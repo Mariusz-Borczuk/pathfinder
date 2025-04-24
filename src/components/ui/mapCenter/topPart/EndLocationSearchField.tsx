@@ -1,17 +1,7 @@
 import { FaMapMarkerAlt, MdLocationPin, SiGoogleclassroom } from '@/utils/icons';
 import React, { useEffect, useState } from 'react';
-import { allFloorData, Coordinate, coordRegex, LocationSearchResult } from '../../../types/types';
+import { AccessibilityFontSizeProps, allFloorData, Coordinate, coordRegex, LocationSearchFieldProps, LocationSearchResult } from '../../../types/types';
 import { getEndLocationStyles, getFontSizeClass } from '../../settings';
-
-/**
- * Props for the search field, onSearch returns full LocationSearchResult or null
- */
-interface LocationSearchFieldProps {
-  onSearch: (result: LocationSearchResult | null) => void;
-  currentFloor: number;
-  setCurrentFloor?: (floor: number) => void;
-  settings?: any;
-}
 
 /**
  * End Location Search Field - Updated to support finding paths between different room types.
@@ -147,7 +137,7 @@ export const EndLocationSearchField: React.FC<LocationSearchFieldProps> = ({
           };
           
           results.push({
-            type: 'utility',
+            type: 'utilityRoom',
             name: room.name,
             floor: floorNumber,
             location: centerCoord,
@@ -175,7 +165,7 @@ export const EndLocationSearchField: React.FC<LocationSearchFieldProps> = ({
 
   // --- UI Rendering --- 
   const styles = getEndLocationStyles(settings);
-  const fontSizeClass = getFontSizeClass(settings);
+  const fontSizeClass = getFontSizeClass(settings as AccessibilityFontSizeProps);
 
   const getLocationIcon = (type?: string) => {
     switch(type) {

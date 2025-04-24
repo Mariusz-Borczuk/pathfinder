@@ -147,7 +147,7 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
           };
           
           results.push({
-            type: 'utility',
+            type: 'utilityRoom',
             name: room.name,
             floor: floorNumber,
             location: centerCoord,

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Grid } from 'lucide-react';
-import { getSettings } from '../../settings';
-import { AccessibilitySettings, GridToggleButtonProps } from '../../../types/types';
+import { getFontSizeClass } from '../../settings';
+import { AccessibilityFontSizeProps, GridToggleButtonProps } from '../../../types/types';
+import { IoMdGrid } from '@/utils/icons';
 
 /**
  * A button component that toggles the grid visibility on the map.
@@ -12,43 +12,42 @@ import { AccessibilitySettings, GridToggleButtonProps } from '../../../types/typ
  * @param {() => void} props.onToggle - Function to toggle grid visibility
  * @param {Object} [props.settings] - Accessibility settings for the component
  * @param {string} [props.settings.contrast="normal"] - Contrast setting ("normal" or "high")
- * @param {string} [props.settings.fontSize="medium"] - Font size setting
- * @param {boolean} [props.settings.isDyslexicFont=false] - Whether to use dyslexic-friendly font
+ * @param {string} [props.settings.fontSize="normal"] - Font size setting
  * 
  * @returns {JSX.Element} A button with appropriate styling based on grid visibility state
  */
 export const GridToggleButton: React.FC<GridToggleButtonProps> = ({ 
     showGrid, 
     onToggle, 
-    settings = { contrast: "normal", fontSize: "medium", isDyslexicFont: false }
+    settings
 }) => {
     // Simplified initialization using the current showGrid state for the label
     const gridLabel = showGrid ? "Hide Grid" : "Show Grid";
+    // Get font size class from settings
+    const fontSizeClass = getFontSizeClass(settings as AccessibilityFontSizeProps);
     
     // Get contrast-appropriate styles
     const labelClass = settings.contrast === "high" 
-        ? `text-white font-bold ${getSettings(settings as AccessibilitySettings)} mb-1 px-2 py-0.5 rounded-md` 
-        : `text-white font-medium ${getSettings(settings as AccessibilitySettings)} mb-1 px-2 py-0.5 rounded-md`;
+        ? `text-white font-bold ${fontSizeClass} mb-1 px-2 py-0.5 rounded-md` 
+        : `text-white font-medium ${fontSizeClass} mb-1 px-2 py-0.5 rounded-md`;
     
     return (
-        <div className="flex flex-col items-center">
-            <span className={labelClass}>{gridLabel}</span>
+        <div className="flex flex-col items-center justify-center">
+            <span className={`text-center ${labelClass}`}>{gridLabel}</span>
             <button
-                onClick={onToggle}
-                className={`p-2.5 rounded-lg ${
-                    showGrid 
-                    ? "bg-gradient-to-br bg-blue-600" 
-                    : "bg-gradient-to-br bg-gray-700"
-                } hover:shadow-lg hover:scale-105 flex items-center justify-center border`}
-                title={gridLabel}
-                aria-label={gridLabel}
+            onClick={onToggle}
+            className={`p-2.5 rounded-lg ${
+                showGrid 
+                ? "bg-blue-600 hover:bg-blue-700" 
+                : "bg-gray-700 hover:bg-gray-800"
+            } hover:shadow-lg hover:scale-105 flex items-center justify-center border`}
+            title={gridLabel}
+            aria-label={gridLabel}
             >
-                <Grid
-                    className={`w-6 h-6 ${showGrid ? "text-white" : "text-gray-300"}`}
-                    strokeWidth={showGrid ? 2 : 1.5}
-                    size={16}
-                />
+            <IoMdGrid
+                className={`w-6 h-6 ${showGrid ? "text-white" : "text-gray-300"}`}
+            />
             </button>
         </div>
     );
-};
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { tileData } from '../../types/tileData';
-import { getFontSizeClass } from '../settings'; 
-import { MapLegendProps } from '../../types/types'; 
+import { AccessibilityFontSizeProps, MapLegendProps } from '../../types/types';
+import { getFontSizeClass } from '../settings';
 
 /**
  * A component that displays a legend for the map, showing what each color represents.
@@ -15,32 +15,24 @@ import { MapLegendProps } from '../../types/types';
  * @param {object} props.settings - Accessibility settings object
  * @param {string} props.settings.fontSize - Font size setting ('small', 'normal', 'large', etc.)
  * @param {string} props.settings.contrast - Contrast setting ('normal', 'high', etc.)
- * @param {boolean} props.settings.isDyslexicFont - Whether to use dyslexic-friendly font
  * 
  * @example
  * ```tsx
  * <MapLegend settings={{
  *   fontSize: "large",
  *   contrast: "high",
- *   isDyslexicFont: true
  * }} />
  * ```
  */
 export const MapLegend: React.FC<MapLegendProps> = ({ settings }) => {
-    // Get full accessibility settings or use defaults
-    const accessSettings = settings || {
-        fontSize: "normal",
-        contrast: "normal", 
-        isDyslexicFont: false
-    };
+  
 
     // Determine font size and family classes
-    const fontSizeClass = getFontSizeClass(accessSettings);
-    const fontFamilyClass = accessSettings.isDyslexicFont ? "font-dyslexic" : "";
+    const fontSizeClass = getFontSizeClass(settings as AccessibilityFontSizeProps);
 
     const legendItems = [
         { label: 'Classroom', color: tileData.classroom.color },
-        { label: 'Entry Point', color: tileData.entry.color },
+        { label: 'Entry Point', color: tileData.classroomEntry.color },
         { label: 'Path', color: tileData.path.color },
         { label: 'Bathroom', color: tileData.bathroom.color },
         { label: 'Elevator', color: tileData.elevator.color },
@@ -52,7 +44,7 @@ export const MapLegend: React.FC<MapLegendProps> = ({ settings }) => {
     return (
         <div className="mt-4 p-4 bg-gray-800 rounded-lg shadow-sm border border-gray-700">
             {/* Apply settings to the title */}
-            <h3 className={`text-lg font-semibold mb-3 text-gray-200 ${fontSizeClass} ${fontFamilyClass}`}>Map Legend</h3>
+            <h3 className={`text-lg font-semibold mb-3 text-gray-200 ${fontSizeClass}`}>Map Legend</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {legendItems.map((item, index) => (
                     <div key={index} className="flex items-center">
@@ -61,7 +53,7 @@ export const MapLegend: React.FC<MapLegendProps> = ({ settings }) => {
                             style={{ backgroundColor: item.color }}
                         />
                         {/* Apply settings to the label span */}
-                        <span className={`text-gray-300 ${fontSizeClass} ${fontFamilyClass}`}>{item.label}</span>
+                        <span className={`text-gray-300 ${fontSizeClass}`}>{item.label}</span>
                     </div>
                 ))}
             </div>

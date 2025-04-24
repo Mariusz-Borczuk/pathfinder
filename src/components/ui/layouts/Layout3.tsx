@@ -1,12 +1,11 @@
 import { PathSegment } from "@/PathFinder";
-import { Eye, Type } from "lucide-react";
+import { FaWheelchair, FiType, IoMdEye, } from "@/utils/icons";
 import React, { useState } from "react";
 import AccessibilityButton from "../../Accessibility_Button";
 import { AccessibilitySettings, Coordinate, LayoutProps, LocationSearchResult } from "../../types/types";
 import FloorManagement from "../leftMenu/Floor_Management";
 import { MainHeader } from "../leftMenu/Main_Header";
 import { QuickNavigation } from "../leftMenu/Quick_Navigation";
-import { SearchBar } from "../leftMenu/SearchBar";
 import { MapView } from "../mapCenter/Map_View";
 import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
 import { PathFinder } from "../mapCenter/topPart/PathFinder";
@@ -37,21 +36,15 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [settings, setSettings] = useState<AccessibilitySettings>({
     fontSize: "normal",
     contrast: "normal",
-    isDyslexicFont: false,
   });
+  const [isWheelchair, setIsWheelchair] = useState<boolean>(false);
   const [currentFloor, setCurrentFloor] = useState(1);
   const [showGrid, setShowGrid] = useState(false);
-  const [highlightedLocation, setHighlightedLocation] = useState<LocationSearchResult | null>(null);
   const [pathSegments, setPathSegments] = useState<PathSegment[]>([]);
   const [pathStartLocation, setPathStartLocation] = useState<LocationSearchResult | null>(null);
   const [pathEndLocation, setPathEndLocation] = useState<LocationSearchResult | null>(null);
 
-  const handleSearch = (result: LocationSearchResult) => {
-    setHighlightedLocation(result);
-    if (result.floor !== currentFloor) {
-      setCurrentFloor(result.floor);
-    }
-  };
+
 
   // Updated handler to receive path segments and coordinates
   const handlePathFound = (path: PathSegment[], startCoord: Coordinate, endCoord: Coordinate) => {
@@ -61,17 +54,17 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
     // These will be used to highlight the start and end points on the map
     if (path.length > 0) {
       setPathStartLocation({
-        type: 'pathPoint',
+        type: 'path',
         name: 'Path Start',
-        floor: path[0].floor,
+        floor: path[0]?.floor ?? currentFloor,
         location: startCoord,
         description: 'Starting point of the path'
       });
       
       setPathEndLocation({
-        type: 'pathPoint',
+        type: 'path',
         name: 'Path End', 
-        floor: path[0].floor,
+        floor: path[0]?.floor ?? currentFloor,
         location: endCoord,
         description: 'Destination point of the path'
       });
@@ -112,7 +105,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
                     isActive={settings.fontSize === size}
                     onClick={() => setSettings({ ...settings, fontSize: size })}
                     icon={
-                      <Type
+                      <FiType
                         className={`text-gray-200 ${
                           settings.contrast === "high"
                             ? " text-zinc-950"
@@ -129,18 +122,15 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
             <div className="h-px bg-gray-600 my-3" />
 
             <div className="flex items-center justify-between">
-              <label className="text-gray-300">Dyslexic Font</label>
+              <label className="text-gray-300">Wheelchair mode</label>
               <AccessibilityButton
-                label="Toggle dyslexic font"
-                isActive={settings.isDyslexicFont}
+                label="Toggle wheelchair accessibility"
+                isActive={isWheelchair}
                 onClick={() =>
-                  setSettings({
-                    ...settings,
-                    isDyslexicFont: !settings.isDyslexicFont,
-                  })
+                  setIsWheelchair(!isWheelchair)
                 }
-                icon={<Type className="text-gray-200" />}
-                description="Toggle dyslexia-friendly font"
+                icon={<FaWheelchair className="text-gray-200 w-6 h-6" />}
+                description="Toggle wheelchair accessibility"
               />
             </div>
 
@@ -155,14 +145,12 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
                     contrast: settings.contrast === "high" ? "normal" : "high",
                   })
                 }
-                icon={<Eye className="text-gray-200" />}
+                icon={<IoMdEye className="text-gray-200" />}
                 description="Toggle high contrast mode"
               />
             </div>
           </div>
         </div>
-
-        <SearchBar settings={settings} currentFloor={currentFloor} onSearch={handleSearch} />
 
         <QuickNavigation settings={settings} currentFloor={currentFloor} />
         <FloorManagement 
@@ -171,10 +159,10 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
         />
       </aside>
 
-      <div className="flex-1 p-4 flex flex-col">
-        {/* Top control bar - Now includes PathFinder which contains its own button and search fields */}
-        <div className="flex items-start space-x-3 py-2 px-3 mb-4 bg-gray-800 rounded-lg w-full">
-          <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} settings={settings} />
+      <div className="flex-1 p-4 flex flex-col justify-center">
+        {/* Top control bar with centered PathFinder */}
+        <div className="flex items-center justify-center space-x-3 py-4 px-3 mb-4 bg-gray-800 rounded-lg w-full shadow-md">
+          <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} settings={{ contrast: settings.contrast, fontSize: settings.fontSize }} />
           
           <PathFinder 
             currentFloor={currentFloor}
@@ -184,13 +172,13 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
           />
         </div>
         
-        {/* Map View takes remaining space */}
-        <div className="flex-1 overflow-hidden">
+        {/* Map View with centered content */}
+        <div className="flex-1 overflow-hidden flex items-center justify-center">
           <MapView  
             settings={settings}   
             currentFloor={currentFloor}
             showGrid={showGrid}
-            endLocation={highlightedLocation || pathEndLocation}
+            endLocation={pathEndLocation}
             startLocation={pathStartLocation}
             pathSegments={pathSegments}
           />

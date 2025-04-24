@@ -3,15 +3,8 @@ import React, { useState } from 'react';
 import type { CellType } from '../../types/tileData';
 import { tileData } from '../../types/tileData';
 import * as types from '../../types/types';
-import { FloorGridProps } from '../../types/types';
+import { pathSegmentsProps } from '../../types/types';
 import { getFontSizeClass } from '../settings';
-
-/**
- * Updated FloorGrid component props to include path segments
- */
-interface ExtendedFloorGridProps extends FloorGridProps {
-    pathSegments?: PathSegment[];
-}
 
 /**
  * FloorGrid component renders a visual representation of a floor map with various room types.
@@ -29,14 +22,13 @@ interface ExtendedFloorGridProps extends FloorGridProps {
  * @param {Object} props - Component properties
  * @param {boolean} props.showGrid - Whether to display grid lines
  * @param {number} props.currentFloor - The floor number to display (1-based index)
- * @param {types.HighlightedLocation} [props.highlightedLocation] - Optional location to highlight on the map
  * @param {types.HighlightedLocation} [props.startLocation] - Optional starting location to highlight on the map
  * @param {Object} [props.settings] - Optional display settings including font size preferences
  * @param {PathSegment[]} [props.pathSegments] - Optional array of path segments to display
  * 
  * @returns {React.ReactElement} The rendered floor grid component
  */
-export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({ 
+export const FloorGrid: React.FC<pathSegmentsProps> = ({ 
     showGrid, 
     currentFloor, 
     endLocation: highlightedLocation, 
@@ -117,7 +109,7 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
                     row: entry.y,
                     col: entry.x,
                     type: 'entry',
-                    color: tileData.entry.color,
+                    color: tileData.classroomEntry.color,
                     label: `${classroom.number}-E${index + 1}`,
                 });
             });
@@ -127,7 +119,7 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
                 row: classroom.entry.y,
                 col: classroom.entry.x,
                 type: 'entry',
-                color: tileData.entry.color,
+                color: tileData.classroomEntry.color,
                 label: `${classroom.number}-E`,
             });
         }
