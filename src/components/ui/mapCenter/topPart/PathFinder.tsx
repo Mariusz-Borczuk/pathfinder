@@ -1,26 +1,20 @@
 import React, { useCallback, useState } from 'react';
-import { PathFinder as CorePathFinder } from '../../../../PathFinder';
-import { AccessibilitySettings, Coordinate } from '../../../types/types';
+import { PathFinder as CorePathFinder, PathSegment } from '../../../../PathFinder';
+import { AccessibilitySettings, Coordinate, LocationSearchResult } from '../../../types/types';
 import { EndLocationSearchField } from './EndLocationSearchField';
 import { FindPathButton } from './FindPathButton';
 import { StartLocationSearchField } from './StartLocationSearchField';
-
-// Define path segment interface
-export interface PathSegment {
-  start: Coordinate;
-  end: Coordinate;
-  floor: number;
-}
 
 interface PathFinderProps {
   currentFloor: number;
   setCurrentFloor: (floor: number) => void;
   settings?: AccessibilitySettings;
-  onPathFound: (path: PathSegment[]) => void;
+  onPathFound: (path: PathSegment[], startCoord: Coordinate, endCoord: Coordinate) => void;
 }
 
 /**
- * PathFinder UI component - Simplified to pass only coordinates to core PathFinder
+ * PathFinder UI component - Updated to work with LocationSearchResult objects
+ * for proper handling of room entries and path finding between different room types
  */
 export const PathFinder: React.FC<PathFinderProps> = ({
   currentFloor,
@@ -28,37 +22,33 @@ export const PathFinder: React.FC<PathFinderProps> = ({
   settings,
   onPathFound
 }) => {
-  const [startCoord, setStartCoord] = useState<Coordinate | null>(null);
-  const [startFloor, setStartFloor] = useState<number | null>(null);
-  const [endCoord, setEndCoord] = useState<Coordinate | null>(null);
-  const [endFloor, setEndFloor] = useState<number | null>(null);
+  const [startLocation, setStartLocation] = useState<LocationSearchResult | null>(null);
+  const [endLocation, setEndLocation] = useState<LocationSearchResult | null>(null);
   
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Handler for start location selection (receives coordinate and floor)
-  const handleStartLocationSearch = useCallback((coordinate: Coordinate | null, floor: number | null) => {
-    console.log("Start coordinates selected:", coordinate);
-    setStartCoord(coordinate);
-    setStartFloor(floor);
+  // Handler for start location selection (receives full LocationSearchResult)
+  const handleStartLocationSearch = useCallback((result: LocationSearchResult | null) => {
+    console.log("Start location selected:", result);
+    setStartLocation(result);
     setErrorMessage(null);
-    if (floor && floor !== currentFloor) {
-      setCurrentFloor(floor);
+    if (result && result.floor !== currentFloor) {
+      setCurrentFloor(result.floor);
     }
   }, [currentFloor, setCurrentFloor]);
 
-  // Handler for end location selection (receives coordinate and floor)
-  const handleEndLocationSearch = useCallback((coordinate: Coordinate | null, floor: number | null) => {
-    console.log("End coordinates selected:", coordinate);
-    setEndCoord(coordinate);
-    setEndFloor(floor);
+  // Handler for end location selection (receives full LocationSearchResult)
+  const handleEndLocationSearch = useCallback((result: LocationSearchResult | null) => {
+    console.log("End location selected:", result);
+    setEndLocation(result);
     setErrorMessage(null);
-    if (floor && floor !== currentFloor) {
-      setCurrentFloor(floor);
+    if (result && result.floor !== currentFloor) {
+      setCurrentFloor(result.floor);
     }
   }, [currentFloor, setCurrentFloor]);
 
-  // Find the path using coordinates and floors
+  // Find path using full location search results
   const findPath = useCallback(() => {
     setErrorMessage(null);
     setIsLoading(true);
@@ -67,27 +57,26 @@ export const PathFinder: React.FC<PathFinderProps> = ({
       console.error("Pathfinding Error:", message);
       setErrorMessage(message);
       setIsLoading(false);
+      onPathFound([], {x:0, y:0}, {x:0, y:0}); // Clear existing path on error
     };
 
     try {
-      if (!startCoord || !endCoord || startFloor === null || endFloor === null) {
+      if (!startLocation || !endLocation) {
         handleError('Please select both start and end locations');
         return;
       }
 
-      if (startFloor !== endFloor) {
-        handleError('Pathfinding between different floors is not supported yet');
-        return;
-      }
-
-      // Directly call the core PathFinder function, which is now a pure function (no hooks)
+      // Pass full LocationSearchResult objects to the core PathFinder
       CorePathFinder({
-        startCoord,
-        endCoord,
-        currentFloor: startFloor,
-        onPathFound: (path) => {
+        startLocation,
+        endLocation,
+        onPathFound: (path: PathSegment[]) => {
           setIsLoading(false);
-          onPathFound(path);
+          if (startLocation && endLocation) {
+            onPathFound(path, startLocation.location, endLocation.location);
+          } else {
+            onPathFound([], {x:0, y:0}, {x:0, y:0});
+          }
         },
         onError: handleError
       });
@@ -96,22 +85,7 @@ export const PathFinder: React.FC<PathFinderProps> = ({
       console.error('Error during pathfinding setup:', error);
       handleError('An unexpected error occurred during pathfinding setup');
     }
-  }, [startCoord, startFloor, endCoord, endFloor, onPathFound]);
-
-  // Create minimal objects for FindPathButton (just enough to enable/disable the button)
-  const startMinimal = startCoord ? {
-    location: startCoord,
-    floor: startFloor ?? 0,
-    name: 'Start',
-    type: 'coordinate'
-  } : null;
-  
-  const endMinimal = endCoord ? {
-    location: endCoord,
-    floor: endFloor ?? 0,
-    name: 'End',
-    type: 'coordinate'
-  } : null;
+  }, [startLocation, endLocation, onPathFound]);
 
   return (
     <div className="flex flex-col w-full space-y-3">
@@ -139,8 +113,8 @@ export const PathFinder: React.FC<PathFinderProps> = ({
         {/* Find path button */}
         <div className="pt-5">
           <FindPathButton
-            startLocation={startMinimal}
-            endLocation={endMinimal}
+            startLocation={startLocation}
+            endLocation={endLocation}
             onFindPath={findPath}
             isLoading={isLoading}
             settings={settings}

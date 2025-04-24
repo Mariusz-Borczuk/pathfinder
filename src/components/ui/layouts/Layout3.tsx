@@ -1,6 +1,8 @@
+import { PathSegment } from "@/PathFinder";
+import { Eye, Type } from "lucide-react";
 import React, { useState } from "react";
 import AccessibilityButton from "../../Accessibility_Button";
-import { AccessibilitySettings, LayoutProps, LocationSearchResult } from "../../types/types";
+import { AccessibilitySettings, Coordinate, LayoutProps, LocationSearchResult } from "../../types/types";
 import FloorManagement from "../leftMenu/Floor_Management";
 import { MainHeader } from "../leftMenu/Main_Header";
 import { QuickNavigation } from "../leftMenu/Quick_Navigation";
@@ -10,8 +12,6 @@ import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
 import { PathFinder } from "../mapCenter/topPart/PathFinder";
 import { RightSidebar } from "../rightMenu/Right_Sidebar";
 import { getSettings } from "../settings";
-import { Type, Eye } from "lucide-react";
-import { PathSegment } from "@/PathFinder";
 
 /**
  * WayfindingApp3 component represents the main layout for the wayfinding application.
@@ -43,11 +43,42 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [showGrid, setShowGrid] = useState(false);
   const [highlightedLocation, setHighlightedLocation] = useState<LocationSearchResult | null>(null);
   const [pathSegments, setPathSegments] = useState<PathSegment[]>([]);
+  const [pathStartLocation, setPathStartLocation] = useState<LocationSearchResult | null>(null);
+  const [pathEndLocation, setPathEndLocation] = useState<LocationSearchResult | null>(null);
 
   const handleSearch = (result: LocationSearchResult) => {
     setHighlightedLocation(result);
     if (result.floor !== currentFloor) {
       setCurrentFloor(result.floor);
+    }
+  };
+
+  // Updated handler to receive path segments and coordinates
+  const handlePathFound = (path: PathSegment[], startCoord: Coordinate, endCoord: Coordinate) => {
+    setPathSegments(path);
+    
+    // Create minimal LocationSearchResult objects for the start and end coordinates
+    // These will be used to highlight the start and end points on the map
+    if (path.length > 0) {
+      setPathStartLocation({
+        type: 'pathPoint',
+        name: 'Path Start',
+        floor: path[0].floor,
+        location: startCoord,
+        description: 'Starting point of the path'
+      });
+      
+      setPathEndLocation({
+        type: 'pathPoint',
+        name: 'Path End', 
+        floor: path[0].floor,
+        location: endCoord,
+        description: 'Destination point of the path'
+      });
+    } else {
+      // Clear path points if no path is found
+      setPathStartLocation(null);
+      setPathEndLocation(null);
     }
   };
 
@@ -149,7 +180,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
             currentFloor={currentFloor}
             setCurrentFloor={setCurrentFloor}
             settings={settings}
-            onPathFound={setPathSegments}
+            onPathFound={handlePathFound}
           />
         </div>
         
@@ -159,7 +190,8 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
             settings={settings}   
             currentFloor={currentFloor}
             showGrid={showGrid}
-            endLocation={highlightedLocation}
+            endLocation={highlightedLocation || pathEndLocation}
+            startLocation={pathStartLocation}
             pathSegments={pathSegments}
           />
         </div>

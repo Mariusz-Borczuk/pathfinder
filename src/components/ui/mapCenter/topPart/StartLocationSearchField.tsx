@@ -4,17 +4,17 @@ import { allFloorData, Coordinate, coordRegex, LocationSearchResult } from '../.
 import { getFontSizeClass, getStartLocationStyles } from '../../settings';
 
 /**
- * Props for the search field, onSearch returns Coordinate | null
+ * Props for the search field, onSearch returns the full LocationSearchResult
  */
 interface LocationSearchFieldProps {
-  onSearch: (coordinate: Coordinate | null, floor: number | null) => void; // Pass coordinate and floor
+  onSearch: (result: LocationSearchResult | null) => void; // Changed signature
   currentFloor: number;
   setCurrentFloor?: (floor: number) => void;
   settings?: any;
 }
 
 /**
- * Start Location Search Field - Rewritten to communicate via coordinates.
+ * Start Location Search Field - Updated to pass full LocationSearchResult.
  */
 export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
   onSearch,
@@ -66,7 +66,8 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
     // Search through floor data for matching locations
     allFloorData.forEach((floorData, floorIndex) => {
       const floorNumber = floorIndex + 1;
-      // Simplified search logic (add other types as needed)
+      
+      // Search classrooms
       floorData.classrooms.forEach(room => {
         if (room.number.toLowerCase().includes(lowerQuery)) {
           let entryCoord = Array.isArray(room.entry) ? room.entry[0] : room.entry;
@@ -78,12 +79,82 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
             name: `Classroom ${room.number}`,
             floor: floorNumber,
             location: entryCoord as Coordinate,
-            description: `Classroom ${room.number} on floor ${floorNumber}`,
-            roomId: room.number
+            description: `Classroom ${room.number} on floor ${floorNumber}`
           });
         }
       });
-      // Add searches for bathrooms, elevators, stairs etc. here if needed
+      
+      // Search bathrooms
+      floorData.bathrooms.forEach(bathroom => {
+        if (bathroom.type.toLowerCase().includes(lowerQuery)) {
+          const entryCoord = bathroom.entry || { 
+            x: Math.floor((bathroom.start.x + bathroom.end.x) / 2), 
+            y: Math.floor((bathroom.start.y + bathroom.end.y) / 2) 
+          };
+          
+          results.push({
+            type: 'bathroom',
+            name: `${bathroom.type} Bathroom`,
+            floor: floorNumber,
+            location: entryCoord,
+            description: `${bathroom.type} Bathroom on floor ${floorNumber}`
+          });
+        }
+      });
+      
+      // Search elevators
+      floorData.elevators.forEach((elevator, index) => {
+        if ('elevator'.includes(lowerQuery)) {
+          const entryCoord = elevator.entry || { 
+            x: Math.floor((elevator.start.x + elevator.end.x) / 2), 
+            y: Math.floor((elevator.start.y + elevator.end.y) / 2) 
+          };
+          
+          results.push({
+            type: 'elevator',
+            name: `Elevator ${index + 1}`,
+            floor: floorNumber,
+            location: entryCoord,
+            description: `Elevator ${index + 1} on floor ${floorNumber}`
+          });
+        }
+      });
+      
+      // Search stairs
+      floorData.stairs.forEach((stair, index) => {
+        if ('stair'.includes(lowerQuery) || 'stairs'.includes(lowerQuery)) {
+          const centerCoord = { 
+            x: Math.floor((stair.start.x + stair.end.x) / 2), 
+            y: Math.floor((stair.start.y + stair.end.y) / 2) 
+          };
+          
+          results.push({
+            type: 'stairs',
+            name: `Stairs ${index + 1}`,
+            floor: floorNumber,
+            location: centerCoord,
+            description: `Stairs ${index + 1} on floor ${floorNumber}`
+          });
+        }
+      });
+      
+      // Search utility rooms
+      floorData.utilityRooms.forEach(room => {
+        if (room.name.toLowerCase().includes(lowerQuery)) {
+          const centerCoord = { 
+            x: Math.floor((room.start.x + room.end.x) / 2), 
+            y: Math.floor((room.start.y + room.end.y) / 2) 
+          };
+          
+          results.push({
+            type: 'utility',
+            name: room.name,
+            floor: floorNumber,
+            location: centerCoord,
+            description: `${room.name} on floor ${floorNumber}`
+          });
+        }
+      });
     });
 
     setSearchResults(results);
@@ -92,12 +163,12 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
 
   // Handle selection from dropdown
   const handleResultClick = (result: LocationSearchResult) => {
-    console.log('Start Location Selected (Full Result for Display):', result);
+    console.log('Start Location Selected:', result);
     if (result.floor !== currentFloor && setCurrentFloor) {
       setCurrentFloor(result.floor);
     }
     setSelectedDisplayLocation(result); // Update internal state for display
-    onSearch(result.location, result.floor); // Pass coordinate and floor up
+    onSearch(result); // Pass the full result object up
     setSearchQuery('');
     setIsDropdownOpen(false);
   };
@@ -138,7 +209,27 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
           <div className="absolute inset-y-0 right-0 flex items-center top-5">
             <button
               className={`${styles.buttonBg} ${styles.buttonText} h-full px-2 rounded-r-lg shadow-sm hover:scale-105 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-green-500 flex items-center justify-center border-l ${styles.inputBorder}`}
-              onClick={() => { if (searchResults.length > 0 && searchResults[0]) { handleResultClick(searchResults[0]); } }}
+              onClick={() => { 
+                if (searchResults.length > 0 && searchResults[0]) { 
+                  handleResultClick(searchResults[0]); 
+                } else {
+                  // Handle case where user types coordinates and clicks button
+                  const coords = parseCoordinates(searchQuery);
+                  if (coords) {
+                    const coordResult: LocationSearchResult = {
+                      type: 'coordinate',
+                      name: `Start at (${coords.x}, ${coords.y})`,
+                      floor: currentFloor,
+                      location: coords,
+                      description: `Coordinates (${coords.x}, ${coords.y}) on current floor`
+                    };
+                    handleResultClick(coordResult);
+                  } else {
+                    onSearch(null); // Clear selection if invalid input
+                    setSelectedDisplayLocation(null);
+                  }
+                }
+              }}
               aria-label="Set starting point"
             >
               <FaPlay className={`h-4 w-4 ${styles.iconColor}`} />
