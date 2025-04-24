@@ -46,10 +46,12 @@ export interface UtilityRoom {
     name: string;
     start: Coordinate;
     end: Coordinate;
+    entry: Coordinate;
 }
 export interface Stair {
     start: Coordinate;
     end: Coordinate;
+    entry: Coordinate;
 }
 export interface Path {
     start: Coordinate;

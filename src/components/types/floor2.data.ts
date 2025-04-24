@@ -81,11 +81,26 @@ export const floor2Data: FloorData = {
     ],
     utilityRooms: [ ],
     stairs: [
-        { start: { x: 10, y: 10 }, end: { x: 12, y: 12 } },
-        { start: { x: 43, y: 10 }, end: { x: 45, y: 12 } },
-        { start: { x: 2, y: 23 }, end: { x: 7, y: 25 } },
-        { start: { x: 2, y: 49 }, end: { x: 7, y: 51 } },
-        { start: { x: 49, y: 49 }, end: { x: 53, y: 51 } }
+        {
+            start: { x: 10, y: 10 }, end: { x: 12, y: 12 },
+            entry: { x: 11, y: 10 }
+        },
+        {
+            start: { x: 43, y: 10 }, end: { x: 45, y: 12 },
+            entry: { x: 44, y: 10 }
+        },
+        {
+            start: { x: 2, y: 23 }, end: { x: 7, y: 25 },
+            entry: { x: 7, y: 24 }
+        },
+        {
+            start: { x: 2, y: 49 }, end: { x: 7, y: 51 },
+            entry:  { x: 7, y: 50 }
+        },
+        {
+            start: { x: 49, y: 49 }, end: { x: 53, y: 51 },
+            entry: { x: 49, y: 50 }
+        }
     ],
     paths: [
         { start: { x: 8, y: 9 }, end: { x: 9, y: 51 } },

@@ -84,14 +84,32 @@ export const floor1Data: FloorData = {
         { location: { x: 22, y: 44 } },
     ],
     utilityRooms: [
-        { name: "GYM", start: { x: 16, y: 25 }, end: { x: 38, y: 14 } },
-        { name: "Changing room", start: { x: 16, y: 10 }, end: { x: 38, y: 13 } },
+        {
+            name: "GYM", start: { x: 16, y: 25 }, end: { x: 38, y: 14 },
+            entry: { x: 16, y: 21 }
+        },
+        {
+            name: "Changing room", start: { x: 16, y: 10 }, end: { x: 38, y: 13 },
+            entry: { x: 27, y: 10 }
+        },
     ],
     stairs: [
-        { start: { x: 10, y: 10 }, end: { x: 12, y: 12 } },
-        { start: { x: 43, y: 9 }, end: { x: 45, y: 11 } }, 
-        { start: { x: 2, y: 48 }, end: { x: 6, y: 50 } },
-        { start: { x: 49, y: 48 }, end: { x: 53, y: 50 } }
+        {
+            start: { x: 10, y: 10 }, end: { x: 12, y: 12 },
+            entry: { x: 11, y: 10 }
+        },
+        {
+            start: { x: 43, y: 9 }, end: { x: 45, y: 11 },
+            entry: { x: 44, y: 9 }
+        }, 
+        {
+            start: { x: 2, y: 48 }, end: { x: 6, y: 50 },
+            entry: { x: 6, y: 49 }
+        },
+        {
+            start: { x: 49, y: 48 }, end: { x: 53, y: 50 },
+            entry: { x: 49, y: 49 }
+        }
     ],
     paths: [
         { start: { x: 7, y: 2 }, end: { x: 9, y: 50 } },

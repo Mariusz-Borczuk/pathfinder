@@ -7,10 +7,11 @@ import { QuickNavigation } from "../leftMenu/Quick_Navigation";
 import { SearchBar } from "../leftMenu/SearchBar";
 import { MapView } from "../mapCenter/Map_View";
 import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
-import { PathFinder, PathSegment } from "../mapCenter/topPart/PathFinder";
+import { PathFinder } from "../mapCenter/topPart/PathFinder";
 import { RightSidebar } from "../rightMenu/Right_Sidebar";
 import { getSettings } from "../settings";
 import { Type, Eye } from "lucide-react";
+import { PathSegment } from "@/PathFinder";
 
 /**
  * WayfindingApp3 component represents the main layout for the wayfinding application.

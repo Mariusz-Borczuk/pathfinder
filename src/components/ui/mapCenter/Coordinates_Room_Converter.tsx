@@ -1,10 +1,10 @@
+import { PathSegment } from '@/PathFinder';
 import React, { useState } from 'react';
 import type { CellType } from '../../types/tileData';
 import { tileData } from '../../types/tileData';
 import * as types from '../../types/types';
 import { FloorGridProps } from '../../types/types';
 import { getFontSizeClass } from '../settings';
-import { PathSegment } from './topPart/PathFinder';
 
 /**
  * Updated FloorGrid component props to include path segments
@@ -135,10 +135,11 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
         return updatedGrid;
     }, initialGrid);
 
-    // Add bathrooms
+    // Add bathroom entries with darker color
     const gridWithBathrooms = currentFloorData.bathrooms.reduce((grid: CellType[][], bathroom: types.Bathroom) => {
         let updatedGrid = grid;
 
+        // Fill bathroom area with regular bathroom color
         for (let row = Math.min(bathroom.start.y, bathroom.end.y); row <= Math.max(bathroom.start.y, bathroom.end.y); row++) {
             for (let col = Math.min(bathroom.start.x, bathroom.end.x); col <= Math.max(bathroom.start.x, bathroom.end.x); col++) {
                 updatedGrid = updateGridCell(updatedGrid, row, col, {
@@ -150,13 +151,26 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
                 });
             }
         }
+        
+        // If there's an entry point, use the darker bathroomEntry color
+        if (bathroom.entry) {
+            updatedGrid = updateGridCell(updatedGrid, bathroom.entry.y, bathroom.entry.x, {
+                row: bathroom.entry.y,
+                col: bathroom.entry.x,
+                type: 'bathroomEntry',
+                color: tileData.bathroomEntry.color,
+                label: `${bathroom.type} Bathroom Entry`,
+            });
+        }
+        
         return updatedGrid;
     }, gridWithClassrooms);
 
-    // Add elevators
+    // Add elevators with darker color for entry
     const gridWithElevators = currentFloorData.elevators.reduce((grid: CellType[][], elevator: types.Elevator) => {
         let updatedGrid = grid;
 
+        // Fill elevator area with regular elevator color
         for (let row = Math.min(elevator.start.y, elevator.end.y); row <= Math.max(elevator.start.y, elevator.end.y); row++) {
             for (let col = Math.min(elevator.start.x, elevator.end.x); col <= Math.max(elevator.start.x, elevator.end.x); col++) {
                 updatedGrid = updateGridCell(updatedGrid, row, col, {
@@ -168,13 +182,26 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
                 });
             }
         }
+        
+        // If there's an entry point, use the darker elevatorEntry color
+        if (elevator.entry) {
+            updatedGrid = updateGridCell(updatedGrid, elevator.entry.y, elevator.entry.x, {
+                row: elevator.entry.y,
+                col: elevator.entry.x,
+                type: 'elevatorEntry',
+                color: tileData.elevatorEntry.color,
+                label: 'Elevator Entry',
+            });
+        }
+        
         return updatedGrid;
     }, gridWithBathrooms);
 
-    // Add utility rooms
+    // Add utility rooms with darker color for entry
     const gridWithUtility = currentFloorData.utilityRooms.reduce((grid: CellType[][], room: types.UtilityRoom) => {
         let updatedGrid = grid;
 
+        // Fill utility room area with regular color
         for (let row = Math.min(room.start.y, room.end.y); row <= Math.max(room.start.y, room.end.y); row++) {
             for (let col = Math.min(room.start.x, room.end.x); col <= Math.max(room.start.x, room.end.x); col++) {
                 updatedGrid = updateGridCell(updatedGrid, row, col, {
@@ -186,13 +213,26 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
                 });
             }
         }
+        
+        // Add a centered entry point with darker color if not explicitly defined
+        // Add entry point with darker color if defined, otherwise use the center
+            updatedGrid = updateGridCell(updatedGrid, room.entry.y, room.entry.x, {
+            row: room.entry.y,
+            col: room.entry.x,
+            type: 'utilityEntry',
+            color: tileData.utilityEntry.color,
+            label: `${room.name} Entry`,
+            });
+       
+        
         return updatedGrid;
     }, gridWithElevators);
 
-    // Add stairs
+    // Add stairs with darker color for entry points
     const gridWithStairs = currentFloorData.stairs.reduce((grid: CellType[][], stair: types.Stair) => {
         let updatedGrid = grid;
 
+        // Fill stair area with regular stairs color
         for (let row = Math.min(stair.start.y, stair.end.y); row <= Math.max(stair.start.y, stair.end.y); row++) {
             for (let col = Math.min(stair.start.x, stair.end.x); col <= Math.max(stair.start.x, stair.end.x); col++) {
                 updatedGrid = updateGridCell(updatedGrid, row, col, {
@@ -204,6 +244,18 @@ export const FloorGrid: React.FC<ExtendedFloorGridProps> = ({
                 });
             }
         }
+        
+        // Add a centered entry point with darker color
+        // Add entry point with darker color if defined, otherwise use the center
+        updatedGrid = updateGridCell(updatedGrid, stair.entry.y, stair.entry.x, {
+        row: stair.entry.y,
+        col: stair.entry.x,
+        type: 'stairsEntry',
+        color: tileData.stairsEntry.color,
+        label: 'Stairs Entry',
+        });
+        
+        
         return updatedGrid;
     }, gridWithUtility);
 
