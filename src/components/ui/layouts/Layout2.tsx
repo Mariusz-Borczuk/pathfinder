@@ -15,14 +15,14 @@
 //   const [settings, setSettings] = useState<AccessibilitySettings>({
 //     fontSize: "normal",
 //     contrast: "normal",
-//     isDyslexicFont: false,
+//     isWheelchair: false,
 //   });
 
 //   const getTextClass = () => {
 //     let textClass = "transition-all duration-200 ";
 //     if (settings.fontSize === "large") textClass += "text-lg ";
 //     if (settings.fontSize === "xlarge") textClass += "text-xl ";
-//     if (settings.isDyslexicFont) textClass += "font-mono ";
+//     if (settings.isWheelchair) textClass += "font-mono ";
 //     return textClass.trim();
 //   };
 
@@ -101,11 +101,11 @@
 //                         <label className="text-gray-300">Dyslexic Font</label>
 //                         <AccessibilityButton
 //                             label="Toggle dyslexic font"
-//                             isActive={settings.isDyslexicFont}
+//                             isActive={settings.isWheelchair}
 //                             onClick={() =>
 //                                 setSettings({
 //                                     ...settings,
-//                                     isDyslexicFont: !settings.isDyslexicFont,
+//                                     isWheelchair: !settings.isWheelchair,
 //                                 })
 //                             }
 //                             icon={<Type className="text-gray-200" />}

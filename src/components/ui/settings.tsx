@@ -1,9 +1,9 @@
-import { AccessibilitySettings } from "../types/types";
+import { AccessibilityFontSizeProps, AccessibilitySettings } from "../types/types";
 
-export const getSettings = ({ contrast, isDyslexicFont, fontSize }: AccessibilitySettings): string => {
+export const getSettings = ({ contrast, fontSize }: AccessibilitySettings): string => {
     return `${
-        contrast === "high" ? "text-white-100" : "text-red-700"
-    } ${isDyslexicFont ? "font-dyslexic" : ""} ${
+        contrast === "high" ?  "text-orange-400" : "text-slate-50"
+    } ${
         fontSize === "large"
             ? "text-lg"
             : fontSize === "xlarge"
@@ -15,8 +15,7 @@ export const getSettings = ({ contrast, isDyslexicFont, fontSize }: Accessibilit
 };
 
 // Function to get font size class based on settings
-export const getFontSizeClass = (settings?: AccessibilitySettings): string => {
-    if (!settings) return "text-base";
+export const getFontSizeClass = (settings: AccessibilityFontSizeProps): string => {
     
     return settings.fontSize === "large" 
         ? "text-lg" 
@@ -44,54 +43,56 @@ export const getFontSizeClass = (settings?: AccessibilitySettings): string => {
 export const getStartLocationStyles = (settings?: AccessibilitySettings) => {
    
     return {
-        labelText: settings?.contrast === "high" ? 'text-green-300 font-bold' : 'text-green-500',
-        inputBg: 'bg-white',
-        inputText: settings?.contrast === "high" ? 'text-green-900 font-bold' : 'text-green-700',
-        inputBorder: settings?.contrast === "high" ? 'border-4 border-green-500' : 'border-2 border-green-500',
-        buttonBg: 'bg-green-500 hover:bg-green-600',
+        labelText: settings?.contrast === "high" ? 'text-green-500 font-bold' : 'text-green-600',
+        inputBg: settings?.contrast === "high" ? 'bg-gray-100' : 'bg-white',
+        inputText: settings?.contrast === "high" ? 'text-green-800 font-bold' : 'text-green-700',
+        inputBorder: settings?.contrast === "high" ? 'border-3 border-green-600' : 'border-2 border-green-500',
+        buttonBg: settings?.contrast === "high" ? 'bg-green-700 hover:bg-green-800' : 'bg-green-500 hover:bg-green-600',
         buttonText: 'text-white',
-        dropdownBg: settings?.contrast === "high" ? 'bg-black' : 'bg-white',
-        dropdownBorder: settings?.contrast === "high" ? 'border-4 border-green-500' : 'border-2 border-green-500',
-        dropdownItemHover: settings?.contrast === "high" ? 'hover:bg-gray-800' : 'hover:bg-green-50',
-        resultText: settings?.contrast === "high" ? 'text-green-300 font-bold' : 'text-green-700',
-        resultDetailText: settings?.contrast === "high" ? 'text-green-200' : 'text-green-600',
-        highlightBadge: settings?.contrast === "high" ? 'bg-green-700 text-white font-bold' : 'bg-green-100 text-green-800',
+        dropdownBg: settings?.contrast === "high" ? 'bg-gray-900' : 'bg-white',
+        dropdownBorder: settings?.contrast === "high" ? 'border-3 border-green-600' : 'border-2 border-green-500',
+        dropdownItemHover: settings?.contrast === "high" ? 'hover:bg-gray-700' : 'hover:bg-green-50',
+        resultText: settings?.contrast === "high" ? 'text-green-500 font-bold' : 'text-green-700',
+        resultDetailText: settings?.contrast === "high" ? 'text-green-500' : 'text-green-600',
+        highlightBadge: settings?.contrast === "high" ? 'bg-green-800 text-white font-bold' : 'bg-green-100 text-green-800',
         iconColor: 'text-white'
     };
 };
+
 export const getEndLocationStyles = (settings?: AccessibilitySettings) => {
     return {
-        labelText: settings?.contrast === "high" ? 'text-red-300 font-bold' : 'text-red-500',
-        inputBg: 'bg-white',
-        inputText: settings?.contrast === "high" ? 'text-red-900 font-bold' : 'text-red-700',
-        inputBorder: settings?.contrast === "high" ? 'border-4 border-red-500' : 'border-2 border-red-500',
-        buttonBg: 'bg-red-500 hover:bg-red-600',
+        labelText: settings?.contrast === "high" ? 'text-red-500 font-bold' : 'text-red-600',
+        inputBg: settings?.contrast === "high" ? 'bg-gray-100' : 'bg-white',
+        inputText: settings?.contrast === "high" ? 'text-red-800 font-bold' : 'text-red-700',
+        inputBorder: settings?.contrast === "high" ? 'border-3 border-red-600' : 'border-2 border-red-500',
+        buttonBg: settings?.contrast === "high" ? 'bg-red-700 hover:bg-red-800' : 'bg-red-500 hover:bg-red-600',
         buttonText: 'text-white',
-        dropdownBg: settings?.contrast === "high" ? 'bg-black' : 'bg-white',
-        dropdownBorder: settings?.contrast === "high" ? 'border-4 border-red-500' : 'border-2 border-red-500',
-        dropdownItemHover: settings?.contrast === "high" ? 'hover:bg-gray-800' : 'hover:bg-red-50',
-        resultText: settings?.contrast === "high" ? 'text-red-300 font-bold' : 'text-red-700',
-        resultDetailText: settings?.contrast === "high" ? 'text-red-200' : 'text-red-600',
-        highlightBadge: settings?.contrast === "high" ? 'bg-red-700 text-white font-bold' : 'bg-red-100 text-red-800',
+        dropdownBg: settings?.contrast === "high" ? 'bg-gray-900' : 'bg-white',
+        dropdownBorder: settings?.contrast === "high" ? 'border-3 border-red-600' : 'border-2 border-red-500',
+        dropdownItemHover: settings?.contrast === "high" ? 'hover:bg-gray-700' : 'hover:bg-red-50',
+        resultText: settings?.contrast === "high" ? 'text-red-500 font-bold' : 'text-red-700',
+        resultDetailText: settings?.contrast === "high" ? 'text-red-500' : 'text-red-600',
+        highlightBadge: settings?.contrast === "high" ? 'bg-red-800 text-white font-bold' : 'bg-red-100 text-red-800',
         iconColor: 'text-white'
     };
 }
+
 export const getSearchStyles = (settings?: AccessibilitySettings) => {
     if (settings?.contrast === "high") {
         return {
-            labelText: 'text-white font-bold text-2xl',
-            inputBg: 'bg-white',
-            inputText: 'text-black font-bold',
-            inputBorder: 'border-4 border-black',
-            buttonBg: 'bg-black',
-            buttonText: 'text-black',
-            dropdownBg: 'bg-black',
-            dropdownBorder: 'border-4 border-green-500',
-            dropdownItemHover: 'hover:bg-gray-800',
-            resultText: 'text-white font-bold',
-            resultDetailText: 'text-white',
-            highlightBadge: 'bg-white text-black font-bold right-0',
-            iconColor: 'text-black bg-red-700'
+            labelText: 'text-gray-100 font-bold text-2xl',
+            inputBg: 'bg-gray-100',
+            inputText: 'text-gray-900 font-bold',
+            inputBorder: 'border-3 border-blue-600',
+            buttonBg: 'bg-blue-700',
+            buttonText: 'text-white font-bold',
+            dropdownBg: 'bg-gray-900',
+            dropdownBorder: 'border-3 border-blue-600',
+            dropdownItemHover: 'hover:bg-gray-700',
+            resultText: 'text-gray-200 font-bold',
+            resultDetailText: 'text-gray-200',
+            highlightBadge: 'bg-blue-700 text-white font-bold right-0',
+            iconColor: 'text-white'
         };
     }
     
@@ -100,7 +101,7 @@ export const getSearchStyles = (settings?: AccessibilitySettings) => {
         inputBg: 'bg-white',
         inputText: 'text-gray-800',
         inputBorder: 'border border-gray-300',
-        buttonBg: 'bg-blue-600',
+        buttonBg: 'bg-blue-600 hover:bg-blue-700',
         buttonText: 'text-white',
         dropdownBg: 'bg-white',
         dropdownBorder: 'border border-gray-300',

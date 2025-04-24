@@ -1,3 +1,4 @@
+import { PathSegment } from "@/PathFinder";
 import { floor1Data } from "./floor1.data";
 import { floor2Data } from "./floor2.data";
 import { floor3Data } from "./floor3.data";
@@ -69,7 +70,9 @@ export interface FloorData {
 export interface AccessibilitySettings {
     fontSize: "normal" | "large" | "xlarge";
     contrast: "normal" | "high";
-    isDyslexicFont: boolean;
+}
+export interface AccessibilityFontSizeProps {
+    fontSize: "normal" | "large" | "xlarge";
 }
 export interface PathMapProps {
     title?: string;
@@ -119,8 +122,9 @@ export interface SpeechSettings {
 export interface GridToggleButtonProps {
     showGrid: boolean;
     onToggle: () => void;
-    settings?: {
+    settings: {
         contrast: string;
+        fontSize: string;
     };
 }
 export interface RightSidebarProps {
@@ -155,17 +159,11 @@ export function isRoomOnFloor(roomNumber: string, floorNumber: number): boolean 
  * @property {string} [description] - Optional description of the location.
  */
 export interface LocationSearchResult {
-    type: 'classroom' | 'bathroom' | 'elevator' | 'stairs' | 'fireEquipment' | 'utilityRoom' | 'coordinate';
+    type: 'classroom' | 'bathroom' | 'elevator' | 'stairs' | 'fireEquipment' | 'utilityRoom' | 'coordinate'| 'path';
     name: string;
     floor: number;
     location: Coordinate;
     description?: string;
-}
-export interface LocationSearchFieldProps {
-    onSearch: (result: LocationSearchResult) => void;
-    currentFloor: number;
-    setCurrentFloor?: (floor: number) => void;
-    settings?: AccessibilitySettings;
 }
 export interface NavigationItem {
     name: string;
@@ -193,3 +191,18 @@ export interface AccessibilityButtonProps {
     description: string;
 }
 export const coordRegex = /(?:x\s*:\s*(\d+)\s*y\s*:\s*(\d+))|(?:\(?(\d+)\s*,\s*(\d+)\)?)/i;
+
+// Update MapViewProps interface to include pathSegments
+export interface pathSegmentsProps extends MapViewProps {
+    pathSegments?: PathSegment[];
+  }
+/**
+ * Props for the search field, onSearch returns full LocationSearchResult or null
+ */
+export interface LocationSearchFieldProps {
+  onSearch: (result: LocationSearchResult | null) => void;
+  currentFloor: number;
+  setCurrentFloor?: (floor: number) => void;
+  settings?: AccessibilitySettings;
+}
+export const isWheelchair: boolean = false;

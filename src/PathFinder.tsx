@@ -208,11 +208,15 @@ export const PathFinder = ({
         // Convert path coordinates to segments
         const segments: PathSegment[] = [];
         for (let i = 0; i < finalPath.length - 1; i++) {
-          segments.push({
-            start: finalPath[i],
-            end: finalPath[i + 1],
-            floor: floor
-          });
+          const start = finalPath[i];
+          const end = finalPath[i + 1];
+          if (start && end) {
+            segments.push({
+              start: start,
+              end: end,
+              floor: floor
+            });
+          }
         }
         
         console.log("Path found with segments:", segments.length);

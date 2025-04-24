@@ -1,7 +1,7 @@
 import React from "react";
+import { RightSidebarProps, Route } from "../../types/types";
 import { getSettings } from "../settings";
 import { AccessibleTTSButton, } from "./Speaking";
-import { RightSidebarProps, Route } from "../../types/types";
 
 /**
  * Right sidebar component that displays details about the current location and accessibility features
@@ -10,7 +10,6 @@ import { RightSidebarProps, Route } from "../../types/types";
  * @param {Object} props - Component props
  * @param {Object} props.settings - User interface settings for accessibility
  * @param {string} props.settings.contrast - Contrast setting (e.g., "high", "normal")
- * @param {boolean} props.settings.isDyslexicFont - Whether to use dyslexic-friendly font
  * @param {number} props.currentFloor - The current floor number being displayed
  * 
  * @returns {React.ReactElement} A sidebar component with location information, accessibility features,
@@ -18,7 +17,7 @@ import { RightSidebarProps, Route } from "../../types/types";
  * 
  * @example
  * <RightSidebar 
- *   settings={{ contrast: "normal", isDyslexicFont: false }}
+ *   settings={{ contrast: "normal"}}
  *   currentFloor={2}
  * />
  */
@@ -90,9 +89,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({ settings, currentFlo
                         <AccessibleTTSButton 
                             route={route}
                             settings={settings}
-                            className={`w-full ${
-                                settings.isDyslexicFont ? "font-dyslexic" : ""
-                            }`}
+                            className={`w-full ${getSettings(settings)}`}
                         />
                     </div>
                 </div>

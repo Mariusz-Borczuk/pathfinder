@@ -85,15 +85,18 @@ const AddCustomNavigationButton: React.FC<AddCustomNavigationButtonProps> = ({ o
                             className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                             required
                             aria-required="true"
+                            placeholder="Name for the navigation point"
+                            aria-label="Navigation point name"
                         />
                     </div>
                     <div className="mb-4">
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            htmlFor="coord-x" aria-label='Coordinates X and Y'> 
                             Coordinates:
                         </label>
-                        <div className="flex gap-4">
+                        <div className="flex gap-4 mb-4">   
                             <div className="w-1/2">
-                                <label htmlFor="coord-x" className="sr-only">X Coordinate</label>
+                                <label htmlFor="coord-x" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">X Coordinate</label>
                                 <input
                                     id="coord-x"
                                     type="number"
@@ -102,10 +105,11 @@ const AddCustomNavigationButton: React.FC<AddCustomNavigationButtonProps> = ({ o
                                     onChange={(e) => setCoordinates({ ...coordinates, x: parseFloat(e.target.value) || 0 })}
                                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                     aria-label="X coordinate"
+                                    aria-required="true"
                                 />
                             </div>
                             <div className="w-1/2">
-                                <label htmlFor="coord-y" className="sr-only">Y Coordinate</label>
+                                <label htmlFor="coord-y" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Y Coordinate</label>
                                 <input
                                     id="coord-y"
                                     type="number"
@@ -114,18 +118,23 @@ const AddCustomNavigationButton: React.FC<AddCustomNavigationButtonProps> = ({ o
                                     onChange={(e) => setCoordinates({ ...coordinates, y: parseFloat(e.target.value) || 0 })}
                                     className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                                     aria-label="Y coordinate"
+                                    aria-required="true"
                                 />
                             </div>
                         </div>
                     </div>
                     <div className="mb-4">
-                        <label id="icon-group-label" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label id="icon-group-label" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            htmlFor="icon-selection" aria-label='Select an icon'>
                             Select an icon:
                         </label>
                         <div 
                             className="flex gap-4" 
                             role="radiogroup"
                             aria-labelledby="icon-group-label"
+                            aria-describedby="icon-selection"
+                            aria-label="Icon selection"
+                            aria-required="true"
                         >
                             {icons.map((iconOption, index) => (
                                 <button
@@ -140,9 +149,21 @@ const AddCustomNavigationButton: React.FC<AddCustomNavigationButtonProps> = ({ o
                                     aria-pressed={selectedIcon === iconOption.icon}
                                     role="radio"
                                     tabIndex={selectedIcon === iconOption.icon ? 0 : -1}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setSelectedIcon(iconOption.icon);
+                                        }
+                                    }}
+                                    onKeyUp={(e) => {
+                                        if (e.key === 'Enter' || e.key === ' ') {
+                                            e.preventDefault();
+                                            setSelectedIcon(iconOption.icon);
+                                        }
+                                    }}
+                                    title={`Select ${iconOption.label} icon`}
                                 >
                                     <span className="text-2xl">{iconOption.icon}</span>
-                                    <span className="sr-only">{iconOption.label}</span>
                                 </button>
                             ))}
                         </div>
@@ -156,6 +177,7 @@ const AddCustomNavigationButton: React.FC<AddCustomNavigationButtonProps> = ({ o
                         }`}
                         disabled={!name.trim()}
                         aria-disabled={!name.trim()}
+                        aria-label="Add custom navigation point"
                     >
                         Add Custom Navigation
                     </button>
