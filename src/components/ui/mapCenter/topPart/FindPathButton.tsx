@@ -1,21 +1,9 @@
 import { FaRoute, FaWheelchair } from '@/utils/icons';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { FindPathButtonProps } from '../../../types/types';
 
-
 /**
- * FindPathButton component provides a visually prominent button to trigger pathfinding
- * between selected start and end locations.
- * 
- * @component
- * @param {Object} props - Component properties
- * @param {LocationSearchResult|null} props.startLocation - Selected starting location
- * @param {LocationSearchResult|null} props.endLocation - Selected destination location
- * @param {Function} props.onFindPath - Function to call when the button is clicked
- * @param {boolean} props.isLoading - Whether the pathfinding process is in progress
- * @param {AccessibilitySettings} props.settings - Accessibility settings for styling
- * @param {boolean} props.isWheelchair - Whether wheelchair accessible mode is enabled
- * @returns {React.ReactElement} The rendered button component
+ * FindPathButton component - Triggers pathfinding with wheelchair accessibility support
  */
 export const FindPathButton: React.FC<FindPathButtonProps> = ({
   startLocation,
@@ -25,46 +13,59 @@ export const FindPathButton: React.FC<FindPathButtonProps> = ({
   settings,
   isWheelchair = false
 }) => {
-  // Determine if the button should be enabled based on selected locations
-  const isDisabled = isLoading || !startLocation || !endLocation;
+  // Determine if the button should be enabled
+  const isDisabled: boolean = isLoading || !startLocation || !endLocation;
 
-  // Get the appropriate button color based on the state
-  const getButtonColor = () => {
+  // Memoize button color based on props to prevent unnecessary re-renders
+  const buttonColorClass: string = useMemo(() => {
     if (isLoading) return 'bg-gray-500 cursor-wait';
     if (isDisabled) return 'bg-gray-500 cursor-not-allowed opacity-70';
     
-    // Use high contrast if specified in settings
+    // High contrast mode colors
     if (settings?.contrast === 'high') {
-      // Add a different color for wheelchair mode in high contrast
       return isWheelchair 
         ? 'bg-blue-500 hover:bg-blue-600 text-white'
         : 'bg-yellow-500 hover:bg-yellow-600 text-black';
     }
     
-    // Add a different color for wheelchair mode in normal contrast
+    // Standard colors
     return isWheelchair 
       ? 'bg-blue-500 hover:bg-blue-600 text-white'
       : 'bg-orange-500 hover:bg-orange-600 text-white';
-  };
+  }, [isLoading, isDisabled, settings?.contrast, isWheelchair]);
 
-  // Get font size class from settings if available
-  const fontSizeClass = settings?.fontSize === 'large' 
-    ? 'text-lg' 
-    : settings?.fontSize === 'xlarge' 
-      ? 'text-xl' 
-      : 'text-base';
+  // Memoize font size class
+  const fontSizeClass: string = useMemo(() => {
+    switch(settings?.fontSize) {
+      case 'large': return 'text-lg';
+      case 'xlarge': return 'text-xl'; 
+      default: return 'text-base';
+    }
+  }, [settings?.fontSize]);
+
+  // Memoize aria and title attributes for accessibility
+  const accessibilityProps = useMemo(() => ({
+    'aria-label': `${isWheelchair ? 'Wheelchair accessible path' : 'Find path'} between selected locations`,
+    'aria-disabled': isDisabled,
+    title: isDisabled 
+      ? "Select both start and end locations first" 
+      : `Find ${isWheelchair ? 'wheelchair accessible ' : ''}path between selected locations`
+  }), [isDisabled, isWheelchair]);
 
   return (
     <button
       className={`px-5 py-3 rounded-lg font-medium flex items-center justify-center 
-                 shadow-md ${getButtonColor()} transition-colors ${fontSizeClass}
+                 shadow-md ${buttonColorClass} transition-colors ${fontSizeClass}
                  focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2`}
       onClick={onFindPath}
       disabled={isDisabled}
-      aria-label={`${isWheelchair ? 'Wheelchair accessible path' : 'Find path'} between selected locations`}
-      title={isDisabled ? "Select both start and end locations first" : `Find ${isWheelchair ? 'wheelchair accessible ' : ''}path between selected locations`}
+      type="button"
+      {...accessibilityProps}
     >
-      {isWheelchair ? <FaWheelchair className="mr-2" /> : <FaRoute className="mr-2" />}
+      {isWheelchair 
+        ? <FaWheelchair className="mr-2" aria-hidden="true" /> 
+        : <FaRoute className="mr-2" aria-hidden="true" />
+      }
       {isLoading ? 'Finding Path...' : 'Find Path'}
     </button>
   );

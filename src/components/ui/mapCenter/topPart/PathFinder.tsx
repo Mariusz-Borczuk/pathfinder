@@ -1,58 +1,59 @@
 import React, { useCallback, useState } from 'react';
-import { PathFinder as CorePathFinder } from '../../../../PathFinder';
-import { LocationSearchResult, PathFinderProps, PathSegment } from '../../../types/types';
+import { PathFinder as CorePathFinder, PathSegment } from '../../../../PathFinder';
+import { LocationSearchResult, PathFinderProps } from '../../../types/types';
 import { EndLocationSearchField } from './EndLocationSearchField';
 import { FindPathButton } from './FindPathButton';
 import { StartLocationSearchField } from './StartLocationSearchField';
 
 /**
- * PathFinder UI component - Updated to work with LocationSearchResult objects
- * for proper handling of room entries and path finding between different room types
+ * PathFinder UI component - Handles location selection and pathfinding
+ * with support for wheelchair accessibility
  */
 export const PathFinder: React.FC<PathFinderProps> = ({
   currentFloor,
   setCurrentFloor,
   settings,
   onPathFound,
-  isWheelchair = false // Add the isWheelchair property with default value
+  isWheelchair = false 
 }) => {
+  // State management with proper TypeScript typing
   const [startLocation, setStartLocation] = useState<LocationSearchResult | null>(null);
   const [endLocation, setEndLocation] = useState<LocationSearchResult | null>(null);
-  
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // Handler for start location selection (receives full LocationSearchResult)
-  const handleStartLocationSearch = useCallback((result: LocationSearchResult | null) => {
-    console.log("Start location selected:", result);
+  // Handler for start location selection
+  const handleStartLocationSearch = useCallback((result: LocationSearchResult | null): void => {
     setStartLocation(result);
     setErrorMessage(null);
+    
     if (result && result.floor !== currentFloor) {
       setCurrentFloor(result.floor);
     }
   }, [currentFloor, setCurrentFloor]);
 
-  // Handler for end location selection (receives full LocationSearchResult)
-  const handleEndLocationSearch = useCallback((result: LocationSearchResult | null) => {
-    console.log("End location selected:", result);
+  // Handler for end location selection
+  const handleEndLocationSearch = useCallback((result: LocationSearchResult | null): void => {
     setEndLocation(result);
     setErrorMessage(null);
+    
     if (result && result.floor !== currentFloor) {
       setCurrentFloor(result.floor);
     }
   }, [currentFloor, setCurrentFloor]);
 
+  // Error handler function
+  const handleError = useCallback((message: string): void => {
+    setErrorMessage(message);
+    setIsLoading(false);
+    // Clear existing path on error with dummy coordinates
+    onPathFound([], { x: 0, y: 0 }, { x: 0, y: 0 });
+  }, [onPathFound]);
+
   // Find path using full location search results
-  const findPath = useCallback(() => {
+  const findPath = useCallback((): void => {
     setErrorMessage(null);
     setIsLoading(true);
-
-    const handleError = (message: string) => {
-      console.error("Pathfinding Error:", message);
-      setErrorMessage(message);
-      setIsLoading(false);
-      onPathFound([], {x:0, y:0}, {x:0, y:0}); // Clear existing path on error
-    };
 
     try {
       if (!startLocation || !endLocation) {
@@ -60,37 +61,37 @@ export const PathFinder: React.FC<PathFinderProps> = ({
         return;
       }
 
-      // Pass full LocationSearchResult objects and wheelchair setting to the core PathFinder
+      // Pass to the core PathFinder with proper typing
       CorePathFinder({
         startLocation,
         endLocation,
-        isWheelchair, // Pass the wheelchair setting to the core pathfinder
-        onPathFound: (path: PathSegment[]) => {
+        isWheelchair,
+        onPathFound: (path: PathSegment[]): void => {
           setIsLoading(false);
+          
           if (startLocation && endLocation) {
-            // If there's a path and it transitions between floors, update the floor
-            if (path.length > 0 && path.some(segment => segment.isTransitPoint)) {
-              // Find the transit segment
+            // If path transitions between floors, log info for debugging
+            if (path.length > 0) {
               const transitSegment = path.find(segment => segment.isTransitPoint);
               if (transitSegment) {
                 console.log(`Transit via ${transitSegment.transitType} detected between floors`);
               }
             }
+            
             onPathFound(path, startLocation.location, endLocation.location);
           } else {
-            onPathFound([], {x:0, y:0}, {x:0, y:0});
+            onPathFound([], { x: 0, y: 0 }, { x: 0, y: 0 });
           }
         },
         onError: handleError
       });
-      
     } catch (error) {
-      console.error('Error during pathfinding setup:', error);
-      handleError('An unexpected error occurred during pathfinding setup');
+      console.error('Error during pathfinding:', error);
+      handleError('An unexpected error occurred during pathfinding');
     }
-  }, [startLocation, endLocation, onPathFound, isWheelchair]); // Add isWheelchair to the dependency array
+  }, [startLocation, endLocation, onPathFound, isWheelchair, handleError]); 
 
-  // Accessibility message about the current path mode
+  // Accessibility message using template literal
   const accessibilityMessage = isWheelchair 
     ? "Wheelchair accessible path mode is active - Using elevators for floor transitions" 
     : "Standard path mode - Using stairs or elevators for floor transitions";
@@ -133,13 +134,20 @@ export const PathFinder: React.FC<PathFinderProps> = ({
       
       {/* Error message display */}
       {errorMessage && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg mt-2" role="alert">
+        <div 
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-2 rounded-lg mt-2" 
+          role="alert"
+          aria-live="polite"
+        >
           <span className="block sm:inline">{errorMessage}</span>
         </div>
       )}
       
       {/* Accessibility message */}
-      <div className={`text-xs ${isWheelchair ? 'text-blue-600' : 'text-gray-500'} px-1`}>
+      <div 
+        className={`text-xs ${isWheelchair ? 'text-blue-600' : 'text-gray-500'} px-1`}
+        aria-live="polite"
+      >
         {accessibilityMessage}
       </div>
     </div>

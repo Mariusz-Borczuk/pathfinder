@@ -1,4 +1,35 @@
-import { allFloorData, Coordinate, PathFinderProps2, PathSegment } from './components/types/types';
+import {
+  allFloorData,
+  Coordinate,
+  Elevator,
+  FloorData,
+  LocationSearchResult,
+  Stair
+} from './components/types/types';
+
+// Define path segment interface
+export interface PathSegment {
+  start: Coordinate;
+  end: Coordinate;
+  floor: number;
+  isTransitPoint?: boolean;
+  transitType?: 'elevator' | 'stairs';
+}
+
+// Define clear interface for PathFinder props
+export interface PathFinderProps {
+  startLocation: LocationSearchResult | null;
+  endLocation: LocationSearchResult | null;
+  isWheelchair: boolean;
+  onPathFound: (path: PathSegment[]) => void;
+  onError: (message: string) => void;
+}
+
+// Define transit point type
+type TransitPoint = {
+  coord: Coordinate;
+  isElevator: boolean;
+};
 
 /**
  * Core PathFinder function that calculates paths between locations.
@@ -10,113 +41,101 @@ export const PathFinder = ({
   isWheelchair,
   onPathFound,
   onError
-}: PathFinderProps2) => {
+}: PathFinderProps): null => {
   
   /**
    * Find all elevator entry points on a floor
    */
-  const findElevatorEntryPoints = (floorData: any): Coordinate[] => {
-    const entryPoints: Coordinate[] = [];
-    
-    floorData.elevators.forEach((elevator: any) => {
+  const findElevatorEntryPoints = (floorData: FloorData): Coordinate[] => {
+    return floorData.elevators.map((elevator: Elevator) => {
       if (elevator.entry) {
-        entryPoints.push(elevator.entry);
-      } else {
-        // Use center point as fallback
-        const centerX = Math.floor((elevator.start.x + elevator.end.x) / 2);
-        const centerY = Math.floor((elevator.start.y + elevator.end.y) / 2);
-        entryPoints.push({ x: centerX, y: centerY });
+        return elevator.entry;
       }
+      
+      // Use center point as fallback
+      const centerX = Math.floor((elevator.start.x + elevator.end.x) / 2);
+      const centerY = Math.floor((elevator.start.y + elevator.end.y) / 2);
+      return { x: centerX, y: centerY };
     });
-    
-    return entryPoints;
   };
   
   /**
    * Find all stair entry points on a floor
    */
-  const findStairEntryPoints = (floorData: any): Coordinate[] => {
-    const entryPoints: Coordinate[] = [];
-    
-    floorData.stairs.forEach((stair: any) => {
+  const findStairEntryPoints = (floorData: FloorData): Coordinate[] => {
+    return floorData.stairs.map((stair: Stair) => {
       // Use center point for stairs
       const centerX = Math.floor((stair.start.x + stair.end.x) / 2);
       const centerY = Math.floor((stair.start.y + stair.end.y) / 2);
-      entryPoints.push({ x: centerX, y: centerY });
+      return { x: centerX, y: centerY };
     });
-    
-    return entryPoints;
   };
   
   /**
    * Check if a tile is a valid path tile or an entry point of any room type
    */
-  const isValidPathTile = (floorData: any, x: number, y: number): boolean => {
+  const isValidPathTile = (floorData: FloorData, x: number, y: number): boolean => {
     // Check grid bounds
     if (x < 0 || y < 0 || x >= 60 || y >= 60) return false;
 
     // Check if the coordinate falls within any path rectangle
-    for (const path of floorData.paths) {
-      if (
-        x >= Math.min(path.start.x, path.end.x) &&
-        x <= Math.max(path.start.x, path.end.x) &&
-        y >= Math.min(path.start.y, path.end.y) &&
-        y <= Math.max(path.start.y, path.end.y)
-      ) {
-        // Valid path tile
-        return true;
-      }
-    }
+    const isOnPath = floorData.paths.some(path => 
+      x >= Math.min(path.start.x, path.end.x) &&
+      x <= Math.max(path.start.x, path.end.x) &&
+      y >= Math.min(path.start.y, path.end.y) &&
+      y <= Math.max(path.start.y, path.end.y)
+    );
+    
+    if (isOnPath) return true;
 
     // Check if it's an entry point to a classroom
-    for (const room of floorData.classrooms) {
+    const isClassroomEntry = floorData.classrooms.some(room => {
       if (Array.isArray(room.entry)) {
-        // Handle multiple entries
-        for (const entry of room.entry) {
-          if (entry.x === x && entry.y === y) return true;
-        }
-      } else if (room.entry && room.entry.x === x && room.entry.y === y) {
-        // Handle single entry
-        return true;
-      }
-    }
+        return room.entry.some(entry => entry.x === x && entry.y === y);
+      } 
+      return room.entry && room.entry.x === x && room.entry.y === y;
+    });
+    
+    if (isClassroomEntry) return true;
 
     // Check if it's an entry point to a bathroom
-    for (const bathroom of floorData.bathrooms) {
-      if (bathroom.entry && bathroom.entry.x === x && bathroom.entry.y === y) {
-        return true;
-      }
-    }
+    const isBathroomEntry = floorData.bathrooms.some(bathroom => 
+      bathroom.entry && bathroom.entry.x === x && bathroom.entry.y === y
+    );
+    
+    if (isBathroomEntry) return true;
 
     // Check if it's an entry point to an elevator
-    for (const elevator of floorData.elevators) {
-      if (elevator.entry && elevator.entry.x === x && elevator.entry.y === y) {
-        return true;
-      }
-    }
+    const isElevatorEntry = floorData.elevators.some(elevator => 
+      elevator.entry && elevator.entry.x === x && elevator.entry.y === y
+    );
+    
+    if (isElevatorEntry) return true;
 
     // Check stair entry points (center of stairs)
-    for (const stair of floorData.stairs) {
+    const isStairEntry = floorData.stairs.some(stair => {
       const centerX = Math.floor((stair.start.x + stair.end.x) / 2);
       const centerY = Math.floor((stair.start.y + stair.end.y) / 2);
-      if (x === centerX && y === centerY) return true;
-    }
+      return x === centerX && y === centerY;
+    });
+    
+    if (isStairEntry) return true;
 
-    // Check utility room entry points (center of room)
-    for (const utilityRoom of floorData.utilityRooms) {
+    // Check utility room entry points
+    const isUtilityRoomEntry = floorData.utilityRooms.some(utilityRoom => {
       const centerX = Math.floor((utilityRoom.start.x + utilityRoom.end.x) / 2);
       const centerY = Math.floor((utilityRoom.start.y + utilityRoom.end.y) / 2);
-      if (x === centerX && y === centerY) return true;
-    }
-
-    return false;
+      return x === centerX && y === centerY;
+    });
+    
+    return isUtilityRoomEntry;
   };
 
   /**
    * Determine if a point is an elevator entry
    */
-  const isElevatorEntry = (floorData: any, x: number, y: number): boolean => {
-    for (const elevator of floorData.elevators) {
+  const isElevatorEntry = (floorData: FloorData, x: number, y: number): boolean => {
+    return floorData.elevators.some(elevator => {
       if (elevator.entry && elevator.entry.x === x && elevator.entry.y === y) {
         return true;
       }
@@ -124,27 +143,25 @@ export const PathFinder = ({
       // Check center point as fallback
       const centerX = Math.floor((elevator.start.x + elevator.end.x) / 2);
       const centerY = Math.floor((elevator.start.y + elevator.end.y) / 2);
-      if (x === centerX && y === centerY) return true;
-    }
-    return false;
+      return x === centerX && y === centerY;
+    });
   };
   
   /**
    * Determine if a point is a stair entry
    */
-  const isStairEntry = (floorData: any, x: number, y: number): boolean => {
-    for (const stair of floorData.stairs) {
+  const isStairEntry = (floorData: FloorData, x: number, y: number): boolean => {
+    return floorData.stairs.some(stair => {
       const centerX = Math.floor((stair.start.x + stair.end.x) / 2);
       const centerY = Math.floor((stair.start.y + stair.end.y) / 2);
-      if (x === centerX && y === centerY) return true;
-    }
-    return false;
+      return x === centerX && y === centerY;
+    });
   };
 
   /**
    * Find the nearest valid path tile if the current position is not on a path
    */
-  const findNearestPathTile = (floorData: any, x: number, y: number): Coordinate | null => {
+  const findNearestPathTile = (floorData: FloorData, x: number, y: number): Coordinate | null => {
     // If the current position is already a valid path tile, return it
     if (isValidPathTile(floorData, x, y)) {
       return { x, y };
@@ -155,7 +172,7 @@ export const PathFinder = ({
       // Check points in a square pattern around the given position
       for (let dy = -radius; dy <= radius; dy++) {
         for (let dx = -radius; dx <= radius; dx++) {
-          // Only check points on the perimeter of the square (makes it more like a circle)
+          // Only check points on the perimeter of the square
           if (Math.abs(dx) === radius || Math.abs(dy) === radius) {
             const newX = x + dx;
             const newY = y + dy;
@@ -172,10 +189,21 @@ export const PathFinder = ({
   };
   
   /**
+   * Calculate Euclidean distance between two points
+   */
+  const calculateDistance = (x1: number, y1: number, x2: number, y2: number): number => {
+    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  };
+  
+  /**
    * Find the nearest stair or elevator entry point depending on wheelchair mode
    */
-  const findNearestTransitPoint = (floorData: any, startX: number, startY: number): { coord: Coordinate, isElevator: boolean } | null => {
-    const transitPoints: { coord: Coordinate, isElevator: boolean }[] = [];
+  const findNearestTransitPoint = (
+    floorData: FloorData, 
+    startX: number, 
+    startY: number
+  ): TransitPoint | null => {
+    const transitPoints: TransitPoint[] = [];
     
     // Always include elevators
     const elevatorEntries = findElevatorEntryPoints(floorData);
@@ -195,32 +223,17 @@ export const PathFinder = ({
       return null;
     }
     
-    // Find the nearest transit point
-    let nearestPoint: { coord: Coordinate, isElevator: boolean } | null = transitPoints.length > 0 ? transitPoints[0] : null;
-    let minDistance = nearestPoint ? calculateDistance(startX, startY, nearestPoint.coord.x, nearestPoint.coord.y) : Infinity;
-    
-    for (let i = 1; i < transitPoints.length; i++) {
-      const point = transitPoints[i];
-      const distance = point ? calculateDistance(startX, startY, point.coord.x, point.coord.y) : Infinity;
+    // Find the nearest transit point using reduce
+    return transitPoints.reduce((nearest, current) => {
+      const currentDistance = calculateDistance(startX, startY, current.coord.x, current.coord.y);
+      const nearestDistance = calculateDistance(startX, startY, nearest.coord.x, nearest.coord.y);
       
-      if (distance < minDistance && point) {
-        minDistance = distance;
-        nearestPoint = point;
-      }
-    }
-    
-    return nearestPoint;
-  };
-  
-  /**
-   * Calculate Euclidean distance between two points
-   */
-  const calculateDistance = (x1: number, y1: number, x2: number, y2: number): number => {
-    return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+      return currentDistance < nearestDistance ? current : nearest;
+    }, transitPoints[0]);
   };
 
   // Directions for BFS: up, right, down, left
-  const directions = [
+  const directions: Coordinate[] = [
     { x: 0, y: -1 }, // up
     { x: 1, y: 0 },  // right
     { x: 0, y: 1 },  // down
@@ -232,6 +245,78 @@ export const PathFinder = ({
     onError("Please select both start and end locations");
     return null;
   }
+
+  /**
+   * Find path between points on the same floor
+   */
+  const findPathBetweenPoints = (
+    floorData: FloorData,
+    startCoord: Coordinate,
+    validStartCoord: Coordinate | null,
+    endCoord: Coordinate,
+    floor: number
+  ): PathSegment[] | null => {
+    // Safety check
+    if (!validStartCoord) {
+      return null;
+    }
+    
+    const queue: Array<{ x: number; y: number; path: Coordinate[] }> = [];
+    
+    // Start path
+    const initialPath: Coordinate[] = (startCoord.x === validStartCoord.x && startCoord.y === validStartCoord.y) 
+      ? [startCoord] 
+      : [startCoord, validStartCoord];
+    
+    queue.push({ 
+      x: validStartCoord.x, 
+      y: validStartCoord.y, 
+      path: initialPath 
+    });
+
+    const visited = new Set<string>();
+    visited.add(`${validStartCoord.x},${validStartCoord.y}`);
+
+    // BFS Loop
+    while (queue.length > 0) {
+      const { x, y, path } = queue.shift()!;
+
+      // Check if we've reached the destination
+      if (x === endCoord.x && y === endCoord.y) {
+        // Convert path coordinates to segments
+        return path.slice(0, -1).map((start, i) => {
+          const end = path[i + 1];
+          const isElevatorTransit = isElevatorEntry(floorData, start.x, start.y) || isElevatorEntry(floorData, end.x, end.y);
+          const isStairTransit = isStairEntry(floorData, start.x, start.y) || isStairEntry(floorData, end.x, end.y);
+          
+          return {
+            start,
+            end,
+            floor,
+            isTransitPoint: isElevatorTransit || isStairTransit,
+            transitType: isElevatorTransit ? 'elevator' : (isStairTransit ? 'stairs' : undefined)
+          };
+        });
+      }
+
+      // Explore all four directions
+      for (const dir of directions) {
+        const newX = x + dir.x;
+        const newY = y + dir.y;
+        const key = `${newX},${newY}`;
+
+        // Only move to unvisited valid path tiles
+        if (!visited.has(key) && isValidPathTile(floorData, newX, newY)) {
+          visited.add(key);
+          const newPath = [...path, { x: newX, y: newY }];
+          queue.push({ x: newX, y: newY, path: newPath });
+        }
+      }
+    }
+
+    // No path found
+    return null;
+  };
 
   // Check if start and end are on the same floor
   if (startLocation.floor === endLocation.floor) {
@@ -265,17 +350,13 @@ export const PathFinder = ({
     }
 
     // Breadth-First Search implementation for path finding on same floor
-    const findPathBFS = () => {
+    const findPathBFS = (): PathSegment[] | null => {
       const queue: Array<{ x: number; y: number; path: Coordinate[] }> = [];
       
       // Start path with original start coordinate followed by nearest valid path tile if different
-      let initialPath: Coordinate[] = [];
-      
-      if (startCoord.x === validStartCoord.x && startCoord.y === validStartCoord.y) {
-        initialPath = [startCoord];
-      } else {
-        initialPath = [startCoord, validStartCoord];
-      }
+      const initialPath: Coordinate[] = (startCoord.x === validStartCoord.x && startCoord.y === validStartCoord.y)
+        ? [startCoord] 
+        : [startCoord, validStartCoord];
       
       queue.push({ 
         x: validStartCoord.x, 
@@ -293,31 +374,27 @@ export const PathFinder = ({
         // Check if we've reached the destination
         if (x === validEndCoord.x && y === validEndCoord.y) {
           // Complete path by adding end coordinate if needed
-          let finalPath = path;
-          
-          // If the valid end coordinate is different from the actual end coordinate,
-          // add the actual end coordinate to the path
-          if (validEndCoord.x !== endCoord.x || validEndCoord.y !== endCoord.y) {
-            finalPath = [...path, endCoord];
-          }
+          const finalPath: Coordinate[] = (validEndCoord.x === endCoord.x && validEndCoord.y === endCoord.y)
+            ? path
+            : [...path, endCoord];
           
           // Convert path coordinates to segments
           const segments: PathSegment[] = [];
+          
           for (let i = 0; i < finalPath.length - 1; i++) {
             const start = finalPath[i];
             const end = finalPath[i + 1];
-            if (start && end) {
-              const isElevatorTransit = isElevatorEntry(floorData, start.x, start.y) || isElevatorEntry(floorData, end.x, end.y);
-              const isStairTransit = isStairEntry(floorData, start.x, start.y) || isStairEntry(floorData, end.x, end.y);
-              
-              segments.push({
-                start: start,
-                end: end,
-                floor: floor,
-                isTransitPoint: isElevatorTransit || isStairTransit,
-                transitType: isElevatorTransit ? 'elevator' : (isStairTransit ? 'stairs' : undefined)
-              });
-            }
+            
+            const isElevatorTransit = isElevatorEntry(floorData, start.x, start.y) || isElevatorEntry(floorData, end.x, end.y);
+            const isStairTransit = isStairEntry(floorData, start.x, start.y) || isStairEntry(floorData, end.x, end.y);
+            
+            segments.push({
+              start,
+              end,
+              floor,
+              isTransitPoint: isElevatorTransit || isStairTransit,
+              transitType: isElevatorTransit ? 'elevator' : (isStairTransit ? 'stairs' : undefined)
+            });
           }
           
           console.log("Path found with segments:", segments.length);
@@ -348,14 +425,13 @@ export const PathFinder = ({
     
     if (pathResult) {
       onPathFound(pathResult);
-      return null;
     } else {
       onError("No valid path found between the selected locations");
-      return null;
     }
+    
+    return null;
   } else {
     // Multi-floor path finding
-    // Get start floor data
     const startFloorIndex = startLocation.floor - 1;
     const endFloorIndex = endLocation.floor - 1;
     
@@ -390,48 +466,37 @@ export const PathFinder = ({
     }
     
     // Find corresponding transit point on end floor
-    let endFloorTransit: { coord: Coordinate, isElevator: boolean } | null = null;
+    let endFloorTransit: TransitPoint | null = null;
     
     if (startFloorTransit.isElevator) {
       // If using elevator, find the nearest elevator on destination floor
       const elevators = findElevatorEntryPoints(endFloorData);
       
       if (elevators.length > 0) {
-        let nearest = elevators[0];
-        let minDist = nearest ? calculateDistance(validEndCoord.x, validEndCoord.y, nearest.x, nearest.y) : Infinity;
-        
-        for (let i = 1; i < elevators.length; i++) {
-          const elevator = elevators[i];
-          if (elevator) {
-            const dist = calculateDistance(validEndCoord.x, validEndCoord.y, elevator.x, elevator.y);
-            if (dist < minDist) {
-              minDist = dist;
-            nearest = elevators[i];
-          }
-        }
-        endFloorTransit = nearest ? { coord: nearest, isElevator: true } : null;
+        // Find nearest elevator to end point
+        endFloorTransit = {
+          coord: elevators.reduce((nearest, current) => {
+            const distCurrent = calculateDistance(validEndCoord.x, validEndCoord.y, current.x, current.y);
+            const distNearest = calculateDistance(validEndCoord.x, validEndCoord.y, nearest.x, nearest.y);
+            return distCurrent < distNearest ? current : nearest;
+          }, elevators[0]),
+          isElevator: true
+        };
       }
     } else {
-      // If using stairs, find the nearest stair on destination floor
       // If using stairs, find the nearest stair on destination floor
       const stairs = findStairEntryPoints(endFloorData);
       
       if (stairs.length > 0) {
-        let nearest: any = stairs[0] || null;
-        let minDist = nearest ? calculateDistance(validEndCoord.x, validEndCoord.y, nearest.x, nearest.y) : Infinity;
-        
-        for (let i = 1; i < stairs.length; i++) {
-          const stair = stairs[i];
-          if (stair) {
-            const dist = calculateDistance(validEndCoord.x, validEndCoord.y, stair.x, stair.y);
-            if (dist < minDist) {
-              minDist = dist;
-              nearest = stair;
-            }
-          }
-        }
-        
-        endFloorTransit = nearest ? { coord: nearest, isElevator: false } : null;
+        // Find nearest stair to end point
+        endFloorTransit = {
+          coord: stairs.reduce((nearest, current) => {
+            const distCurrent = calculateDistance(validEndCoord.x, validEndCoord.y, current.x, current.y);
+            const distNearest = calculateDistance(validEndCoord.x, validEndCoord.y, nearest.x, nearest.y);
+            return distCurrent < distNearest ? current : nearest;
+          }, stairs[0]),
+          isElevator: false
+        };
       }
     }
     
@@ -453,7 +518,7 @@ export const PathFinder = ({
     const endFloorPath = findPathBetweenPoints(
       endFloorData,
       endFloorTransit.coord,
-      validEndCoord,
+      findNearestPathTile(endFloorData, endFloorTransit.coord.x, endFloorTransit.coord.y),
       endCoord,
       endLocation.floor
     );
@@ -478,83 +543,5 @@ export const PathFinder = ({
     console.log("Multi-floor path found with segments:", fullPath.length);
     onPathFound(fullPath);
     return null;
-  }
-  
-  /**
-   * Find path between points on the same floor
-   */
-  function findPathBetweenPoints(
-    floorData: any,
-    startCoord: Coordinate,
-    validStartCoord: Coordinate,
-    endCoord: Coordinate,
-    floor: number
-  ): PathSegment[] | null {
-    const queue: Array<{ x: number; y: number; path: Coordinate[] }> = [];
-    
-    // Start path
-    let initialPath: Coordinate[] = [];
-    
-    if (startCoord.x === validStartCoord.x && startCoord.y === validStartCoord.y) {
-      initialPath = [startCoord];
-    } else {
-      initialPath = [startCoord, validStartCoord];
-    }
-    
-    queue.push({ 
-      x: validStartCoord.x, 
-      y: validStartCoord.y, 
-      path: initialPath 
-    });
-
-    const visited = new Set<string>();
-    visited.add(`${validStartCoord.x},${validStartCoord.y}`);
-
-    // BFS Loop
-    while (queue.length > 0) {
-      const { x, y, path } = queue.shift()!;
-
-      // Check if we've reached the destination
-      if (x === endCoord.x && y === endCoord.y) {
-        // Convert path coordinates to segments
-        const segments: PathSegment[] = [];
-        for (let i = 0; i < path.length - 1; i++) {
-          const start = path[i];
-          const end = path[i + 1];
-          if (start && end) {
-            const isElevatorTransit = isElevatorEntry(floorData, start.x, start.y) || isElevatorEntry(floorData, end.x, end.y);
-            const isStairTransit = isStairEntry(floorData, start.x, start.y) || isStairEntry(floorData, end.x, end.y);
-            
-            segments.push({
-              start: start,
-              end: end,
-              floor: floor,
-              isTransitPoint: isElevatorTransit || isStairTransit,
-              transitType: isElevatorTransit ? 'elevator' : (isStairTransit ? 'stairs' : undefined)
-            });
-          }
-        }
-        
-        return segments;
-      }
-
-      // Explore all four directions
-      for (const dir of directions) {
-        const newX = x + dir.x;
-        const newY = y + dir.y;
-        const key = `${newX},${newY}`;
-
-        // Only move to unvisited valid path tiles
-        if (!visited.has(key) && isValidPathTile(floorData, newX, newY)) {
-          visited.add(key);
-          const newPath = [...path, { x: newX, y: newY }];
-          queue.push({ x: newX, y: newY, path: newPath });
-        }
-      }
-    }
-
-    // No path found
-    return null;
-  }
   }
 };
