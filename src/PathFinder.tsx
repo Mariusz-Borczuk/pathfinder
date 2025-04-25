@@ -196,14 +196,14 @@ export const PathFinder = ({
     }
     
     // Find the nearest transit point
-    let nearestPoint = transitPoints[0];
-    let minDistance = calculateDistance(startX, startY, nearestPoint.coord.x, nearestPoint.coord.y);
+    let nearestPoint: { coord: Coordinate, isElevator: boolean } | null = transitPoints.length > 0 ? transitPoints[0] : null;
+    let minDistance = nearestPoint ? calculateDistance(startX, startY, nearestPoint.coord.x, nearestPoint.coord.y) : Infinity;
     
     for (let i = 1; i < transitPoints.length; i++) {
       const point = transitPoints[i];
-      const distance = calculateDistance(startX, startY, point.coord.x, point.coord.y);
+      const distance = point ? calculateDistance(startX, startY, point.coord.x, point.coord.y) : Infinity;
       
-      if (distance < minDistance) {
+      if (distance < minDistance && point) {
         minDistance = distance;
         nearestPoint = point;
       }
@@ -402,9 +402,10 @@ export const PathFinder = ({
         
         for (let i = 1; i < elevators.length; i++) {
           const elevator = elevators[i];
-          const dist = calculateDistance(validEndCoord.x, validEndCoord.y, elevator.x, elevator.y);
-          if (dist < minDist) {
-            minDist = dist;
+          if (elevator) {
+            const dist = calculateDistance(validEndCoord.x, validEndCoord.y, elevator.x, elevator.y);
+            if (dist < minDist) {
+              minDist = dist;
             nearest = elevators[i];
           }
         }
@@ -416,19 +417,17 @@ export const PathFinder = ({
       const stairs = findStairEntryPoints(endFloorData);
       
       if (stairs.length > 0) {
-        if (stairs.length === 0) {
-          return null;
-        }
-
-        let nearest = stairs[0];
-        let minDist = calculateDistance(validEndCoord.x, validEndCoord.y, nearest.x, nearest.y);
+        let nearest: any = stairs[0] || null;
+        let minDist = nearest ? calculateDistance(validEndCoord.x, validEndCoord.y, nearest.x, nearest.y) : Infinity;
         
         for (let i = 1; i < stairs.length; i++) {
           const stair = stairs[i];
-          const dist = calculateDistance(validEndCoord.x, validEndCoord.y, stair.x, stair.y);
-          if (dist < minDist) {
-            minDist = dist;
-            nearest = stairs[i];
+          if (stair) {
+            const dist = calculateDistance(validEndCoord.x, validEndCoord.y, stair.x, stair.y);
+            if (dist < minDist) {
+              minDist = dist;
+              nearest = stair;
+            }
           }
         }
         
@@ -556,5 +555,6 @@ export const PathFinder = ({
 
     // No path found
     return null;
+  }
   }
 };
