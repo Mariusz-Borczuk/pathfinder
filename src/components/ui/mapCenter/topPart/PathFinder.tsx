@@ -1,16 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { PathFinder as CorePathFinder, PathSegment } from '../../../../PathFinder';
-import { AccessibilitySettings, Coordinate, LocationSearchResult } from '../../../types/types';
+import { PathFinder as CorePathFinder } from '../../../../PathFinder';
+import { LocationSearchResult, PathFinderProps, PathSegment } from '../../../types/types';
 import { EndLocationSearchField } from './EndLocationSearchField';
 import { FindPathButton } from './FindPathButton';
 import { StartLocationSearchField } from './StartLocationSearchField';
-
-interface PathFinderProps {
-  currentFloor: number;
-  setCurrentFloor: (floor: number) => void;
-  settings?: AccessibilitySettings;
-  onPathFound: (path: PathSegment[], startCoord: Coordinate, endCoord: Coordinate) => void;
-}
 
 /**
  * PathFinder UI component - Updated to work with LocationSearchResult objects
@@ -20,7 +13,8 @@ export const PathFinder: React.FC<PathFinderProps> = ({
   currentFloor,
   setCurrentFloor,
   settings,
-  onPathFound
+  onPathFound,
+  isWheelchair = false // Add the isWheelchair property with default value
 }) => {
   const [startLocation, setStartLocation] = useState<LocationSearchResult | null>(null);
   const [endLocation, setEndLocation] = useState<LocationSearchResult | null>(null);
@@ -66,13 +60,22 @@ export const PathFinder: React.FC<PathFinderProps> = ({
         return;
       }
 
-      // Pass full LocationSearchResult objects to the core PathFinder
+      // Pass full LocationSearchResult objects and wheelchair setting to the core PathFinder
       CorePathFinder({
         startLocation,
         endLocation,
+        isWheelchair, // Pass the wheelchair setting to the core pathfinder
         onPathFound: (path: PathSegment[]) => {
           setIsLoading(false);
           if (startLocation && endLocation) {
+            // If there's a path and it transitions between floors, update the floor
+            if (path.length > 0 && path.some(segment => segment.isTransitPoint)) {
+              // Find the transit segment
+              const transitSegment = path.find(segment => segment.isTransitPoint);
+              if (transitSegment) {
+                console.log(`Transit via ${transitSegment.transitType} detected between floors`);
+              }
+            }
             onPathFound(path, startLocation.location, endLocation.location);
           } else {
             onPathFound([], {x:0, y:0}, {x:0, y:0});
@@ -85,7 +88,12 @@ export const PathFinder: React.FC<PathFinderProps> = ({
       console.error('Error during pathfinding setup:', error);
       handleError('An unexpected error occurred during pathfinding setup');
     }
-  }, [startLocation, endLocation, onPathFound]);
+  }, [startLocation, endLocation, onPathFound, isWheelchair]); // Add isWheelchair to the dependency array
+
+  // Accessibility message about the current path mode
+  const accessibilityMessage = isWheelchair 
+    ? "Wheelchair accessible path mode is active - Using elevators for floor transitions" 
+    : "Standard path mode - Using stairs or elevators for floor transitions";
 
   return (
     <div className="flex flex-col w-full space-y-3">
@@ -118,6 +126,7 @@ export const PathFinder: React.FC<PathFinderProps> = ({
             onFindPath={findPath}
             isLoading={isLoading}
             settings={settings}
+            isWheelchair={isWheelchair}
           />
         </div>
       </div>
@@ -128,6 +137,11 @@ export const PathFinder: React.FC<PathFinderProps> = ({
           <span className="block sm:inline">{errorMessage}</span>
         </div>
       )}
+      
+      {/* Accessibility message */}
+      <div className={`text-xs ${isWheelchair ? 'text-blue-600' : 'text-gray-500'} px-1`}>
+        {accessibilityMessage}
+      </div>
     </div>
   );
 };

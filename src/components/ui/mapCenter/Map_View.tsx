@@ -1,7 +1,7 @@
+import MapLegend from './MapLegend';
 import React, { useRef } from 'react';
 import { pathSegmentsProps } from '../../types/types';
 import { FloorGrid } from './Coordinates_Room_Converter';
-import MapLegend from './MapLegend';
 
 /**
  * A component that renders a map view of the current floor.

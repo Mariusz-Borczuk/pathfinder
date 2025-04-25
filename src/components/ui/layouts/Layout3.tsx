@@ -1,8 +1,7 @@
-import { PathSegment } from "@/PathFinder";
 import { FaWheelchair, FiType, IoMdEye, } from "@/utils/icons";
 import React, { useState } from "react";
 import AccessibilityButton from "../../Accessibility_Button";
-import { AccessibilitySettings, Coordinate, LayoutProps, LocationSearchResult } from "../../types/types";
+import { AccessibilitySettings, Coordinate, LayoutProps, LocationSearchResult, PathSegment } from "../../types/types";
 import FloorManagement from "../leftMenu/Floor_Management";
 import { MainHeader } from "../leftMenu/Main_Header";
 import { QuickNavigation } from "../leftMenu/Quick_Navigation";
@@ -168,6 +167,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
             currentFloor={currentFloor}
             setCurrentFloor={setCurrentFloor}
             settings={settings}
+            isWheelchair={isWheelchair} // Pass isWheelchair state to PathFinder
             onPathFound={handlePathFound}
           />
         </div>

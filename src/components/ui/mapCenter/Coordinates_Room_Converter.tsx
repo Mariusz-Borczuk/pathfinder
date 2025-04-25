@@ -1,9 +1,8 @@
-import { PathSegment } from '@/PathFinder';
 import React, { useState } from 'react';
 import type { CellType } from '../../types/tileData';
 import { tileData } from '../../types/tileData';
 import * as types from '../../types/types';
-import { pathSegmentsProps } from '../../types/types';
+import { PathSegment, pathSegmentsProps } from '../../types/types';
 import { getFontSizeClass } from '../settings';
 
 /**

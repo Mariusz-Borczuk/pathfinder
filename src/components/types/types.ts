@@ -1,4 +1,3 @@
-import { PathSegment } from "@/PathFinder";
 import { floor1Data } from "./floor1.data";
 import { floor2Data } from "./floor2.data";
 import { floor3Data } from "./floor3.data";
@@ -206,3 +205,40 @@ export interface LocationSearchFieldProps {
   settings?: AccessibilitySettings;
 }
 export const isWheelchair: boolean = false;
+
+export interface PathFinderProps {
+    currentFloor: number;
+    setCurrentFloor: (floor: number) => void;
+    settings?: AccessibilitySettings;
+    onPathFound: (path: PathSegment[], startCoord: Coordinate, endCoord: Coordinate) => void;
+    isWheelchair?: boolean;
+}
+
+
+// Define path segment interface
+export interface PathSegment {
+    start: Coordinate;
+    end: Coordinate;
+    floor: number;
+    // New property to track transit points between floors (elevator or stairs)
+    isTransitPoint?: boolean;
+    transitType?: 'elevator' | 'stairs';
+  }
+  
+  // Updated props interface to include isWheelchair option
+export interface PathFinderProps2 {
+    startLocation: LocationSearchResult | null;
+    endLocation: LocationSearchResult | null;
+    isWheelchair: boolean;
+    onPathFound: (path: PathSegment[]) => void;
+    onError: (message: string) => void;
+  }
+  
+export interface FindPathButtonProps {
+    startLocation: LocationSearchResult | null;
+    endLocation: LocationSearchResult | null;
+    onFindPath: () => void;
+    isLoading?: boolean;
+    settings?: AccessibilitySettings;
+    isWheelchair?: boolean; // Add wheelchair mode flag
+  }

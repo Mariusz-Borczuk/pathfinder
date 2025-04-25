@@ -1,14 +1,7 @@
-import { FaRoute } from '@/utils/icons';
+import { FaRoute, FaWheelchair } from '@/utils/icons';
 import React from 'react';
-import { AccessibilitySettings, LocationSearchResult } from '../../../types/types';
+import { FindPathButtonProps } from '../../../types/types';
 
-interface FindPathButtonProps {
-  startLocation: LocationSearchResult | null;
-  endLocation: LocationSearchResult | null;
-  onFindPath: () => void;
-  isLoading?: boolean;
-  settings?: AccessibilitySettings;
-}
 
 /**
  * FindPathButton component provides a visually prominent button to trigger pathfinding
@@ -21,6 +14,7 @@ interface FindPathButtonProps {
  * @param {Function} props.onFindPath - Function to call when the button is clicked
  * @param {boolean} props.isLoading - Whether the pathfinding process is in progress
  * @param {AccessibilitySettings} props.settings - Accessibility settings for styling
+ * @param {boolean} props.isWheelchair - Whether wheelchair accessible mode is enabled
  * @returns {React.ReactElement} The rendered button component
  */
 export const FindPathButton: React.FC<FindPathButtonProps> = ({
@@ -28,7 +22,8 @@ export const FindPathButton: React.FC<FindPathButtonProps> = ({
   endLocation,
   onFindPath,
   isLoading = false,
-  settings
+  settings,
+  isWheelchair = false
 }) => {
   // Determine if the button should be enabled based on selected locations
   const isDisabled = isLoading || !startLocation || !endLocation;
@@ -40,10 +35,16 @@ export const FindPathButton: React.FC<FindPathButtonProps> = ({
     
     // Use high contrast if specified in settings
     if (settings?.contrast === 'high') {
-      return 'bg-yellow-500 hover:bg-yellow-600 text-black';
+      // Add a different color for wheelchair mode in high contrast
+      return isWheelchair 
+        ? 'bg-blue-500 hover:bg-blue-600 text-white'
+        : 'bg-yellow-500 hover:bg-yellow-600 text-black';
     }
     
-    return 'bg-orange-500 hover:bg-orange-600 text-white';
+    // Add a different color for wheelchair mode in normal contrast
+    return isWheelchair 
+      ? 'bg-blue-500 hover:bg-blue-600 text-white'
+      : 'bg-orange-500 hover:bg-orange-600 text-white';
   };
 
   // Get font size class from settings if available
@@ -60,10 +61,10 @@ export const FindPathButton: React.FC<FindPathButtonProps> = ({
                  focus:outline-none focus:ring-2 focus:ring-orange-300 focus:ring-offset-2`}
       onClick={onFindPath}
       disabled={isDisabled}
-      aria-label="Found path between selected locations"
-      title={isDisabled ? "Select both start and end locations first" : "Find path between selected locations"}
+      aria-label={`${isWheelchair ? 'Wheelchair accessible path' : 'Find path'} between selected locations`}
+      title={isDisabled ? "Select both start and end locations first" : `Find ${isWheelchair ? 'wheelchair accessible ' : ''}path between selected locations`}
     >
-      <FaRoute className="mr-2" />
+      {isWheelchair ? <FaWheelchair className="mr-2" /> : <FaRoute className="mr-2" />}
       {isLoading ? 'Finding Path...' : 'Find Path'}
     </button>
   );
