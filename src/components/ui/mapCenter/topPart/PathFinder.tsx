@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { PathFinder as CorePathFinder, PathSegment } from '../../../../PathFinder';
+import { PathFinder as CorePathFinder, PathSegment } from '../../../../RouteCalculator';
 import { LocationSearchResult, PathFinderProps } from '../../../types/types';
 import { EndLocationSearchField } from './EndLocationSearchField';
 import { FindPathButton } from './FindPathButton';
