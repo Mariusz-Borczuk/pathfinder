@@ -3,6 +3,7 @@ import { PathFinder as CorePathFinder, PathSegment } from '../../../../RouteCalc
 import { LocationSearchResult, PathFinderProps } from '../../../types/types';
 import { EndLocationSearchField } from './EndLocationSearchField';
 import { FindPathButton } from './FindPathButton';
+import { NavigationButton } from './NavigationButton';
 import { StartLocationSearchField } from './StartLocationSearchField';
 
 /**
@@ -21,11 +22,19 @@ export const PathFinder: React.FC<PathFinderProps> = ({
   const [endLocation, setEndLocation] = useState<LocationSearchResult | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [pathSegments, setPathSegments] = useState<PathSegment[]>([]);
+  const [nextFloors, setNextFloors] = useState<number[]>([]);
+  const [currentPathIndex, setCurrentPathIndex] = useState<number>(0);
+  const [pathCompleted, setPathCompleted] = useState<boolean>(false);
 
   // Handler for start location selection
   const handleStartLocationSearch = useCallback((result: LocationSearchResult | null): void => {
     setStartLocation(result);
     setErrorMessage(null);
+    setPathSegments([]);
+    setNextFloors([]);
+    setCurrentPathIndex(0);
+    setPathCompleted(false);
     
     if (result && result.floor !== currentFloor) {
       setCurrentFloor(result.floor);
@@ -36,6 +45,10 @@ export const PathFinder: React.FC<PathFinderProps> = ({
   const handleEndLocationSearch = useCallback((result: LocationSearchResult | null): void => {
     setEndLocation(result);
     setErrorMessage(null);
+    setPathSegments([]);
+    setNextFloors([]);
+    setCurrentPathIndex(0);
+    setPathCompleted(false);
     
     if (result && result.floor !== currentFloor) {
       setCurrentFloor(result.floor);
@@ -46,6 +59,10 @@ export const PathFinder: React.FC<PathFinderProps> = ({
   const handleError = useCallback((message: string): void => {
     setErrorMessage(message);
     setIsLoading(false);
+    setPathSegments([]);
+    setNextFloors([]);
+    setCurrentPathIndex(0);
+    setPathCompleted(false);
     // Clear existing path on error with dummy coordinates
     onPathFound([], { x: 0, y: 0 }, { x: 0, y: 0 });
   }, [onPathFound]);
@@ -54,6 +71,10 @@ export const PathFinder: React.FC<PathFinderProps> = ({
   const findPath = useCallback((): void => {
     setErrorMessage(null);
     setIsLoading(true);
+    setPathSegments([]);
+    setNextFloors([]);
+    setCurrentPathIndex(0);
+    setPathCompleted(false);
 
     try {
       if (!startLocation || !endLocation) {
@@ -68,13 +89,24 @@ export const PathFinder: React.FC<PathFinderProps> = ({
         isWheelchair,
         onPathFound: (path: PathSegment[]): void => {
           setIsLoading(false);
+          setPathSegments(path);
           
           if (startLocation && endLocation) {
+            // Extract unique floor numbers from path segments
+            const uniqueFloors = Array.from(new Set(path.map(segment => segment.floor)))
+              .filter(floor => floor > 0); // Filter out special transit codes
+            
+            // Set the next floors to navigate to
+            setNextFloors(uniqueFloors);
+            
             // If path transitions between floors, log info for debugging
             if (path.length > 0) {
               const transitSegment = path.find(segment => segment.isTransitPoint);
               if (transitSegment) {
                 console.log(`Transit via ${transitSegment.transitType} detected between floors`);
+                setPathCompleted(false);
+              } else {
+                setPathCompleted(uniqueFloors.length <= 1);
               }
             }
             
@@ -89,12 +121,22 @@ export const PathFinder: React.FC<PathFinderProps> = ({
       console.error('Error during pathfinding:', error);
       handleError('An unexpected error occurred during pathfinding');
     }
-  }, [startLocation, endLocation, onPathFound, isWheelchair, handleError]); 
+  }, [startLocation, endLocation, onPathFound, isWheelchair, handleError]);
+
+  // Handle clearing the path - to be passed to the NavigationButton
+  const handleClearPath = useCallback((): void => {
+    // Clear all path data
+    setPathSegments([]);
+    setNextFloors([]);
+    setCurrentPathIndex(0);
+    setPathCompleted(false);
+    onPathFound([], { x: 0, y: 0 }, { x: 0, y: 0 });
+  }, [onPathFound]);
 
   // Accessibility message using template literal
   const accessibilityMessage = isWheelchair 
     ? "Wheelchair accessible path mode is active - Using elevators for floor transitions" 
-    : "Standard path mode - Using stairs or elevators for floor transitions";
+    : "Standard path mode - Using stairs for floor transitions";
 
   return (
     <div className="flex flex-col w-full space-y-3">
@@ -119,8 +161,8 @@ export const PathFinder: React.FC<PathFinderProps> = ({
           />
         </div>
         
-        {/* Find path button */}
-        <div className="pt-5">
+        {/* Find path button and Navigation Button side by side */}
+        <div className="flex flex-col space-y-2 pt-5">
           <FindPathButton
             startLocation={startLocation}
             endLocation={endLocation}
@@ -129,6 +171,20 @@ export const PathFinder: React.FC<PathFinderProps> = ({
             settings={settings}
             isWheelchair={isWheelchair}
           />
+          
+          {pathSegments.length > 0 && (
+            <NavigationButton
+              pathSegments={pathSegments}
+              nextFloors={nextFloors}
+              currentPathIndex={currentPathIndex}
+              pathCompleted={pathCompleted}
+              setCurrentFloor={setCurrentFloor}
+              setCurrentPathIndex={setCurrentPathIndex}
+              setPathCompleted={setPathCompleted}
+              onClearPath={handleClearPath}
+              settings={settings}
+            />
+          )}
         </div>
       </div>
       
