@@ -90,7 +90,7 @@ export interface Route {
     estimatedTime: string;
     accessibilityNotes: string;
     navigationInstructions: string;
-    // estimatedDistance?: string;
+    distance?: string; // Added distance property
 }
 export interface RouteInformationCardProps {
     route: Route;
@@ -129,6 +129,10 @@ export interface GridToggleButtonProps {
 export interface RightSidebarProps {
     settings: AccessibilitySettings;
     currentFloor: number;
+    isWheelchair?: boolean;
+    pathSegments?: PathSegment[];
+    estimatedTime?: string;
+    distance?: string;
 }
 export interface MapViewProps {
     currentFloor: number;
@@ -242,3 +246,28 @@ export interface FindPathButtonProps {
     settings?: AccessibilitySettings;
     isWheelchair?: boolean; // Add wheelchair mode flag
   }
+
+// Define path segment interface
+export interface PathSegment {
+    start: Coordinate;
+    end: Coordinate;
+    floor: number;
+    isTransitPoint?: boolean;
+    transitType?: 'elevator' | 'stairs';
+  }
+  
+  // Define clear interface for PathFinder props
+  export interface RouteFinderProps {
+    startLocation: LocationSearchResult | null;
+    endLocation: LocationSearchResult | null;
+    isWheelchair: boolean;
+    onPathFound: (path: PathSegment[]) => void;
+    onError: (message: string) => void;
+  }
+  
+  // Define transit point type
+export type TransitPoint = {
+    coord: Coordinate;
+    isElevator: boolean;
+  };
+  

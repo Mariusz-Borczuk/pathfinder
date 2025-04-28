@@ -1,6 +1,6 @@
 import React from "react";
 import { IoMdEye, IoMdGrid, } from "react-icons/io";
-import { FaRestroom, FaFireExtinguisher, FaWrench, FaMapMarkerAlt, FaPlay, FaRoute, FaWheelchair, FaArrowRight, FaCheck } from "react-icons/fa";
+import { FaRestroom, FaFireExtinguisher, FaWrench, FaMapMarkerAlt, FaPlay, FaRoute, FaWheelchair, FaArrowRight, FaCheck, FaClock, FaRuler, FaWalking } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import {
   MdDarkMode,
@@ -32,7 +32,7 @@ import { FiType } from "react-icons/fi";
  * @module icons
  */
 export {
-  IoMdEye, MdDarkMode, MdElevator, MdFemale, MdHome, SiGoogleclassroom, MdLocationOn, MdMale, MdOutlineDirectionsWalk, MdSearch, MdSportsTennis, MdWater, MdStairs, FaRestroom, FaFireExtinguisher, FaWrench, MdLocationPin, FaMapMarkerAlt, FaPlay, FaRoute, FaWheelchair, FaArrowRight, FaCheck, FiType, IoMdGrid
+  IoMdEye, MdDarkMode, MdElevator, MdFemale, MdHome, SiGoogleclassroom, MdLocationOn, MdMale, MdOutlineDirectionsWalk, MdSearch, MdSportsTennis, MdWater, MdStairs, FaRestroom, FaFireExtinguisher, FaWrench, MdLocationPin, FaMapMarkerAlt, FaPlay, FaRoute, FaWheelchair, FaArrowRight, FaCheck, FaClock, FaRuler, FaWalking, FiType, IoMdGrid
 };
 
 // Export commonly used icon combinations

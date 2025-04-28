@@ -1,54 +1,66 @@
-# React + TypeScript + Vite
+# Campus Navigator: Accessible Wayfinding System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Campus Navigator is a modern, accessible wayfinding application built with React, TypeScript, and Vite. The system helps users navigate through complex building environments with special attention to accessibility needs.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Accessible Navigation
 
-## Expanding the ESLint configuration
+- **Wheelchair Mode**: Optimized routes for wheelchair users with adjusted time calculations
+- **Visual Accessibility**: High contrast mode and adjustable text size
+- **Audio Navigation**: Text-to-speech functionality for route directions
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Pathfinding
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+- **Intelligent Routing**: Find the most efficient path between any two points
+- **Multi-floor Navigation**: Seamless navigation across different floors with elevator and stair options
+- **Distance & Time Calculation**: Accurate distance (in meters) and time estimates based on:
+  - Path length (each tile = 0.5 meter)
+  - Standard moving speed (determined by the user /m)
+  - Wheelchair adjustments (1.5x time factor when in wheelchair mode)
+  - Floor transitions (60 seconds per floor change)
+
+### User Interface
+
+- **Interactive Map**: Visual representation of the path with start and end points
+- **Location Search**: Easily find rooms, facilities, and points of interest
+- **Quick Navigation**: Shortcuts to commonly used destinations
+- **Custom Locations**: Add and save your own navigation points
+- **Floor Management**: Easily switch between different building floors
+
+### Technical Details
+
+- Built with React 18+ and TypeScript
+- Uses Vite for fast development and optimized builds
+- Component-based architecture for maintainability
+- Responsive design that works on various screen sizes
+
+## Getting Started
+
+### Installation
+
+```bash
+# Clone the repository
+git clone [repository-url]
+
+# Navigate to project directory
+cd pathFinder
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Usage
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Select your starting point and destination
+2. Toggle wheelchair mode if needed
+3. Adjust accessibility settings according to your preferences
+4. Click "Find Path" to generate the optimal route
+5. Use the provided navigation instructions or audio guidance to reach your destination
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+## Development
+
+This project is built with React + TypeScript + Vite. To learn more about working with this stack, check the sections below.

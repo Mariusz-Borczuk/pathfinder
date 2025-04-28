@@ -3,33 +3,11 @@ import {
   Coordinate,
   Elevator,
   FloorData,
-  LocationSearchResult,
-  Stair
+  PathSegment,
+  RouteFinderProps,
+  Stair,
+  TransitPoint
 } from './components/types/types';
-
-// Define path segment interface
-export interface PathSegment {
-  start: Coordinate;
-  end: Coordinate;
-  floor: number;
-  isTransitPoint?: boolean;
-  transitType?: 'elevator' | 'stairs';
-}
-
-// Define clear interface for PathFinder props
-export interface PathFinderProps {
-  startLocation: LocationSearchResult | null;
-  endLocation: LocationSearchResult | null;
-  isWheelchair: boolean;
-  onPathFound: (path: PathSegment[]) => void;
-  onError: (message: string) => void;
-}
-
-// Define transit point type
-type TransitPoint = {
-  coord: Coordinate;
-  isElevator: boolean;
-};
 
 /**
  * Core PathFinder function that calculates paths between locations.
@@ -41,7 +19,7 @@ export const PathFinder = ({
   isWheelchair,
   onPathFound,
   onError
-}: PathFinderProps): null => {
+}: RouteFinderProps): null => {
   
   /**
    * Find all elevator entry points on a floor

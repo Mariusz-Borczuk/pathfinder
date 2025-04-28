@@ -1,7 +1,14 @@
-import { FaWheelchair, FiType, IoMdEye, } from "@/utils/icons";
+import { getSettings } from "@/components/types/settings";
+import { FaWheelchair, FiType, IoMdEye } from "@/utils/icons";
 import React, { useState } from "react";
-import AccessibilityButton from "../../Accessibility_Button";
-import { AccessibilitySettings, Coordinate, LayoutProps, LocationSearchResult, PathSegment } from "../../types/types";
+import AccessibilityButton from "../../../utils/Accessibility_Button";
+import {
+  AccessibilitySettings,
+  Coordinate,
+  LayoutProps,
+  LocationSearchResult,
+  PathSegment,
+} from "../../types/types";
 import FloorManagement from "../leftMenu/Floor_Management";
 import { MainHeader } from "../leftMenu/Main_Header";
 import { QuickNavigation } from "../leftMenu/Quick_Navigation";
@@ -9,21 +16,20 @@ import { MapView } from "../mapCenter/Map_View";
 import { GridToggleButton } from "../mapCenter/topPart/GridToggleButton";
 import { PathFinder } from "../mapCenter/topPart/PathFinder";
 import { RightSidebar } from "../rightMenu/Right_Sidebar";
-import { getSettings } from "../settings";
 
 /**
  * WayfindingApp3 component represents the main layout for the wayfinding application.
  * It manages the state for accessibility settings, current floor, grid visibility, highlighted locations, and pathfinding.
- * 
+ *
  * The layout consists of:
  * - Left sidebar with accessibility settings, search functionality, quick navigation and floor management
  * - Main content area with map view, pathfinding controls, and location search
  * - Right sidebar with additional information
- * 
+ *
  * @component
  * @param {LayoutProps} props - Component props
  * @param {React.ReactNode} props.children - Child components to be rendered within the layout
- * 
+ *
  * @example
  * ```tsx
  * <WayfindingApp3>
@@ -40,32 +46,36 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [currentFloor, setCurrentFloor] = useState(1);
   const [showGrid, setShowGrid] = useState(false);
   const [pathSegments, setPathSegments] = useState<PathSegment[]>([]);
-  const [pathStartLocation, setPathStartLocation] = useState<LocationSearchResult | null>(null);
-  const [pathEndLocation, setPathEndLocation] = useState<LocationSearchResult | null>(null);
-
-
+  const [pathStartLocation, setPathStartLocation] =
+    useState<LocationSearchResult | null>(null);
+  const [pathEndLocation, setPathEndLocation] =
+    useState<LocationSearchResult | null>(null);
 
   // Updated handler to receive path segments and coordinates
-  const handlePathFound = (path: PathSegment[], startCoord: Coordinate, endCoord: Coordinate) => {
+  const handlePathFound = (
+    path: PathSegment[],
+    startCoord: Coordinate,
+    endCoord: Coordinate
+  ) => {
     setPathSegments(path);
-    
+
     // Create minimal LocationSearchResult objects for the start and end coordinates
     // These will be used to highlight the start and end points on the map
     if (path.length > 0) {
       setPathStartLocation({
-        type: 'path',
-        name: 'Path Start',
+        type: "path",
+        name: "Path Start",
         floor: path[0]?.floor ?? currentFloor,
         location: startCoord,
-        description: 'Starting point of the path'
+        description: "Starting point of the path",
       });
-      
+
       setPathEndLocation({
-        type: 'path',
-        name: 'Path End', 
+        type: "path",
+        name: "Path End",
         floor: path[0]?.floor ?? currentFloor,
         location: endCoord,
-        description: 'Destination point of the path'
+        description: "Destination point of the path",
       });
     } else {
       // Clear path points if no path is found
@@ -74,14 +84,73 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
     }
   };
 
+  // Calculate estimated time and distance based on path segments
+  const calculateEstimatedTime = (): string => {
+    if (pathSegments.length === 0) return "";
+
+    // Fixed time per tile (20 seconds)
+    const secondsPerTile = 2;
+
+    // Calculate tile count
+    const tileCount = pathSegments.length * 0.5;
+
+    // Calculate base time (in seconds)
+    const baseSeconds = tileCount * secondsPerTile;
+
+    // Apply floor transition time
+    const floorTransitions =
+      new Set(pathSegments.map((segment) => segment.floor)).size - 1;
+    const transitionSeconds = floorTransitions * 60; // 1 minute per floor transition
+
+    // Apply wheelchair speed adjustment (slower in wheelchair mode)
+    const wheelchairFactor = isWheelchair ? 1.5 : 1.0; // 50% slower in wheelchair mode
+
+    // Calculate total time (in seconds)
+    const totalSeconds = (baseSeconds + transitionSeconds) * wheelchairFactor;
+
+    // Convert to minutes and seconds
+    const totalMinutes = Math.floor(totalSeconds / 60);
+    const remainingSeconds = Math.round(totalSeconds % 60);
+
+    // Format the result
+    if (totalMinutes === 0) {
+      return `${remainingSeconds} seconds`;
+    } else if (remainingSeconds === 0) {
+      return `${totalMinutes} minute${totalMinutes !== 1 ? "s" : ""}`;
+    } else {
+      return `${totalMinutes} minute${
+        totalMinutes !== 1 ? "s" : ""
+      } and ${remainingSeconds} seconds`;
+    }
+  };
+
+  const calculateDistance = (): string => {
+    if (pathSegments.length === 0) return "";
+
+    // Calculate actual distance by summing the length of each path segment
+    let totalDistance = 0;
+
+    pathSegments.forEach((segment) => {
+      const dx = segment.end.x - segment.start.x;
+      const dy = segment.end.y - segment.start.y;
+      // Calculate segment length using Pythagorean theorem
+      const segmentLength = Math.sqrt(dx * dx + dy * dy);
+      totalDistance += segmentLength;
+    });
+
+    // Convert to meters (assuming each grid unit is 1 meter)
+    const distanceInMeters = Math.round(totalDistance);
+
+    return `${distanceInMeters} meters`;
+  };
+
   return (
-    <div
-      className="flex h-full w-full bg-gray-900"
-      role="application"
-    >
+    <div className="flex h-full w-full bg-gray-900" role="application">
       {/* Left Sidebar */}
       <aside
-        className={`w-80 bg-gray-800 shadow-lg p-4 flex flex-col ${getSettings(settings)}`}
+        className={`w-80 bg-gray-800 shadow-lg p-4 flex flex-col ${getSettings(
+          settings
+        )}`}
         role="complementary"
       >
         <MainHeader settings={settings} />
@@ -125,9 +194,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
               <AccessibilityButton
                 label="Toggle wheelchair accessibility"
                 isActive={isWheelchair}
-                onClick={() =>
-                  setIsWheelchair(!isWheelchair)
-                }
+                onClick={() => setIsWheelchair(!isWheelchair)}
                 icon={<FaWheelchair className="text-gray-200 w-6 h-6" />}
                 description="Toggle wheelchair accessibility"
               />
@@ -152,18 +219,25 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
         </div>
 
         <QuickNavigation settings={settings} currentFloor={currentFloor} />
-        <FloorManagement 
-          currentFloor={currentFloor} 
-          onFloorChange={setCurrentFloor} 
+        <FloorManagement
+          currentFloor={currentFloor}
+          onFloorChange={setCurrentFloor}
         />
       </aside>
 
       <div className="flex-1 p-4 flex flex-col justify-center">
         {/* Top control bar with centered PathFinder */}
         <div className="flex items-center justify-center space-x-3 py-4 px-3 mb-4 bg-gray-800 rounded-lg w-full shadow-md">
-          <GridToggleButton showGrid={showGrid} onToggle={() => setShowGrid(!showGrid)} settings={{ contrast: settings.contrast, fontSize: settings.fontSize }} />
-          
-          <PathFinder 
+          <GridToggleButton
+            showGrid={showGrid}
+            onToggle={() => setShowGrid(!showGrid)}
+            settings={{
+              contrast: settings.contrast,
+              fontSize: settings.fontSize,
+            }}
+          />
+
+          <PathFinder
             currentFloor={currentFloor}
             setCurrentFloor={setCurrentFloor}
             settings={settings}
@@ -171,11 +245,11 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
             onPathFound={handlePathFound}
           />
         </div>
-        
+
         {/* Map View with centered content */}
         <div className="flex-1 overflow-hidden flex items-center justify-center">
-          <MapView  
-            settings={settings}   
+          <MapView
+            settings={settings}
             currentFloor={currentFloor}
             showGrid={showGrid}
             endLocation={pathEndLocation}
@@ -184,9 +258,13 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
           />
         </div>
       </div>
-      <RightSidebar 
+      <RightSidebar
         settings={settings}
         currentFloor={currentFloor}
+        isWheelchair={isWheelchair}
+        pathSegments={pathSegments}
+        estimatedTime={calculateEstimatedTime()}
+        distance={calculateDistance()}
       />
       {children}
     </div>

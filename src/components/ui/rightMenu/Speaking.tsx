@@ -116,6 +116,7 @@ export const AccessibleTTSButton: React.FC<AccessibleTTSButtonProps> = ({
     const sections: Section[] = [
         { title: "Location", content: route.destination },
         { title: "Time", content: route.estimatedTime },
+        { title: "Distance", content: route.distance || "Distance not available" },
         { title: "Directions", content: route.navigationInstructions },
         { title: "Accessibility", content: route.accessibilityNotes }
     ];
@@ -200,8 +201,8 @@ export const AccessibleTTSButton: React.FC<AccessibleTTSButtonProps> = ({
                             className={`
                                 transition-colors duration-200
                                 ${currentSection === section.title 
-                                    ? 'bg-gray-700 rounded px-3 py-1' 
-                                    : ''
+                                    ? 'bg-blue-700 rounded px-3 py-1' 
+                                    : 'hover:bg-gray-700 rounded px-3 py-1'
                                 }
                             `}
                         >
