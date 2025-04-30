@@ -3,6 +3,7 @@ import {
   LocationSearchResult,
   NavigationItem,
 } from "@/components/types/types";
+import { formatIconName } from "@/utils/formatUtils"; // Import from the new utility file
 import { IoMdArrowDropdown, MdLocationPin } from "@/utils/icons";
 import React, { useState } from "react";
 import IconSelector from "./IconSelector";
@@ -213,7 +214,7 @@ const AddCustomNavigationButton: React.FC<
                   <div className="flex items-center justify-between">
                     <span>
                       <span className="flex flex-col">
-                        {selectedIconName}
+                        {formatIconName(selectedIconName)}
                         <span className="text-xs text-gray-500 dark:text-gray-400">
                           (Click to change)
                         </span>
