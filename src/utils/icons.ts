@@ -1,15 +1,13 @@
 import React from "react";
-import { IoMdEye, IoMdGrid, } from "react-icons/io";
+import { IoMdEye, IoMdGrid, IoMdArrowDropdown } from "react-icons/io";
 import { FaRestroom, FaFireExtinguisher, FaWrench, FaMapMarkerAlt, FaPlay, FaRoute, FaWheelchair, FaArrowRight, FaCheck, FaClock, FaRuler, FaWalking } from "react-icons/fa";
 import { SiGoogleclassroom } from "react-icons/si";
 import {
   MdDarkMode,
-  MdElevator,
   MdFemale,
   MdHome,
   MdLocationOn,
   MdMale,
-  MdOutlineDirectionsWalk,
   MdSearch,
   MdSportsTennis,
   MdWater,
@@ -17,6 +15,7 @@ import {
   MdLocationPin,
 } from "react-icons/md";
 import { FiType } from "react-icons/fi";
+import { FaElevator } from "react-icons/fa6";
 
 // Export all icons as named exports
 /**
@@ -32,15 +31,7 @@ import { FiType } from "react-icons/fi";
  * @module icons
  */
 export {
-  IoMdEye, MdDarkMode, MdElevator, MdFemale, MdHome, SiGoogleclassroom, MdLocationOn, MdMale, MdOutlineDirectionsWalk, MdSearch, MdSportsTennis, MdWater, MdStairs, FaRestroom, FaFireExtinguisher, FaWrench, MdLocationPin, FaMapMarkerAlt, FaPlay, FaRoute, FaWheelchair, FaArrowRight, FaCheck, FaClock, FaRuler, FaWalking, FiType, IoMdGrid
+  IoMdEye, MdDarkMode, MdFemale, MdHome, SiGoogleclassroom, MdLocationOn, MdMale, MdSearch, MdSportsTennis, MdWater, MdStairs, FaRestroom, FaFireExtinguisher, FaWrench, MdLocationPin, FaMapMarkerAlt, FaPlay, FaRoute, FaWheelchair, FaArrowRight, FaCheck, FaClock, FaRuler, FaWalking, FiType, IoMdGrid, FaElevator, IoMdArrowDropdown
 };
-
-// Export commonly used icon combinations
-export const RestroomIcon = () =>
-  React.createElement("span", { className: "flex flex-row" }, [
-    React.createElement(MdFemale, { key: "female" }),
-    React.createElement(MdMale, { key: "male" }),
-  ]);
-
 // Export icon types for type safety
 export type IconType = React.ReactNode;

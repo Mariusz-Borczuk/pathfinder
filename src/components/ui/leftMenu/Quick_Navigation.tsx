@@ -5,11 +5,11 @@ import {
   RightSidebarProps,
 } from "@/components/types/types";
 import {
-  MdElevator,
-  MdOutlineDirectionsWalk,
+  FaWalking,
+  FaElevator,
   MdSportsTennis,
   MdWater,
-  RestroomIcon,
+  FaRestroom,
 } from "@/utils/icons";
 import React, { useState } from "react";
 import AddCustomNavigationButton from "./Custom_Location";
@@ -46,19 +46,19 @@ export const QuickNavigation: React.FC<
       color: "#4CAF50", // Green
     },
     {
-      icon: <RestroomIcon />,
+      icon: <FaRestroom />,
       name: "Restrooms",
       coordinates: { x: 15, y: 25 },
       color: "#2196F3", // Blue
     },
     {
-      icon: <MdElevator />,
+      icon: <FaElevator />,
       name: "Elevators",
-      coordinates: { x: 10, y: 32 },
+      coordinates: { x: 5, y: 10 },
       color: "#673AB7", // Deep Purple
     },
     {
-      icon: <MdOutlineDirectionsWalk />,
+      icon: <FaWalking />,
       name: "Escape route",
       coordinates: { x: 30, y: 40 },
       color: "#FF5722", // Deep Orange
@@ -101,25 +101,25 @@ export const QuickNavigation: React.FC<
         {[...predefinedLocations, ...customNavigation].map(
           (location, index) => (
             <li key={index}>
-                <button
+              <button
                 className="w-full p-3 text-left bg-gray-700 text-gray-200 hover:bg-gray-600 focus:ring-2 focus:ring-blue-400 focus:outline-none flex items-center"
                 onClick={() => handleLocationClick(location)}
-                >
+              >
                 <div className="flex items-center gap-2 flex-1">
                   <div className="flex items-center justify-center">
-                  <div
-                    className="w-8 h-8 rounded-[4px] mr-2 flex items-center justify-center"
-                    style={{ backgroundColor: location.color || "#4CAF50" }}
-                  >
-                    <span className="text-white">{location.icon}</span>
-                  </div>
+                    <div
+                      className="w-8 h-8 rounded-[4px] mr-2 flex items-center justify-center"
+                      style={{ backgroundColor: location.color || "#4CAF50" }}
+                    >
+                      <span className="text-white">{location.icon}</span>
+                    </div>
                   </div>
                   <span className="flex-1">{location.name}</span>
                   <span className="text-xs text-gray-400">
-                  ({location.coordinates.x}, {location.coordinates.y})
+                    ({location.coordinates.x}, {location.coordinates.y})
                   </span>
                 </div>
-                </button>
+              </button>
             </li>
           )
         )}

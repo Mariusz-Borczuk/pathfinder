@@ -3,8 +3,9 @@ import {
   LocationSearchResult,
   NavigationItem,
 } from "@/components/types/types";
-import { MdHome, MdLocationOn, MdSportsTennis } from "@/utils/icons";
+import { IoMdArrowDropdown, MdLocationPin } from "@/utils/icons";
 import React, { useState } from "react";
+import IconSelector from "./IconSelector";
 
 /**
  * A component that provides a UI for adding custom navigation points.
@@ -13,7 +14,7 @@ import React, { useState } from "react";
  * - Toggle an accordion panel to show/hide the form
  * - Enter a name for the navigation point
  * - Set X and Y coordinates
- * - Select an icon from predefined options
+ * - Select an icon from a comprehensive list of available icons
  * - Choose a color for the location marker
  * - Submit the new custom navigation point
  *
@@ -36,22 +37,25 @@ const AddCustomNavigationButton: React.FC<
   const [name, setName] = useState("");
   const [coordinates, setCoordinates] = useState({ x: 0, y: 0 });
   const [selectedIcon, setSelectedIcon] = useState<React.ReactNode>(
-    <MdSportsTennis />
+    <MdLocationPin />
   );
+  const [selectedIconName, setSelectedIconName] = useState("MdLocationPin");
   const [markerColor, setMarkerColor] = useState("#4CAF50"); // Default green color
-
-  const icons = [
-    { label: "Tennis", icon: <MdSportsTennis /> },
-    { label: "Location", icon: <MdLocationOn /> },
-    { label: "Home", icon: <MdHome /> },
-  ];
+  const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
 
   const colorOptions = [
-    { name: "Green", value: "#4CAF50" },
-    { name: "Blue", value: "#2196F3" },
-    { name: "Red", value: "#F44336" },
-    { name: "Purple", value: "#9C27B0" },
-    { name: "Orange", value: "#FF9800" },
+    { name: "Blue", value: "#0072B2" },
+    { name: "Orange", value: "#E69F00" },
+    { name: "Purple", value: "#CC79A7" },
+    { name: "Green", value: "#009E73" },
+    { name: "Red", value: "#D55E00" },
+    { name: "Yellow", value: "#F0E442" },
+    { name: "Cyan", value: "#56B4E9" },
+    { name: "Teal", value: "#00C4CC" },
+    { name: "Pink", value: "#FF2D55" },
+    { name: "Brown", value: "#A0522D" },
+    { name: "Navy", value: "#34495E" },
+    { name: "Lime", value: "#BFFF00" },
   ];
 
   const handleAddCustomNavigation = () => {
@@ -82,7 +86,15 @@ const AddCustomNavigationButton: React.FC<
     // Reset form
     setName("");
     setCoordinates({ x: 0, y: 0 });
-    setSelectedIcon(<MdSportsTennis />);
+    setSelectedIcon(<MdLocationPin />);
+    setSelectedIconName("MdLocationPin");
+  };
+
+  // Handle icon selection from IconSelector
+  const handleIconSelect = (icon: React.ReactNode, iconName: string) => {
+    setSelectedIcon(icon);
+    setSelectedIconName(iconName);
+    setIsIconSelectorOpen(false);
   };
 
   return (
@@ -100,7 +112,7 @@ const AddCustomNavigationButton: React.FC<
       {isAccordionOpen && (
         <div
           id="custom-navigation-panel"
-          className="mt-4 w-full p-6 border border-gray-300 rounded-lg bg-white dark:bg-gray-800 shadow-md"
+          className="mt-4 w-full p-4 border border-gray-300 rounded-lg bg-white dark:bg-gray-800 shadow-md"
           role="region"
           aria-label="Custom navigation settings"
         >
@@ -127,14 +139,7 @@ const AddCustomNavigationButton: React.FC<
             />
           </div>
           <div className="mb-4">
-            <label
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              htmlFor="coord-x"
-              aria-label="Coordinates X and Y"
-            >
-              Coordinates:
-            </label>
-            <div className="flex gap-4 mb-4">
+            <div className="flex gap-4">
               <div className="w-1/2">
                 <label
                   htmlFor="coord-x"
@@ -183,49 +188,56 @@ const AddCustomNavigationButton: React.FC<
               </div>
             </div>
           </div>
+
+          {/* Icon Selection */}
           <div className="mb-4">
-            <label
-              id="icon-group-label"
-              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-              htmlFor="icon-selection"
-              aria-label="Select an icon"
-            >
-              Select an icon:
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Icon:
             </label>
-            <div
-              className="flex gap-4 flex-wrap"
-              role="radiogroup"
-              aria-labelledby="icon-group-label"
-              aria-describedby="icon-selection"
-              aria-label="Icon selection"
-              aria-required="true"
-            >
-              {icons.map((iconOption, index) => (
-                <button
-                  key={index}
-                  onClick={() => setSelectedIcon(iconOption.icon)}
-                  className={`p-3 border rounded-lg flex items-center justify-center transition duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 ${
-                    selectedIcon === iconOption.icon
-                      ? "bg-red-700 text-white border-red-700 scale-110 transform ring-red-500"
-                      : "bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-900 dark:text-white border-gray-300 dark:border-gray-600"
-                  }`}
-                  aria-label={`Select ${iconOption.label} icon`}
-                  aria-pressed={selectedIcon === iconOption.icon}
-                  role="radio"
-                  tabIndex={selectedIcon === iconOption.icon ? 0 : -1}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedIcon(iconOption.icon);
-                    }
-                  }}
-                  title={`Select ${iconOption.label} icon`}
+            <div className="flex items-center gap-3">
+              <div className="w-14 h-14 bg-white dark:bg-gray-700 border-2 border-blue-500 rounded-md flex items-center justify-center">
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: markerColor }}
                 >
-                  <span className="text-2xl">{iconOption.icon}</span>
+                  <span className="text-xl text-white">{selectedIcon}</span>
+                </div>
+              </div>
+
+              <div className="flex-1">
+                <button
+                  type="button"
+                  onClick={() => setIsIconSelectorOpen(!isIconSelectorOpen)}
+                  className="block w-full text-left px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <div className="flex items-center justify-between">
+                    <span>
+                      <span className="flex flex-col">
+                        {selectedIconName}
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          (Click to change)
+                        </span>
+                      </span>
+                    </span>
+                    <span className="text-gray-400 text-3xl">
+                      <IoMdArrowDropdown />
+                    </span>
+                  </div>
                 </button>
-              ))}
+              </div>
             </div>
+
+            {isIconSelectorOpen && (
+              <div className="mt-2 max-h-64 overflow-auto border border-gray-300 dark:border-gray-600 rounded-md shadow-lg">
+                <IconSelector
+                  selectedIcon={selectedIcon}
+                  onIconSelect={handleIconSelect}
+                />
+              </div>
+            )}
           </div>
+
+          {/* Color Selection */}
           <div className="mb-4">
             <label
               id="color-group-label"
@@ -240,7 +252,7 @@ const AddCustomNavigationButton: React.FC<
                   onClick={() => setMarkerColor(color.value)}
                   className={`w-8 h-8 rounded-full border-2 transition-transform focus:outline-none focus:ring-2 ${
                     markerColor === color.value
-                      ? "border-white scale-125"
+                      ? "border-white scale-125 shadow-lg"
                       : "border-transparent"
                   }`}
                   style={{ backgroundColor: color.value }}
@@ -250,32 +262,25 @@ const AddCustomNavigationButton: React.FC<
                 ></button>
               ))}
             </div>
-            <div className="mt-2 flex items-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400 mr-2">
-                Custom color:
-              </span>
+            {/* Custom Color Input */}
+            <div className="mt-3 flex items-center gap-2">
+              <label
+                htmlFor="custom-color-input"
+                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Custom Color:
+              </label>
               <input
+                id="custom-color-input"
                 type="color"
                 value={markerColor}
                 onChange={(e) => setMarkerColor(e.target.value)}
-                className="w-8 h-8 rounded-full border-0 cursor-pointer"
+                className="w-10 h-10 rounded-md border border-gray-300 dark:border-gray-600 cursor-pointer p-1 bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 dark:focus:ring-offset-gray-800"
                 aria-label="Select custom marker color"
               />
             </div>
-            <div className="mt-3 flex items-center justify-center">
-              <div className="flex flex-col items-center">
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center shadow-lg"
-                  style={{ backgroundColor: markerColor }}
-                >
-                  <span className="text-white text-xs font-bold">●</span>
-                </div>
-                <span className="text-xs mt-1 text-gray-600 dark:text-gray-400">
-                  Preview
-                </span>
-              </div>
-            </div>
           </div>
+
           <button
             onClick={handleAddCustomNavigation}
             className={`w-full mt-4 p-3 rounded-lg transition duration-200 font-medium ${
