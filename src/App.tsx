@@ -1,4 +1,4 @@
-import PathMap from "./PathMap"; // Ensure the file exists at this path or update the path accordingly
+import { PathMap } from "./PathMap"; // Ensure the file exists at this path or update the path accordingly
 
 /**
  * Main application component for the path finding visualization.

@@ -1,6 +1,6 @@
 import React from 'react';
-import { getSettings } from '../settings';
 import { AccessibilitySettings } from '@/components/types/types';
+import { getSettings } from '@/components/types/settings';
 
 /**
  * MainHeader component displays the title and subtitle for the Campus Navigator application.

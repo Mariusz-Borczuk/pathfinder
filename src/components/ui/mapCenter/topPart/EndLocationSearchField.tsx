@@ -1,7 +1,7 @@
 import { FaMapMarkerAlt, MdLocationPin, SiGoogleclassroom } from '@/utils/icons';
 import React, { useEffect, useState } from 'react';
 import { AccessibilityFontSizeProps, allFloorData, Coordinate, coordRegex, LocationSearchFieldProps, LocationSearchResult } from '../../../types/types';
-import { getEndLocationStyles, getFontSizeClass } from '../../settings';
+import { getEndLocationStyles, getFontSizeClass } from '@/components/types/settings';
 
 /**
  * End Location Search Field - Updated to support finding paths between different room types.

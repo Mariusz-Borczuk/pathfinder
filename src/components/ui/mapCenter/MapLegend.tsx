@@ -1,7 +1,7 @@
 import React from 'react';
 import { tileData } from '../../types/tileData';
 import { AccessibilityFontSizeProps, MapLegendProps } from '../../types/types';
-import { getFontSizeClass } from '../settings';
+import { getFontSizeClass } from '@/components/types/settings';
 
 /**
  * A component that displays a legend for the map, showing what each color represents.

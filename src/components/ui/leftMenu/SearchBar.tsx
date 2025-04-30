@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
-import { getSettings } from "../settings";
 import { RightSidebarProps } from "../../types/types";
+import { getSettings } from "@/components/types/settings";
 
 /**
  * SearchBar component that provides a search input field for locations/rooms.

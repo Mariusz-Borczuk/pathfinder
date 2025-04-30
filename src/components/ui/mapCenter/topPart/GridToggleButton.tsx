@@ -1,7 +1,7 @@
 import React from 'react';
-import { getFontSizeClass } from '../../settings';
 import { AccessibilityFontSizeProps, GridToggleButtonProps } from '../../../types/types';
 import { IoMdGrid } from '@/utils/icons';
+import { getFontSizeClass } from '@/components/types/settings';
 
 /**
  * A button component that toggles the grid visibility on the map.
