@@ -1,15 +1,16 @@
 import { getSettings } from "@/components/types/settings";
 import {
+  AccessibilitySettings,
   LocationSearchResult,
   NavigationItem,
   RightSidebarProps,
 } from "@/components/types/types";
 import {
-  FaWalking,
   FaElevator,
+  FaRestroom,
+  FaWalking,
   MdSportsTennis,
   MdWater,
-  FaRestroom,
 } from "@/utils/icons";
 import React, { useState } from "react";
 import AddCustomNavigationButton from "./Custom_Location";
@@ -25,17 +26,35 @@ import AddCustomNavigationButton from "./Custom_Location";
  * @param {Object} props.settings - The settings for displaying the component
  * @param {number} props.currentFloor - The current floor number
  * @param {Function} [props.onSelectLocation] - Optional callback for when a location is selected
+ * @param {Function} [props.onUpdateSettings] - Optional callback for updating settings
  *
  * @returns {JSX.Element} A sidebar section with quick navigation options and ability to add custom locations
  */
 export const QuickNavigation: React.FC<
   RightSidebarProps & {
     onSelectLocation?: (location: LocationSearchResult) => void;
+    onUpdateSettings?: (settings: AccessibilitySettings) => void;
   }
-> = ({ settings, currentFloor, onSelectLocation }) => {
+> = ({ settings, currentFloor, onSelectLocation, onUpdateSettings }) => {
   const [customNavigation, setCustomNavigation] = useState<NavigationItem[]>(
     []
   );
+
+  // Default settings for locations if not already set
+  const initializeDefaultSettings = () => {
+    if (!settings.preferredBathroom) {
+      onUpdateSettings?.({ preferredBathroom: "Any" });
+    }
+
+    if (!settings.walkingSpeedMPS) {
+      onUpdateSettings?.({ walkingSpeedMPS: 1.4 });
+    }
+  };
+
+  // Initialize default settings on component mount
+  React.useEffect(() => {
+    initializeDefaultSettings();
+  }, []);
 
   // Predefined locations with colors
   const predefinedLocations: NavigationItem[] = [
@@ -87,6 +106,11 @@ export const QuickNavigation: React.FC<
         color: location.color || "#4CAF50", // Use provided color or default to green
       };
       onSelectLocation(locationResult);
+    }
+
+    // If clicking on bathroom, update preferred bathroom setting
+    if (location.name === "Restrooms" && onUpdateSettings) {
+      onUpdateSettings({ preferredBathroom: "Any" });
     }
   };
 

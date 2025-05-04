@@ -67,9 +67,13 @@ export interface FloorData {
   stairs: Stair[];
   paths: Path[];
 }
+export type PreferredBathroom = "Male" | "Female" | "Neutral" | "Any";
+
 export interface AccessibilitySettings {
   fontSize: "normal" | "large" | "xlarge";
   contrast: "normal" | "high";
+  preferredBathroom?: PreferredBathroom; // Add preferred bathroom
+  walkingSpeedMPS?: number; // Changed from secondsPer5m to metersPerSecond
 }
 export interface AccessibilityFontSizeProps {
   fontSize: "normal" | "large" | "xlarge";
@@ -134,6 +138,8 @@ export interface RightSidebarProps {
   pathSegments?: PathSegment[];
   estimatedTime?: string;
   distance?: string;
+  // Add callbacks to update settings
+  onUpdateSettings: (newSettings: Partial<AccessibilitySettings>) => void;
 }
 export interface MapViewProps {
   currentFloor: number;

@@ -170,7 +170,6 @@ const IconSelector: React.FC<IconSelectorProps> = ({
             "FaPlay",
             "FaRoute",
             "MdOutlineDirectionsWalk",
-            "FaWheelchair",
             "FaWalking",
           ].map((iconName) => {
             const Icon = iconComponents[iconName];
@@ -208,6 +207,7 @@ const IconSelector: React.FC<IconSelectorProps> = ({
             "MdWater",
             "MdElevator",
             "MdStairs",
+            "FaWheelchair",
           ].map((iconName) => {
             const Icon = iconComponents[iconName];
             return Icon ? (

@@ -51,6 +51,16 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   const [pathEndLocation, setPathEndLocation] =
     useState<LocationSearchResult | null>(null);
 
+  // Function to update accessibility settings
+  const handleUpdateSettings = (
+    newSettings: Partial<AccessibilitySettings>
+  ) => {
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      ...newSettings,
+    }));
+  };
+
   // Updated handler to receive path segments and coordinates
   const handlePathFound = (
     path: PathSegment[],
@@ -211,14 +221,18 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
                     contrast: settings.contrast === "high" ? "normal" : "high",
                   })
                 }
-                icon={<IoMdEye className="text-gray-200" />}
+                icon={<IoMdEye className="w-6 h-6 text-gray-200" />}
                 description="Toggle high contrast mode"
               />
             </div>
           </div>
         </div>
 
-        <QuickNavigation settings={settings} currentFloor={currentFloor} />
+        <QuickNavigation
+          settings={settings}
+          currentFloor={currentFloor}
+          onUpdateSettings={handleUpdateSettings}
+        />
         <FloorManagement
           currentFloor={currentFloor}
           onFloorChange={setCurrentFloor}
@@ -265,6 +279,7 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
         pathSegments={pathSegments}
         estimatedTime={calculateEstimatedTime()}
         distance={calculateDistance()}
+        onUpdateSettings={handleUpdateSettings}
       />
       {children}
     </div>

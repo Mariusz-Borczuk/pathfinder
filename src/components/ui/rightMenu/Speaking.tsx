@@ -232,7 +232,7 @@ export const AccessibleTTSButton: React.FC<AccessibleTTSButtonProps> = ({
                 />
 
                 <div className="flex items-center justify-between mt-2">
-                    <label htmlFor="rate" className="text-gray-200">Speed</label>
+                    <label htmlFor="rate" className="text-gray-200">Speaking Speed</label>
                     <span className="text-gray-400">{Math.round(speechSettings.rate * 100)}%</span>
                 </div>
                 <input

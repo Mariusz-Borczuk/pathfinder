@@ -136,7 +136,7 @@ export const PathFinder: React.FC<PathFinderProps> = ({
   // Accessibility message using template literal
   const accessibilityMessage = isWheelchair 
     ? "Wheelchair accessible path mode is active - Using elevators for floor transitions" 
-    : "Standard path mode - Using stairs for floor transitions";
+    : "Standard path mode - Using stairs or elevators for floor transitions";
 
   return (
     <div className="flex flex-col w-full space-y-3">

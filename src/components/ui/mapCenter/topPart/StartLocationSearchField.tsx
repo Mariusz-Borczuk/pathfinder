@@ -269,15 +269,11 @@ export const StartLocationSearchField: React.FC<LocationSearchFieldProps> = ({
         <div
           className={`mt-1 p-2 ${styles.inputBg} border-2 border-green-500 rounded-lg flex items-center`}
         >
-          <div
-            className="mr-2 text-lg flex items-center justify-center w-6 h-6 rounded-full"
-            style={{
-              backgroundColor: selectedDisplayLocation.color || "#4CAF50",
-              color: "white",
-            }}
-          >
+            <div
+            className="mr-2 text-lg flex items-center justify-center w-6 h-6 rounded-md ring-2   ring-green-500 bg-green-100/30 text-bold"
+            >
             {getLocationIcon(selectedDisplayLocation.type)}
-          </div>
+            </div>
           <div className="flex flex-col flex-1">
             <span className={`font-semibold ${styles.resultText}`}>
               {selectedDisplayLocation.name.replace("Start at ", "")}
