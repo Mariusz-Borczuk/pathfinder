@@ -35,8 +35,8 @@ export const GridToggleButton: React.FC<GridToggleButtonProps> = ({
   // Get contrast-appropriate styles
   const labelClass =
     settings.contrast === "high"
-      ? `text-white font-bold ${fontSizeClass} px-2 py-0.5 rounded-md`
-      : `text-white font-medium ${fontSizeClass} px-2 py-0.5 rounded-md`;
+      ? `text-white font-bold ${fontSizeClass} px-0 py-0 rounded-md`
+      : `text-white font-medium ${fontSizeClass} px-0 py-0 rounded-md`;
 
   // Create size mapping based on font size
   let containerSize: "small" | "medium" | "large" = "medium";
@@ -47,7 +47,7 @@ export const GridToggleButton: React.FC<GridToggleButtonProps> = ({
   const buttonElement = (
     <button
       onClick={onToggle}
-      className={`p-2.5 rounded-lg ${
+      className={`p-3.5 rounded-lg ${
         showGrid
           ? "bg-blue-600 hover:bg-blue-700"
           : "bg-gray-700 hover:bg-gray-800"
@@ -56,7 +56,7 @@ export const GridToggleButton: React.FC<GridToggleButtonProps> = ({
       aria-label={gridLabel}
     >
       <IoMdGrid
-        className={`w-6 h-6 ${showGrid ? "text-white" : "text-gray-300"}`}
+        className={`w-8 h-8 ${showGrid ? "text-white" : "text-gray-300"}`}
       />
     </button>
   );

@@ -186,12 +186,14 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 >
                   {route.estimatedTime}
                 </span>
+                
                 {isWheelchair && (
                   <span className="block text-xs opacity-70 mt-1">
                     (Includes wheelchair pace adjustment)
                   </span>
                 )}
               </p>
+               
               <p className={`mt-1 ${getSettings(settings)} text-xs opacity-70`}>
                 {`Based on ${currentSpeed.toFixed(1)} meters per second`}
                 {isWheelchair ? " with 1.5x factor" : ""}
@@ -258,14 +260,14 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                   <option value="Neutral">All-Gender/Neutral</option>
                 </select>
               </div>
-              {showSaveIndicator === "bathroom" && (
                 <div
-                  id="bathroom-feedback"
-                  className="text-xs text-green-400 mt-1 animate-pulse"
+                id="bathroom-feedback"
+                className={`text-xs text-green-400 ${
+                  showSaveIndicator === "bathroom" ? "animate-pulse" : "invisible"
+                }`}
                 >
-                  Preference saved
+                Preference saved
                 </div>
-              )}
             </div>
           </div>
 
@@ -288,14 +290,14 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
             {/* Combined Slider Container */}
             <div className="mt-3 relative h-6 flex items-center">
               {/* Background Track */}
-              <div className="absolute top-1/2 left-0 w-full h-2 bg-gray-600 rounded-lg transform -translate-y-1/2 pointer-events-none"></div>
+              <div className="absolute top-1/2 left-1 right-1 h-2 bg-gray-600 rounded-lg transform -translate-y-1/2 pointer-events-none"></div>
 
-              {/* Filled Track */}
+              {/* Filled Track - Modified to start from left edge with proper margin */}
               <div
-                className="absolute top-1/2 left-0 h-2 bg-blue-500 rounded-lg pointer-events-none transform -translate-y-1/2"
+                className="absolute top-1/2 left-1 h-2 bg-blue-500 rounded-lg pointer-events-none transform -translate-y-1/2"
                 style={{
-                  width: `${((currentSpeed - 0.5) / 2) * 100}%`,
-                  maxWidth: "100%",
+                  width: `${((currentSpeed - 0.5) / 2) * (100 - 8)}%`, // Adjusted to account for margins
+                  maxWidth: "calc(100% - 8px)", // Account for left and right margin
                 }}
               ></div>
 
@@ -303,7 +305,9 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
               <div
                 className="absolute w-5 h-5 bg-blue-500 rounded-full shadow-lg transform -translate-x-1/2 cursor-grab hover:scale-110 transition-transform z-10 ring-2 ring-blue-300 ring-opacity-50 flex items-center justify-center"
                 style={{
-                  left: `${((currentSpeed - 0.5) / 2) * 100}%`,
+                  left: `calc(${
+                    ((currentSpeed - 0.5) / 2) * (100 - 8)
+                  }% + 20px)`, // Adjusted position calculation
                   top: "50%",
                   transform: "translate(-50%, -50%)",
                 }}
@@ -322,7 +326,7 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
                 value={currentSpeed}
                 onChange={handleSpeedChange}
                 onInput={handleSliderInput}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-grab z-20"
+                className="absolute inset-x-1 inset-y-0 w-[calc(100%-8px)] h-full opacity-0 cursor-grab z-20" // Adjusted to match visible track
                 aria-label={`Walking speed slider, currently ${currentSpeed.toFixed(
                   1
                 )} meters per second (${getSpeedDescription(currentSpeed)})`}
@@ -349,15 +353,15 @@ export const RightSidebar: React.FC<RightSidebarProps> = ({
               </span>
             </div>
 
-              {/* Feedback messages */}
-              <div
-                id="speed-feedback"
-                className={`text-xs text-green-400 mt-1 ${
+            {/* Feedback messages */}
+            <div
+              id="speed-feedback"
+              className={`text-xs text-green-400 mt-1 ${
                 showSaveIndicator === "speed" ? "animate-pulse" : "invisible"
-                }`}
-              >
-                Speed setting saved
-              </div>
+              }`}
+            >
+              Speed setting saved
+            </div>
             {currentSpeed !== walkingSpeed && pathSegments.length > 0 && (
               <div className="text-xs text-blue-400 mt-1">
                 Est. arrival: {localEstimatedTime}
