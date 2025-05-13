@@ -1,4 +1,4 @@
-import { getFontSizeClass } from "@/components/types/settings";
+import { getFontSizeClass } from "@/utils/accessibilityStyles";
 import { IoMdGrid } from "@/utils/icons";
 import React from "react";
 import {

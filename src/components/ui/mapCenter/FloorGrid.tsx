@@ -1,9 +1,9 @@
+import { getFontSizeClass } from "@/utils/accessibilityStyles";
 import React, { useState } from "react";
-import type { CellType } from "../../types/tileData";
-import { tileData } from "../../types/tileData";
+import type { CellType } from "../../../data/tileData";
+import { tileData } from "../../../data/tileData";
 import * as types from "../../types/types";
 import { PathSegment, pathSegmentsProps } from "../../types/types";
-import { getFontSizeClass } from "@/components/types/settings";
 
 /**
  * FloorGrid component renders a visual representation of a floor map with various room types.

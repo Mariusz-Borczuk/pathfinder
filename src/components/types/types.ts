@@ -1,7 +1,7 @@
-import { floor1Data } from "./floor1.data";
-import { floor2Data } from "./floor2.data";
-import { floor3Data } from "./floor3.data";
-import { floor4Data } from "./floor4.data";
+import { floor1Data } from "../../data/floor1Data";
+import { floor2Data } from "../../data/floor2Data";
+import { floor3Data } from "../../data/floor3Data";
+import { floor4Data } from "../../data/floor4Data";
 
 export interface Coordinate {
   x: number;

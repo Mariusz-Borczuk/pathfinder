@@ -1,13 +1,13 @@
 import React, { useCallback, useState } from "react";
-import { RouteNavigator as CorePathFinder } from "../../../../RouteCalculator";
+import { RouteNavigator } from "../../../../logic/RouteCalculator";
 import {
   LocationSearchResult,
   PathFinderProps,
   PathSegment,
 } from "../../../types/types";
-import { EndLocationSearchField } from "./EndLocationSearchField";
 import { FindPathButton } from "./FindPathButton";
 import { NavigationButton } from "./NavigationButton";
+import { EndLocationSearchField } from "./SearchFieldEndLocation";
 import { StartLocationSearchField } from "./StartLocationSearchField";
 
 /**
@@ -99,7 +99,7 @@ export const PathFinder: React.FC<PathFinderProps> = ({
       }
 
       // Pass to the core PathFinder with proper typing
-      CorePathFinder({
+      RouteNavigator({
         startLocation, // Pass the startLocation object directly
         endLocation,
         isWheelchair,
