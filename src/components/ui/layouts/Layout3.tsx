@@ -37,7 +37,7 @@ import { RightSidebar } from "../rightMenu/Right_Sidebar";
  * </WayfindingApp3>
  * ```
  */
-const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
+const Pathfinder: React.FC<LayoutProps> = ({ children }) => {
   const [settings, setSettings] = useState<AccessibilitySettings>({
     fontSize: "normal",
     contrast: "normal",
@@ -286,4 +286,4 @@ const WayfindingApp3: React.FC<LayoutProps> = ({ children }) => {
   );
 };
 
-export default WayfindingApp3;
+export default Pathfinder;

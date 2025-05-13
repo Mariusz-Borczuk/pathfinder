@@ -171,6 +171,7 @@ export function isRoomOnFloor(
  * @property {Coordinate} location - The coordinates of the location.
  * @property {string} [description] - Optional description of the location.
  * @property {string} [color] - Custom color for the location marker.
+ * @property {PreferredBathroom} [PreferredBathroom] - Preferred bathroom type.
  */
 export interface LocationSearchResult {
   type:
@@ -186,7 +187,8 @@ export interface LocationSearchResult {
   floor: number;
   location: Coordinate;
   description?: string;
-  color?: string; // Custom color for the location marker
+  color?: string;
+  PreferredBathroom?: PreferredBathroom;
 }
 export interface AddCustomNavigationButtonProps {
   onAdd: (item: NavigationItem) => void;
@@ -287,6 +289,7 @@ export interface RouteFinderProps {
   isWheelchair: boolean;
   onPathFound: (path: PathSegment[]) => void;
   onError: (message: string) => void;
+  preferredBathroom?: PreferredBathroom; // Add preferred bathroom
 }
 
 // Define transit point type
